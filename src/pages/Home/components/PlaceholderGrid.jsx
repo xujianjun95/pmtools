@@ -5,8 +5,10 @@ function PlaceholderGrid() {
     <div className={`${styles.placeholderGrid} ${styles.placeholderGridSingle} fi d5`}>
       <div className={styles.placeholderCard}>
         <span className={styles.phNum}>03</span>
-        <h3 className={styles.phTitle}>即将推出</h3>
-        <p className={styles.phDesc}>下一个项目正在酝酿中</p>
+        <h3 className={styles.phTitle}>
+          Next<span className={styles.cursor}>_</span>
+        </h3>
+        <p className={styles.phDesc}>保持观察，让直觉自然落地。</p>
       </div>
     </div>
   )

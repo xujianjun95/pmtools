@@ -1,24 +1,38 @@
 .homeIntro {
-  padding: 56px 0 56px;
+  padding: 22px 0 22px;
 }
 
-.homeIntroDesc {
-  max-width: 480px;
-  font-size: 1.05rem;
+.homeIntroBlock {
+  display: flex;
+  flex-direction: column;
+  max-width: 760px;
+}
+
+.homeIntroDescEn {
+  margin-bottom: 8px;
+  font-family: 'Inter', var(--font-body);
+  font-size: clamp(1.08rem, 2vw, 1.32rem);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
+
+.homeIntroDescZh {
+  font-size: 0.98rem;
   line-height: 1.8;
-  color: var(--text-secondary);
+  color: #777;
 }
 
 .homeIntro :global(.section-title) {
-  /* 让首页标题到副标题的距离更紧凑 */
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .projectsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 28px;
-  margin-top: 28px;
+  margin-top: 18px;
   margin-bottom: 28px;
 }
 
@@ -61,15 +75,37 @@
   color: var(--text-muted);
 }
 
+.cursor {
+  animation: blink 2s step-end infinite;
+}
+
 .phDesc {
   font-size: 0.85rem;
   color: var(--text-muted);
   opacity: 0.6;
 }
 
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .homeIntro {
-    padding: 40px 0 36px;
+    padding: 20px 0 18px;
+  }
+  
+  .homeIntroDescEn {
+    font-size: 1.02rem;
+  }
+
+  .projectsGrid {
+    margin-top: 14px;
   }
 
   .projectsGrid,

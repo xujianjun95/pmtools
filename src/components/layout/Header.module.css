@@ -14,6 +14,12 @@
   gap: 40px;
 }
 
+.right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .logo {
   font-family: var(--font-mono);
   font-size: 0.82rem;
@@ -29,8 +35,25 @@
 }
 
 .nav {
+  position: relative;
   display: flex;
   gap: 32px;
+  --indicator-left: 0px;
+  --indicator-width: 0px;
+  --indicator-opacity: 0;
+}
+
+.nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--indicator-width);
+  height: 1.5px;
+  background: var(--accent);
+  opacity: var(--indicator-opacity);
+  transform: translateX(var(--indicator-left));
+  transition: transform 0.28s ease, width 0.28s ease, opacity 0.2s ease;
 }
 
 .navLink {
@@ -53,14 +76,35 @@
   color: var(--text-primary);
 }
 
-.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1.5px;
-  background: var(--accent);
+.statusBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 520px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.statusItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #30b56b;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #30b56b 24%, transparent);
+}
+
+.statusDivider {
+  color: var(--border);
 }
 
 @media (max-width: 768px) {
@@ -70,5 +114,9 @@
 
   .left {
     gap: 20px;
+  }
+
+  .statusBar {
+    display: none;
   }
 }

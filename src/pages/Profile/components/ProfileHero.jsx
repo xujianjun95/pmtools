@@ -4,7 +4,7 @@ function ProfileHero() {
   return (
     <section className={styles.profileHero}>
       <span className="section-label fi">About</span>
-      <h1 className={`${styles.profileName} fi d1`}>你的名字</h1>
+      <h1 className={`${styles.profileName} fi d1`}>徐健钧</h1>
       <p className={`${styles.profileTitle} fi d2`}>独立开发者 · 产品工程师</p>
       <div className={`${styles.profileBio} fi d3`}>
         <p>

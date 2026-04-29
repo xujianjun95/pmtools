@@ -3,8 +3,9 @@ import { getProjectById } from '../../data/projects'
 import styles from './ProjectDetail.module.css'
 import DetailHero from './components/DetailHero'
 import FeaturesSection from './components/FeaturesSection'
+import OriginSection from './components/OriginSection'
+import ChangelogSection from './components/ChangelogSection'
 import TechStackSection from './components/TechStackSection'
-import DetailLinks from './components/DetailLinks'
 
 function ProjectDetailPage() {
   const { id } = useParams()
@@ -29,9 +30,10 @@ function ProjectDetailPage() {
         <span className={styles.backArrow}>←</span> 返回项目列表
       </Link>
       <DetailHero project={project} />
+      <OriginSection project={project} />
       <FeaturesSection project={project} />
+      <ChangelogSection project={project} />
       <TechStackSection project={project} />
-      <DetailLinks project={project} />
     </section>
   )
 }

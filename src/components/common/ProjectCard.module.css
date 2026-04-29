@@ -1,4 +1,7 @@
 .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -10,7 +13,7 @@
 .card:hover {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-3px);
-  border-color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border) 50%);
 }
 
 .mockupWrap {
@@ -27,6 +30,9 @@
 }
 
 .content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 28px 28px 24px;
 }
 
@@ -84,6 +90,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-top: auto;
   margin-bottom: 20px;
 }
 
@@ -91,8 +98,8 @@
 }
 
 .card:hover .cardTag {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border) 50%);
+  color: color-mix(in srgb, var(--accent) 50%, var(--text-secondary) 50%);
 }
 
 .link {

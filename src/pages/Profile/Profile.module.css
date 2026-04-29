@@ -1,5 +1,5 @@
 .profileHero {
-  padding: 64px 0 56px;
+  padding: 22px 0 56px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 56px;
 }
@@ -112,6 +112,6 @@
 
 @media (max-width: 768px) {
   .profileHero {
-    padding: 40px 0 32px;
+    padding: 20px 0 32px;
   }
 }

@@ -7,17 +7,15 @@ function ThemeToggle() {
   return (
     <button
       type="button"
-      className={styles.toggle}
+      className={styles.textToggle}
       onClick={toggleTheme}
       aria-label="切换主题"
       aria-pressed={isDark}
     >
-      <div className={styles.track}>
-        <span className={styles.trackSun}>☀</span>
-        <span className={styles.trackMoon}>☾</span>
-        <div className={styles.thumb}>
-          <span className={styles.thumbIcon}>{isDark ? '☾' : '☀'}</span>
-        </div>
+      <div className={styles.textTrack}>
+        <div className={styles.textThumb} />
+        <span className={`${styles.textItem} ${!isDark ? styles.textActive : ''}`}>light</span>
+        <span className={`${styles.textItem} ${isDark ? styles.textActive : ''}`}>dark</span>
       </div>
     </button>
   )

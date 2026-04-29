@@ -1,12 +1,12 @@
 .page {
-  padding: 64px 0;
+  padding: 22px 0 28px;
 }
 
 .backLink {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 56px;
+  margin-bottom: 24px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -27,8 +27,8 @@
 }
 
 .detailHero {
-  padding-bottom: 56px;
-  margin-bottom: 72px;
+  padding-bottom: 40px;
+  margin-bottom: 56px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -66,6 +66,11 @@
   color: var(--text-body);
 }
 
+.heroActions {
+  display: flex;
+  gap: 12px;
+}
+
 .detailHeroVisual {
   flex: 1.1;
 }
@@ -77,7 +82,7 @@
 }
 
 .detailFeatures {
-  margin-bottom: 72px;
+  margin-bottom: 56px;
 }
 
 .featGrid {
@@ -120,7 +125,126 @@
 }
 
 .detailTech {
-  margin-bottom: 72px;
+  margin-bottom: 56px;
+}
+
+.detailChangelog {
+  margin-bottom: 56px;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 22px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--border);
+}
+
+.timelineItem {
+  position: relative;
+}
+
+.timelineDot {
+  position: absolute;
+  left: -22px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.timelineContent {
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.timelineDate {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.timelineTitle {
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.timelineList {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text-body);
+}
+
+.timelineList li {
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.detailOrigin {
+  margin-bottom: 56px;
+}
+
+.originCard {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.originPara {
+  margin-bottom: 14px;
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+
+.originPoint {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.originPointTitle {
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 1.06rem;
+  color: var(--text-primary);
+}
+
+.originEmphasis {
+  margin: 18px 0;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  color: var(--text-primary);
+}
+
+.originEnding {
+  margin-top: 18px;
+  margin-bottom: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--accent);
 }
 
 .techTags {
@@ -203,7 +327,7 @@
 
 @media (max-width: 768px) {
   .page {
-    padding: 40px 0;
+    padding: 20px 0 24px;
   }
 
   .detailHeroInner {
@@ -219,7 +343,20 @@
     grid-template-columns: 1fr;
   }
 
-  .detailLinks {
-    /* 上方已有 buttonsRow 控制布局，这里无需再改方向 */
+  .originCard {
+    padding: 22px 18px;
   }
+
+  .timeline {
+    padding-left: 18px;
+  }
+
+  .timelineDot {
+    left: -18px;
+  }
+
+  .timelineContent {
+    padding: 18px 16px;
+  }
+
 }
