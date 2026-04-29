@@ -1,0 +1,63 @@
+.toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 13px;
+  position: relative;
+  background: var(--toggle-bg);
+  transition: background 0.3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  border: none;
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--toggle-dot);
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='dark'] .dot {
+  transform: translateX(22px);
+}
+
+.icons {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.icon {
+  transition: opacity 0.3s;
+}
+
+[data-theme='light'] .moon {
+  opacity: 0.3;
+}
+
+[data-theme='light'] .sun {
+  opacity: 1;
+  color: var(--accent);
+}
+
+[data-theme='dark'] .moon {
+  opacity: 1;
+  color: var(--accent);
+}
+
+[data-theme='dark'] .sun {
+  opacity: 0.3;
+}

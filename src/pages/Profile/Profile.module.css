@@ -1,0 +1,117 @@
+.profileHero {
+  padding: 64px 0 56px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 56px;
+}
+
+.profileName {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.profileTitle {
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+
+.profileBio {
+  max-width: 520px;
+}
+
+.profileBio p {
+  font-size: 0.95rem;
+  color: var(--text-body);
+  line-height: 1.8;
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+.profileSection {
+  margin-bottom: 56px;
+}
+
+.profileSection .sectionTitle {
+  font-size: 1.15rem;
+}
+
+.skillGroup {
+  margin-bottom: 24px;
+}
+
+.skillGroupTitle {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.skillTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skillTag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-secondary);
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contactLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  width: 72px;
+  flex-shrink: 0;
+}
+
+.contactValue {
+  font-size: 0.95rem;
+  color: var(--text-body);
+  font-weight: 400;
+}
+
+.contactValue a {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.contactValue a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .profileHero {
+    padding: 40px 0 32px;
+  }
+}

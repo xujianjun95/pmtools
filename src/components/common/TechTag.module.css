@@ -1,0 +1,13 @@
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  padding: 4px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
