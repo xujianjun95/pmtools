@@ -66,30 +66,6 @@
   color: var(--text-body);
 }
 
-.detailStats {
-  display: flex;
-  gap: 36px;
-}
-
-.detailStat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.detailStatVal {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--text-primary);
-}
-
-.detailStatLbl {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
 .detailHeroVisual {
   flex: 1.1;
 }
@@ -166,10 +142,14 @@
 }
 
 .detailLinks {
-  display: flex;
-  gap: 12px;
+  display: block;
   padding-top: 40px;
   border-top: 1px solid var(--border);
+}
+
+.buttonsRow {
+  display: flex;
+  gap: 12px;
 }
 
 .dlBtn {
@@ -212,6 +192,15 @@
   transform: translate(2px, -2px);
 }
 
+.sciNote {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .page {
     padding: 40px 0;
@@ -222,11 +211,15 @@
     gap: 32px;
   }
 
+  .buttonsRow {
+    flex-direction: column;
+  }
+
   .featGrid {
     grid-template-columns: 1fr;
   }
 
   .detailLinks {
-    flex-direction: column;
+    /* 上方已有 buttonsRow 控制布局，这里无需再改方向 */
   }
 }

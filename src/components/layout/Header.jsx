@@ -17,7 +17,7 @@ function Header() {
               `${styles.navLink} ${isActive ? styles.active : ''}`
             }
           >
-            项目
+            实验室
           </NavLink>
           <NavLink
             to="/profile"

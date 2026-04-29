@@ -4,9 +4,9 @@ function HomeIntro() {
   return (
     <section className={styles.homeIntro}>
       <span className="section-label fi">Portfolio</span>
-      <h1 className="section-title fi d1">作品集</h1>
+      <h1 className="section-title fi d1">实验室</h1>
       <p className={`fi d2 ${styles.homeIntroDesc}`}>
-        独立开发的工具类产品，从需求到上线，全流程独立完成。
+        探索、构建并交付那些能解决问题的工具。
       </p>
     </section>
   )

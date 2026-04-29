@@ -11,14 +11,6 @@ function DetailHero({ project }) {
           <h1 className={`${styles.detailName} fi d2`}>{project.title}</h1>
           <p className={`${styles.detailTagline} fi d3`}>{project.tagline}</p>
           <p className={`${styles.detailDesc} fi d4`}>{project.detailDescription}</p>
-          <div className={`${styles.detailStats} fi d5`}>
-            {project.stats.map((item) => (
-              <div key={`${item.value}-${item.label}`} className={styles.detailStat}>
-                <span className={styles.detailStatVal}>{item.value}</span>
-                <span className={styles.detailStatLbl}>{item.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className={`${styles.detailHeroVisual} fi d6`}>

@@ -1,5 +1,6 @@
 .mockYessir {
   background: linear-gradient(160deg, #12121e 0%, #181830 40%, #1a2548 100%);
+  height: 100%;
 }
 
 .bar {
@@ -133,6 +134,7 @@
 
 .mockKada {
   background: #1e1e1e;
+  height: 100%;
 }
 
 .toolbar {

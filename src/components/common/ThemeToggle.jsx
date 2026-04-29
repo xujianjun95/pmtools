@@ -12,11 +12,13 @@ function ThemeToggle() {
       aria-label="切换主题"
       aria-pressed={isDark}
     >
-      <div className={styles.icons}>
-        <span className={`${styles.icon} ${styles.sun}`}>☀</span>
-        <span className={`${styles.icon} ${styles.moon}`}>☾</span>
+      <div className={styles.track}>
+        <span className={styles.trackSun}>☀</span>
+        <span className={styles.trackMoon}>☾</span>
+        <div className={styles.thumb}>
+          <span className={styles.thumbIcon}>{isDark ? '☾' : '☀'}</span>
+        </div>
       </div>
-      <div className={styles.dot} />
     </button>
   )
 }

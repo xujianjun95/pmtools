@@ -10,6 +10,12 @@ function MainLayout() {
   useEffect(() => {
     // 复刻旧版 `show()` 中“重置 animation 以重新播放”的效果
     // 避免只在首次挂载时淡入的问题（例如 /project/:id 参数切换）。
+
+    // 关键修复：路由切换时强制回到顶部，避免详情页从上次滚动的“很下方”开始渲染。
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+
     const fiEls = document.querySelectorAll('.fi')
     fiEls.forEach((el) => {
       // eslint-disable-next-line no-param-reassign
@@ -20,6 +26,7 @@ function MainLayout() {
       // eslint-disable-next-line no-param-reassign
       el.style.animation = ''
     })
+
   }, [location.pathname, location.search, location.hash])
 
   return (

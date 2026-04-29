@@ -43,7 +43,8 @@ export const projects = [
       },
     ],
     links: {
-      project: '#',
+      project:
+        'https://chromewebstore.google.com/detail/%E6%A0%87%E7%AD%BE%E9%A1%B5ai%E8%87%AA%E5%8A%A8%E5%88%86%E7%BB%84%E8%B7%A8%E7%AA%97%E5%8F%A3%E7%AE%A1%E7%90%86%E5%BF%AB%E9%80%9F%E5%88%87%E6%8D%A2%E5%8F%8C%E5%87%BB%E5%85%B3%E9%97%AD%E6%99%BA%E8%83%BD%E8%AF%AD/ggdplmigmgopdecjadbgakofifnonacb?authuser=0&hl=zh-CN',
       source: '#',
     },
     mockupType: 'yessir',
@@ -51,12 +52,12 @@ export const projects = [
   {
     id: 'kada',
     number: '02',
-    title: '咔哒',
+    title: '咔哒 · SnapBuild',
     tagline: '轻量级在线 HTML 编辑工具',
     description: '让灵感即刻落地的在线编辑器。编辑代码，瞬间转化为真实的交互界面。',
     detailDescription:
       '让灵感即刻落地的在线 HTML 编辑器。编辑代码，瞬间转化为真实的交互界面，告别臃肿的本地开发环境。',
-    tags: ['实时预览', '离线可用', '零配置'],
+    tags: ['实时预览', '零配置'],
     techStack: ['HTML / CSS / JS', '实时渲染引擎', '代码格式化', '离线导出', '响应式设计'],
     stats: [
       { value: '实时', label: '预览' },
@@ -83,7 +84,7 @@ export const projects = [
       },
     ],
     links: {
-      project: '#',
+      project: 'https://pmtools.com.cn/kada/',
       source: '#',
     },
     mockupType: 'kada',

@@ -22,6 +22,8 @@
 .mockupInner {
   border-radius: 8px 8px 0 0;
   overflow: hidden;
+  /* 保证不同 mockup 组件在卡片顶部区域的底边对齐 */
+  height: 220px;
 }
 
 .content {

@@ -1,5 +1,5 @@
 .homeIntro {
-  padding: 64px 0 56px;
+  padding: 56px 0 56px;
 }
 
 .homeIntroDesc {
@@ -7,6 +7,11 @@
   font-size: 1.05rem;
   line-height: 1.8;
   color: var(--text-secondary);
+}
+
+.homeIntro :global(.section-title) {
+  /* 让首页标题到副标题的距离更紧凑 */
+  margin-bottom: 24px;
 }
 
 .projectsGrid {
@@ -21,6 +26,11 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 28px;
+}
+
+.placeholderGridSingle {
+  /* 只保留一个占位卡片时，让它不占右侧空白区域 */
+  grid-template-columns: 1fr;
 }
 
 .placeholderCard {
