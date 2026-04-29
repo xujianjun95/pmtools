@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pmtools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ═══════════════════════════════════════
+       LIGHT THEME
+       ═══════════════════════════════════════ */
+    [data-theme="light"] {
+      --bg: #f7f5f2;
+      --bg-alt: #f0ede8;
+      --surface: #ffffff;
+      --surface-hover: #fefdfb;
+      --border: #ddd8d0;
+      --border-subtle: #e8e4dd;
+      --text-primary: #1a1714;
+      --text-body: #3a3530;
+      --text-secondary: #555048;
+      --text-muted: #8a8478;
+      --accent: #7a6040;
+      --accent-hover: #6a5235;
+      --accent-subtle: rgba(122, 96, 64, 0.08);
+      --shadow-card: 0 2px 24px rgba(26, 23, 20, 0.06), 0 0 0 1px rgba(26, 23, 20, 0.03);
+      --shadow-card-hover: 0 8px 48px rgba(26, 23, 20, 0.1), 0 0 0 1px rgba(26, 23, 20, 0.04);
+      --mockup-yessir-bg: linear-gradient(160deg, #12121e 0%, #181830 40%, #1a2548 100%);
+      --toggle-bg: #e8e4dd;
+      --toggle-dot: #ffffff;
+      --toggle-icon: #8a8478;
+    }
+
+    /* ═══════════════════════════════════════
+       DARK THEME
+       ═══════════════════════════════════════ */
+    [data-theme="dark"] {
+      --bg: #111010;
+      --bg-alt: #181614;
+      --surface: #1c1a18;
+      --surface-hover: #222018;
+      --border: #2e2b26;
+      --border-subtle: #252320;
+      --text-primary: #ede8e0;
+      --text-body: #c8c2b8;
+      --text-secondary: #a09888;
+      --text-muted: #6a6258;
+      --accent: #c4a070;
+      --accent-hover: #d4b080;
+      --accent-subtle: rgba(196, 160, 112, 0.08);
+      --shadow-card: 0 2px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
+      --shadow-card-hover: 0 8px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      --mockup-yessir-bg: linear-gradient(160deg, #0a0a14 0%, #0e0e20 40%, #101828 100%);
+      --toggle-bg: #2e2b26;
+      --toggle-dot: #3a3630;
+      --toggle-icon: #c4a070;
+    }
+
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body); font-weight: 400; color: var(--text-body);
+      background: var(--bg); line-height: 1.75; letter-spacing: 0.01em;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Subtle grain */
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      opacity: 0.018;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    :root {
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'DM Mono', 'Courier New', monospace;
+      --margin-page: 100px;
+      --radius: 10px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { background: none; border: none; cursor: pointer; font-family: inherit; color: inherit; }
+
+    /* ── Layout ──────────────────────────────── */
+    .layout { min-height: 100vh; display: flex; flex-direction: column; }
+    .main { flex: 1; padding: 0 var(--margin-page); max-width: 1400px; width: 100%; margin: 0 auto; }
+
+    /* ── Header ──────────────────────────────── */
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px var(--margin-page); max-width: 1400px; width: 100%; margin: 0 auto;
+    }
+    .header-left { display: flex; align-items: center; gap: 40px; }
+    .header-logo {
+      font-family: var(--font-mono); font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-primary);
+      transition: opacity 0.2s; cursor: pointer;
+    }
+    .header-logo:hover { opacity: 0.6; }
+    .header-nav { display: flex; gap: 32px; }
+    .nav-link {
+      font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
+      transition: color 0.2s; cursor: pointer; position: relative; padding-bottom: 3px;
+    }
+    .nav-link:hover { color: var(--text-primary); }
+    .nav-link.active { color: var(--text-primary); }
+    .nav-link.active::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1.5px; background: var(--accent);
+    }
+
+    /* ── Theme Toggle ────────────────────────── */
+    .theme-toggle {
+      width: 48px; height: 26px; border-radius: 13px; position: relative;
+      background: var(--toggle-bg); transition: background 0.3s; cursor: pointer;
+      display: flex; align-items: center; padding: 0 5px;
+    }
+    .theme-toggle .toggle-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--toggle-dot); position: absolute; top: 4px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    [data-theme="light"] .toggle-dot { left: 4px; }
+    [data-theme="dark"] .toggle-dot { transform: translateX(22px); }
+    .toggle-icons {
+      display: flex; justify-content: space-between; width: 100%;
+      font-size: 0.6rem; position: relative; z-index: 1; pointer-events: none;
+    }
+    .toggle-icon { transition: opacity 0.3s; }
+    [data-theme="light"] .toggle-icon.moon { opacity: 0.3; }
+    [data-theme="light"] .toggle-icon.sun { opacity: 1; color: var(--accent); }
+    [data-theme="dark"] .toggle-icon.moon { opacity: 1; color: var(--accent); }
+    [data-theme="dark"] .toggle-icon.sun { opacity: 0.3; }
+
+    /* ── Footer ──────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border); padding: 28px var(--margin-page);
+      margin-top: 120px; transition: border-color 0.4s;
+    }
+    .footer-inner {
+      max-width: 1400px; margin: 0 auto; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.04em; }
+    .footer-note { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* ── Animations ──────────────────────────── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fi { opacity: 0; animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .d1 { animation-delay: 0.06s; } .d2 { animation-delay: 0.12s; } .d3 { animation-delay: 0.18s; }
+    .d4 { animation-delay: 0.24s; } .d5 { animation-delay: 0.3s; } .d6 { animation-delay: 0.36s; }
+    .d7 { animation-delay: 0.42s; } .d8 { animation-delay: 0.48s; }
+
+    /* ── Page System ─────────────────────────── */
+    .page { display: none; }
+    .page.active { display: block; animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    /* ── Common ──────────────────────────────── */
+    .section-label {
+      display: block; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+      font-weight: 400; color: var(--text-primary); margin-bottom: 40px;
+    }
+
+    /* ═══════════════════════════════════════════
+       HOME
+       ═══════════════════════════════════════════ */
+
+    .home-intro { padding: 64px 0 56px; }
+    .home-intro .section-title { margin-bottom: 12px; font-size: clamp(1.5rem, 2.8vw, 2rem); }
+    .home-intro-desc { font-size: 1.05rem; color: var(--text-secondary); max-width: 480px; line-height: 1.8; font-weight: 400; }
+
+    /* ── Project Grid ────────────────────────── */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Project Card ────────────────────────── */
+    .project-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface); overflow: hidden; cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: var(--shadow-card);
+    }
+    .project-card:hover {
+      box-shadow: var(--shadow-card-hover); transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    /* Card Mockup Area */
+    .card-mockup {
+      padding: 20px 20px 0; position: relative; overflow: hidden;
+    }
+    .card-mockup-inner {
+      border-radius: 8px 8px 0 0; overflow: hidden;
+    }
+
+    /* Card Content */
+    .card-content { padding: 28px 28px 24px; }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .card-num {
+      font-family: var(--font-display); font-style: italic; font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .card-arrow-icon {
+      font-size: 1.1rem; color: var(--text-muted); transition: all 0.3s;
+      display: inline-block;
+    }
+    .project-card:hover .card-arrow-icon { color: var(--accent); transform: translate(3px, -3px); }
+
+    .card-name {
+      font-family: var(--font-display); font-size: 1.5rem; font-weight: 400;
+      color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.01em;
+    }
+    .card-tagline {
+      font-size: 0.88rem; color: var(--accent); font-weight: 500;
+      letter-spacing: 0.01em; margin-bottom: 14px;
+    }
+    .card-desc {
+      font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;
+      margin-bottom: 20px; font-weight: 400;
+    }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .meta-tag {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 400;
+      padding: 4px 12px; border: 1px solid var(--border-subtle); border-radius: 100px;
+      color: var(--text-muted); letter-spacing: 0.03em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .project-card:hover .meta-tag { border-color: var(--accent); color: var(--accent); }
+    .card-link {
+      font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);
+      display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
+    }
+    .project-card:hover .card-link { color: var(--accent); }
+
+    /* ── Placeholder Grid ────────────────────── */
+    .placeholder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+    .placeholder-card {
+      padding: 32px 28px; border: 1px dashed var(--border); border-radius: var(--radius);
+      display: flex; flex-direction: column; gap: 6px;
+      transition: border-color 0.3s;
+    }
+    .placeholder-card:hover { border-color: var(--text-muted); }
+    .ph-num { font-family: var(--font-display); font-style: italic; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+    .ph-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-muted); }
+    .ph-desc { font-size: 0.85rem; color: var(--text-muted); opacity: 0.6; }
+
+    /* ── YesSir Mockup (inside card) ─────────── */
+    .mock-yessir { background: linear-gradient(160deg, #12121e 0%, #181830 40%, #1a2548 100%); }
+    .mock-yessir .m-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .mock-yessir .m-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .mock-yessir .m-dot:nth-child(1) { background: #ff5f57; }
+    .mock-yessir .m-dot:nth-child(2) { background: #febc2e; }
+    .mock-yessir .m-dot:nth-child(3) { background: #28c840; }
+    .mock-yessir .m-url { flex: 1; height: 18px; border-radius: 3px; background: rgba(255,255,255,0.06); margin-left: 6px; }
+    .mock-yessir .m-body { padding: 24px 16px 18px; text-align: center; }
+    .mock-yessir .m-brand { font-family: var(--font-display); font-size: 0.72rem; color: rgba(255,255,255,0.4); letter-spacing: 0.04em; margin-bottom: 12px; }
+    .mock-yessir .m-search { display: flex; align-items: center; gap: 8px; max-width: 260px; margin: 0 auto 14px; padding: 7px 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; }
+    .mock-yessir .m-sicon { font-size: 0.65rem; opacity: 0.3; color: #fff; }
+    .mock-yessir .m-stxt { font-size: 0.6rem; color: rgba(255,255,255,0.2); }
+    .mock-yessir .m-tabs { display: flex; justify-content: center; gap: 16px; margin-bottom: 14px; }
+    .mock-yessir .m-tab { font-size: 0.52rem; color: rgba(255,255,255,0.2); font-family: var(--font-mono); letter-spacing: 0.04em; padding-bottom: 3px; }
+    .mock-yessir .m-tab.on { color: rgba(255,255,255,0.55); border-bottom: 1px solid rgba(255,255,255,0.25); }
+    .mock-yessir .m-cards { display: flex; flex-direction: column; gap: 5px; max-width: 260px; margin: 0 auto; }
+    .mock-yessir .m-card { display: flex; gap: 8px; padding: 6px 10px; background: rgba(255,255,255,0.035); border-radius: 5px; align-items: center; }
+    .mock-yessir .m-cicon { width: 14px; height: 14px; border-radius: 3px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
+    .mock-yessir .m-clines { flex: 1; }
+    .mock-yessir .m-cline { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.05); margin-bottom: 3px; }
+    .mock-yessir .m-cline:last-child { margin-bottom: 0; }
+
+    /* ── 咔哒 Mockup (inside card) ───────────── */
+    .mock-kada { background: #1e1e1e; }
+    .mock-kada .m-toolbar { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: #252526; border-bottom: 1px solid #333; }
+    .mock-kada .m-tb { font-family: var(--font-mono); font-size: 0.52rem; color: rgba(255,255,255,0.25); letter-spacing: 0.03em; }
+    .mock-kada .m-sep { width: 1px; height: 10px; background: rgba(255,255,255,0.1); }
+    .mock-kada .m-tbr { margin-left: auto; font-family: var(--font-mono); font-size: 0.5rem; color: rgba(255,255,255,0.15); }
+    .mock-kada .m-panes { display: flex; min-height: 160px; }
+    .mock-kada .m-code { flex: 1; padding: 10px; background: #1e1e1e; border-right: 1px solid #333; }
+    .mock-kada .m-ln { display: flex; gap: 5px; margin-bottom: 4px; align-items: center; }
+    .mock-kada .m-lnum { font-family: var(--font-mono); font-size: 0.45rem; color: rgba(255,255,255,0.12); width: 12px; text-align: right; flex-shrink: 0; }
+    .mock-kada .m-tk { height: 4px; border-radius: 2px; }
+    .mock-kada .t-b { width: 24px; background: #569cd6; }
+    .mock-kada .t-o { width: 36px; background: #ce9178; }
+    .mock-kada .t-g { width: 18px; background: rgba(255,255,255,0.1); }
+    .mock-kada .t-gr { width: 44px; background: #6a9955; }
+    .mock-kada .t-w { width: 14px; background: rgba(255,255,255,0.2); }
+    .mock-kada .t-p { width: 28px; background: #c586c0; }
+    .mock-kada .ind { margin-left: 12px; }
+    .mock-kada .ind2 { margin-left: 24px; }
+    .mock-kada .m-prev { flex: 1; padding: 10px; background: #f8f8f8; }
+    .mock-kada .pv { height: 6px; border-radius: 2px; background: #e0ddd8; margin-bottom: 6px; }
+    .mock-kada .pv.w60 { width: 60%; } .mock-kada .pv.w40 { width: 40%; } .mock-kada .pv.w80 { width: 80%; }
+    .mock-kada .pv.acc { background: #c4a882; height: 18px; border-radius: 3px; }
+    .mock-kada .pv.box { height: 32px; border-radius: 3px; border: 1px solid #d8d4ce; background: transparent; }
+
+    /* ═══════════════════════════════════════════
+       DETAIL PAGE
+       ═══════════════════════════════════════════ */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 56px;
+      transition: color 0.2s; cursor: pointer;
+    }
+    .back-link:hover { color: var(--text-primary); }
+    .back-link .bk { transition: transform 0.2s; display: inline-block; }
+    .back-link:hover .bk { transform: translateX(-4px); }
+
+    .detail-hero { padding-bottom: 56px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+    .detail-hero-inner { display: flex; gap: 56px; align-items: flex-start; }
+    .detail-hero-text { flex: 1; }
+    .detail-name {
+      font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 400; line-height: 1.15; margin-bottom: 10px; color: var(--text-primary);
+    }
+    .detail-tagline { font-size: 1rem; color: var(--accent); font-weight: 500; margin-bottom: 24px; }
+    .detail-desc { font-size: 0.95rem; color: var(--text-body); line-height: 1.8; max-width: 440px; margin-bottom: 32px; font-weight: 400; }
+    .detail-stats { display: flex; gap: 36px; }
+    .detail-stat { display: flex; flex-direction: column; gap: 2px; }
+    .detail-stat-val { font-family: var(--font-display); font-size: 1.05rem; color: var(--text-primary); }
+    .detail-stat-lbl { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.05em; }
+    .detail-hero-visual { flex: 1.1; }
+    .detail-visual-mockup {
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .detail-features { margin-bottom: 72px; }
+    .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .feat-card {
+      padding: 24px; border: 1px solid var(--border); border-radius: var(--radius);
+      transition: border-color 0.25s;
+    }
+    .feat-card:hover { border-color: var(--accent); }
+    .feat-num { font-family: var(--font-display); font-style: italic; font-size: 0.75rem; color: var(--accent); margin-bottom: 14px; display: block; }
+    .feat-title { font-family: var(--font-display); font-size: 1.05rem; color: var(--text-primary); margin-bottom: 6px; }
+    .feat-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; font-weight: 400; }
+
+    .detail-tech { margin-bottom: 72px; }
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tech-tag {
+      font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400;
+      padding: 5px 16px; border: 1px solid var(--border); border-radius: 100px;
+      color: var(--text-secondary); transition: all 0.2s;
+    }
+    .tech-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    .detail-links { display: flex; gap: 12px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .dl-btn {
+      font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.03em; padding: 11px 24px; border-radius: 6px;
+      display: inline-flex; align-items: center; gap: 8px; transition: all 0.25s; cursor: pointer;
+    }
+    .dl-btn.primary { background: var(--text-primary); color: var(--bg); }
+    .dl-btn.primary:hover { background: var(--accent); }
+    .dl-btn.secondary { border: 1px solid var(--border); color: var(--text-primary); }
+    .dl-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .dl-btn .la { transition: transform 0.2s; }
+    .dl-btn:hover .la { transform: translate(2px, -2px); }
+
+    /* ═══════════════════════════════════════════
+       PROFILE PAGE
+       ═══════════════════════════════════════════ */
+    .profile-hero { padding: 64px 0 56px; border-bottom: 1px solid var(--border); margin-bottom: 56px; }
+    .profile-name {
+      font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      font-weight: 400; line-height: 1.15; margin-bottom: 10px; color: var(--text-primary);
+    }
+    .profile-title { font-size: 1rem; color: var(--accent); font-weight: 500; margin-bottom: 28px; }
+    .profile-bio { max-width: 520px; }
+    .profile-bio p { font-size: 0.95rem; color: var(--text-body); line-height: 1.8; margin-bottom: 14px; font-weight: 400; }
+
+    .profile-section { margin-bottom: 56px; }
+    .profile-section .section-title { font-size: 1.15rem; margin-bottom: 24px; }
+
+    .skill-group { margin-bottom: 24px; }
+    .skill-group-title {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .skill-tag {
+      font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400;
+      padding: 5px 14px; border: 1px solid var(--border); border-radius: 100px;
+      color: var(--text-secondary);
+    }
+
+    .contact-list { display: flex; flex-direction: column; gap: 12px; }
+    .contact-item { display: flex; align-items: center; gap: 16px; }
+    .contact-label {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);
+      width: 72px; flex-shrink: 0;
+    }
+    .contact-value { font-size: 0.95rem; color: var(--text-body); font-weight: 400; }
+    .contact-value a {
+      border-bottom: 1px solid var(--border); padding-bottom: 1px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .contact-value a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 1024px) { :root { --margin-page: 48px; } }
+    @media (max-width: 768px) {
+      :root { --margin-page: 20px; }
+      .header { padding: 20px var(--margin-page); }
+      .header-left { gap: 20px; }
+      .footer { padding: 20px var(--margin-page); margin-top: 80px; }
+      .footer-inner { flex-direction: column; gap: 6px; text-align: center; }
+      .home-intro { padding: 40px 0 36px; }
+      .projects-grid, .placeholder-grid { grid-template-columns: 1fr; }
+      .detail-hero-inner { flex-direction: column; gap: 32px; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .detail-links { flex-direction: column; }
+      .profile-hero { padding: 40px 0 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- ── Header ── -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-logo" onclick="show('home')">Pmtools</span>
+        <nav class="header-nav">
+          <span class="nav-link" id="nav-home" onclick="show('home')">项目</span>
+          <span class="nav-link" id="nav-profile" onclick="show('profile')">关于</span>
+        </nav>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+        <div class="toggle-icons">
+          <span class="toggle-icon sun">☀</span>
+          <span class="toggle-icon moon">☾</span>
+        </div>
+        <div class="toggle-dot"></div>
+      </button>
+    </header>
+
+    <main class="main">
+
+      <!-- ═══════ HOME ═══════ -->
+      <div id="page-home" class="page active">
+        <section class="home-intro">
+          <span class="section-label fi">Portfolio</span>
+          <h1 class="section-title fi d1">作品集</h1>
+          <p class="home-intro-desc fi d2">独立开发的工具类产品，从需求到上线，全流程独立完成。</p>
+        </section>
+
+        <div class="projects-grid">
+          <!-- YesSir -->
+          <div class="project-card fi d3" onclick="show('yessir')">
+            <div class="card-mockup">
+              <div class="card-mockup-inner">
+                <div class="mock-yessir">
+                  <div class="m-bar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span><div class="m-url"></div></div>
+                  <div class="m-body">
+                    <div class="m-brand">YesSir</div>
+                    <div class="m-search"><span class="m-sicon">⌕</span><span class="m-stxt">搜索标题、URL 或域名...</span></div>
+                    <div class="m-tabs"><span class="m-tab on">全部</span><span class="m-tab">标签页</span><span class="m-tab">AI</span></div>
+                    <div class="m-cards">
+                      <div class="m-card"><div class="m-cicon"></div><div class="m-clines"><div class="m-cline" style="width:78%"></div><div class="m-cline" style="width:48%"></div></div></div>
+                      <div class="m-card"><div class="m-cicon"></div><div class="m-clines"><div class="m-cline" style="width:62%"></div><div class="m-cline" style="width:38%"></div></div></div>
+                      <div class="m-card"><div class="m-cicon"></div><div class="m-clines"><div class="m-cline" style="width:70%"></div><div class="m-cline" style="width:52%"></div></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="card-header"><span class="card-num">01</span><span class="card-arrow-icon">↗</span></div>
+              <h3 class="card-name">YesSir</h3>
+              <p class="card-tagline">Chrome 标签页管理 · AI 聚合搜索</p>
+              <p class="card-desc">Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效。</p>
+              <div class="card-meta">
+                <span class="meta-tag">Chrome Extension</span>
+                <span class="meta-tag">AI</span>
+                <span class="meta-tag">标签页管理</span>
+              </div>
+              <span class="card-link">查看详情 →</span>
+            </div>
+          </div>
+
+          <!-- 咔哒 -->
+          <div class="project-card fi d4" onclick="show('kada')">
+            <div class="card-mockup">
+              <div class="card-mockup-inner">
+                <div class="mock-kada">
+                  <div class="m-toolbar">
+                    <span class="m-tb">结构</span><span class="m-tb">布局</span><span class="m-tb">文本</span>
+                    <span class="m-sep"></span><span class="m-tb">导出</span>
+                    <span class="m-tbr">100%</span>
+                  </div>
+                  <div class="m-panes">
+                    <div class="m-code">
+                      <div class="m-ln"><span class="m-lnum">1</span><span class="m-tk t-b"></span><span class="m-tk t-o" style="width:40px"></span><span class="m-tk t-b"></span></div>
+                      <div class="m-ln"><span class="m-lnum">2</span><span class="m-tk t-b"></span><span class="m-tk t-p"></span><span class="m-tk t-o" style="width:30px"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">3</span><span class="m-tk t-b"></span><span class="m-tk t-w"></span><span class="m-tk t-g"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">4</span><span class="m-tk t-p"></span><span class="m-tk t-o" style="width:48px"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">5</span><span class="m-tk t-b"></span><span class="m-tk t-gr"></span></div>
+                      <div class="m-ln ind2"><span class="m-lnum">6</span><span class="m-tk t-g" style="width:38px"></span><span class="m-tk t-o" style="width:20px"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">7</span><span class="m-tk t-b"></span><span class="m-tk t-g"></span></div>
+                      <div class="m-ln"><span class="m-lnum">8</span><span class="m-tk t-b"></span><span class="m-tk t-g"></span></div>
+                    </div>
+                    <div class="m-prev">
+                      <div class="pv acc w60"></div>
+                      <div class="pv w80"></div>
+                      <div class="pv w40"></div>
+                      <div class="pv box"></div>
+                      <div class="pv w60"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="card-header"><span class="card-num">02</span><span class="card-arrow-icon">↗</span></div>
+              <h3 class="card-name">咔哒</h3>
+              <p class="card-tagline">轻量级在线 HTML 编辑工具</p>
+              <p class="card-desc">让灵感即刻落地的在线编辑器。编辑代码，瞬间转化为真实的交互界面。</p>
+              <div class="card-meta">
+                <span class="meta-tag">实时预览</span>
+                <span class="meta-tag">离线可用</span>
+                <span class="meta-tag">零配置</span>
+              </div>
+              <span class="card-link">查看详情 →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placeholders -->
+        <div class="placeholder-grid fi d5">
+          <div class="placeholder-card">
+            <span class="ph-num">03</span>
+            <h3 class="ph-title">即将推出</h3>
+            <p class="ph-desc">下一个项目正在酝酿中</p>
+          </div>
+          <div class="placeholder-card">
+            <span class="ph-num">04</span>
+            <h3 class="ph-title">即将推出</h3>
+            <p class="ph-desc">更多创意正在路上</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ YES SIR DETAIL ═══════ -->
+      <div id="page-yessir" class="page">
+        <span class="back-link fi" onclick="show('home')"><span class="bk">←</span> 返回项目列表</span>
+        <section class="detail-hero">
+          <div class="detail-hero-inner">
+            <div class="detail-hero-text">
+              <span class="section-label fi d1">Project</span>
+              <h1 class="detail-name fi d2">YesSir</h1>
+              <p class="detail-tagline fi d3">Chrome 标签页管理 · AI 聚合搜索</p>
+              <p class="detail-desc fi d4">一款 Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效、更智能。</p>
+              <div class="detail-stats fi d5">
+                <div class="detail-stat"><span class="detail-stat-val">Chrome</span><span class="detail-stat-lbl">Extension</span></div>
+                <div class="detail-stat"><span class="detail-stat-val">AI</span><span class="detail-stat-lbl">聚合搜索</span></div>
+                <div class="detail-stat"><span class="detail-stat-val">标签页</span><span class="detail-stat-lbl">管理工具</span></div>
+              </div>
+            </div>
+            <div class="detail-hero-visual fi d6">
+              <div class="detail-visual-mockup">
+                <div class="mock-yessir">
+                  <div class="m-bar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span><div class="m-url"></div></div>
+                  <div class="m-body">
+                    <div class="m-brand">YesSir</div>
+                    <div class="m-search"><span class="m-sicon">⌕</span><span class="m-stxt">搜索标题、URL 或域名...</span></div>
+                    <div class="m-tabs"><span class="m-tab on">全部</span><span class="m-tab">标签页</span><span class="m-tab">AI</span></div>
+                    <div class="m-cards">
+                      <div class="m-card"><div class="m-cicon"></div><div class="m-clines"><div class="m-cline" style="width:78%"></div><div class="m-cline" style="width:48%"></div></div></div>
+                      <div class="m-card"><div class="m-cicon"></div><div class="m-clines"><div class="m-cline" style="width:62%"></div><div class="m-cline" style="width:38%"></div></div></div>
+                      <div class="m-card"><div class="m-cicon"></div><div class="m-clines"><div class="m-cline" style="width:70%"></div><div class="m-cline" style="width:52%"></div></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="detail-features">
+          <span class="section-label fi">Features</span>
+          <h2 class="section-title fi d1">核心功能</h2>
+          <div class="feat-grid">
+            <div class="feat-card fi d2"><span class="feat-num">01</span><h3 class="feat-title">智能标签管理</h3><p class="feat-desc">可视化管理所有标签页，支持分组、搜索、快速切换，告别标签页混乱。</p></div>
+            <div class="feat-card fi d3"><span class="feat-num">02</span><h3 class="feat-title">AI 聚合搜索</h3><p class="feat-desc">集成多种 AI 搜索引擎，一次输入，多源结果聚合展示，提升信息获取效率。</p></div>
+            <div class="feat-card fi d4"><span class="feat-num">03</span><h3 class="feat-title">快捷操作</h3><p class="feat-desc">支持键盘快捷键操作，Tab 切换搜索模式，Command + E 快速导航。</p></div>
+            <div class="feat-card fi d5"><span class="feat-num">04</span><h3 class="feat-title">轻量极速</h3><p class="feat-desc">极简设计，零学习成本，即装即用，不影响浏览器性能。</p></div>
+          </div>
+        </section>
+        <section class="detail-tech">
+          <span class="section-label fi">Tech Stack</span>
+          <h2 class="section-title fi d1">技术栈</h2>
+          <div class="tech-tags fi d2">
+            <span class="tech-tag">Chrome Extension API</span><span class="tech-tag">Manifest V3</span>
+            <span class="tech-tag">JavaScript</span><span class="tech-tag">HTML / CSS</span><span class="tech-tag">AI Search</span>
+          </div>
+        </section>
+        <section class="detail-links fi">
+          <span class="dl-btn primary">访问项目 <span class="la">↗</span></span>
+          <span class="dl-btn secondary">源代码 <span class="la">↗</span></span>
+        </section>
+      </div>
+
+      <!-- ═══════ KADA DETAIL ═══════ -->
+      <div id="page-kada" class="page">
+        <span class="back-link fi" onclick="show('home')"><span class="bk">←</span> 返回项目列表</span>
+        <section class="detail-hero">
+          <div class="detail-hero-inner">
+            <div class="detail-hero-text">
+              <span class="section-label fi d1">Project</span>
+              <h1 class="detail-name fi d2">咔哒</h1>
+              <p class="detail-tagline fi d3">轻量级在线 HTML 编辑工具</p>
+              <p class="detail-desc fi d4">让灵感即刻落地的在线 HTML 编辑器。编辑代码，瞬间转化为真实的交互界面，告别臃肿的本地开发环境。</p>
+              <div class="detail-stats fi d5">
+                <div class="detail-stat"><span class="detail-stat-val">实时</span><span class="detail-stat-lbl">预览</span></div>
+                <div class="detail-stat"><span class="detail-stat-val">离线</span><span class="detail-stat-lbl">可用</span></div>
+                <div class="detail-stat"><span class="detail-stat-val">零配置</span><span class="detail-stat-lbl">即开即用</span></div>
+              </div>
+            </div>
+            <div class="detail-hero-visual fi d6">
+              <div class="detail-visual-mockup">
+                <div class="mock-kada">
+                  <div class="m-toolbar">
+                    <span class="m-tb">结构</span><span class="m-tb">布局</span><span class="m-tb">文本</span>
+                    <span class="m-sep"></span><span class="m-tb">导出</span><span class="m-tbr">100%</span>
+                  </div>
+                  <div class="m-panes">
+                    <div class="m-code">
+                      <div class="m-ln"><span class="m-lnum">1</span><span class="m-tk t-b"></span><span class="m-tk t-o" style="width:40px"></span><span class="m-tk t-b"></span></div>
+                      <div class="m-ln"><span class="m-lnum">2</span><span class="m-tk t-b"></span><span class="m-tk t-p"></span><span class="m-tk t-o" style="width:30px"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">3</span><span class="m-tk t-b"></span><span class="m-tk t-w"></span><span class="m-tk t-g"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">4</span><span class="m-tk t-p"></span><span class="m-tk t-o" style="width:48px"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">5</span><span class="m-tk t-b"></span><span class="m-tk t-gr"></span></div>
+                      <div class="m-ln ind2"><span class="m-lnum">6</span><span class="m-tk t-g" style="width:38px"></span><span class="m-tk t-o" style="width:20px"></span></div>
+                      <div class="m-ln ind"><span class="m-lnum">7</span><span class="m-tk t-b"></span><span class="m-tk t-g"></span></div>
+                      <div class="m-ln"><span class="m-lnum">8</span><span class="m-tk t-b"></span><span class="m-tk t-g"></span></div>
+                    </div>
+                    <div class="m-prev">
+                      <div class="pv acc w60"></div><div class="pv w80"></div><div class="pv w40"></div>
+                      <div class="pv box"></div><div class="pv w60"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="detail-features">
+          <span class="section-label fi">Features</span>
+          <h2 class="section-title fi d1">核心功能</h2>
+          <div class="feat-grid">
+            <div class="feat-card fi d2"><span class="feat-num">01</span><h3 class="feat-title">极速预览</h3><p class="feat-desc">编辑代码，右侧即时渲染交互效果，所见即所得的开发体验。</p></div>
+            <div class="feat-card fi d3"><span class="feat-num">02</span><h3 class="feat-title">轻量编辑</h3><p class="feat-desc">告别臃肿的本地环境，用快捷标签像搭积木一样创造，结构、布局、表单一键插入。</p></div>
+            <div class="feat-card fi d4"><span class="feat-num">03</span><h3 class="feat-title">草图模式</h3><p class="feat-desc">一键切换线框图视图，褪去视觉干扰，专注于业务逻辑和页面结构。</p></div>
+            <div class="feat-card fi d5"><span class="feat-num">04</span><h3 class="feat-title">高效沟通</h3><p class="feat-desc">支持代码美化、高清截图与离线导出为 HTML 文件，告别需求拉扯。</p></div>
+          </div>
+        </section>
+        <section class="detail-tech">
+          <span class="section-label fi">Tech Stack</span>
+          <h2 class="section-title fi d1">技术栈</h2>
+          <div class="tech-tags fi d2">
+            <span class="tech-tag">HTML / CSS / JS</span><span class="tech-tag">实时渲染引擎</span>
+            <span class="tech-tag">代码格式化</span><span class="tech-tag">离线导出</span><span class="tech-tag">响应式设计</span>
+          </div>
+        </section>
+        <section class="detail-links fi">
+          <span class="dl-btn primary">访问项目 <span class="la">↗</span></span>
+          <span class="dl-btn secondary">源代码 <span class="la">↗</span></span>
+        </section>
+      </div>
+
+      <!-- ═══════ PROFILE ═══════ -->
+      <div id="page-profile" class="page">
+        <section class="profile-hero">
+          <span class="section-label fi">About</span>
+          <h1 class="profile-name fi d1">你的名字</h1>
+          <p class="profile-title fi d2">独立开发者 · 产品工程师</p>
+          <div class="profile-bio fi d3">
+            <p>独立完成从 0 到 1 的产品设计与开发，专注于构建实用、精致的工具类产品。擅长将复杂需求转化为简洁优雅的解决方案。</p>
+            <p>目前专注于浏览器扩展和 Web 工具类产品开发，持续探索技术与产品设计的交叉地带。</p>
+          </div>
+        </section>
+        <section class="profile-section">
+          <span class="section-label fi d4">Skills</span>
+          <h2 class="section-title fi d5">技能</h2>
+          <div class="skill-group fi d6">
+            <h3 class="skill-group-title">Frontend</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">React</span><span class="skill-tag">JavaScript</span>
+              <span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">Vite</span>
+            </div>
+          </div>
+          <div class="skill-group fi d7">
+            <h3 class="skill-group-title">Extension</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Chrome Extension API</span><span class="skill-tag">Manifest V3</span>
+            </div>
+          </div>
+          <div class="skill-group fi d8">
+            <h3 class="skill-group-title">Design & Tools</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">产品设计</span><span class="skill-tag">UI / UX</span>
+              <span class="skill-tag">Figma</span><span class="skill-tag">Git</span>
+            </div>
+          </div>
+        </section>
+        <section class="profile-section">
+          <span class="section-label fi">Contact</span>
+          <h2 class="section-title fi d1">联系方式</h2>
+          <div class="contact-list fi d2">
+            <div class="contact-item"><span class="contact-label">Email</span><span class="contact-value"><a href="mailto:hello@pmtools.com.cn">hello@pmtools.com.cn</a></span></div>
+            <div class="contact-item"><span class="contact-label">GitHub</span><span class="contact-value"><a href="#">github.com/yourname</a></span></div>
+            <div class="contact-item"><span class="contact-label">Website</span><span class="contact-value"><a href="#">pmtools.com.cn</a></span></div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-copy">© 2026 Pmtools</span>
+        <span class="footer-note">Crafted with care</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ── Page Navigation ──
+    function show(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      const target = document.getElementById('page-' + page);
+      if (target) {
+        target.classList.add('active');
+        target.querySelectorAll('.fi').forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight;
+          el.style.animation = '';
+        });
+      }
+      if (page === 'home') document.getElementById('nav-home').classList.add('active');
+      if (page === 'profile') document.getElementById('nav-profile').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    // ── Theme Toggle ──
+    function getPreferredTheme() {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    // Init theme
+    setTheme(getPreferredTheme());
+
+    // Listen for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  </script>
+</body>
+</html>
