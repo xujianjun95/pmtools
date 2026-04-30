@@ -123,14 +123,6 @@ function Header() {
               >
                 关于
               </NavLink>
-              <NavLink
-                to="/hegotmarried"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.active : ''}`
-                }
-              >
-                这有俩人结婚
-              </NavLink>
             </nav>
           </div>
           <div className={styles.right}>
