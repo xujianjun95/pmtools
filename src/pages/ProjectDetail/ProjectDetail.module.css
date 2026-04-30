@@ -389,6 +389,7 @@
 .privacyLangSwitch {
   display: inline-flex;
   margin-bottom: 18px;
+  margin-right: 8px;
 }
 
 .privacySwitchTrack {
@@ -549,6 +550,72 @@
   margin-top: 0;
   padding-top: 0;
   border-top: 0;
+}
+
+.privacyContentWrapper {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collapsed {
+  max-height: 320px;
+}
+
+.expanded {
+  max-height: 5000px;
+}
+
+.privacyHiddenContent {
+  position: relative;
+  z-index: 1;
+}
+
+.fadeOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--surface) 0%, transparent) 0%,
+    var(--surface) 92%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.privacyActionArea {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 20px;
+  position: relative;
+  z-index: 3;
+}
+
+.privacyToggleButton {
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--toggle-bg) 90%, transparent);
+  color: var(--text-muted);
+  padding: 6px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.privacyToggleButton:hover {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--text-primary) 18%, var(--border-subtle));
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .privacyEnTitle {

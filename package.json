@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:clean": "rm -rf node_modules/.vite && vite --port 5173 --strictPort",
+    "dev:reset": "sh -c \"lsof -ti tcp:5173 | xargs kill -9 2>/dev/null || true; rm -rf node_modules/.vite; vite --port 5173 --strictPort\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

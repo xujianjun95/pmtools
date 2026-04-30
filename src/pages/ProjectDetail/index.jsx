@@ -67,9 +67,9 @@ function ProjectDetailPage() {
       <DetailHero project={project} />
       <FeaturesSection project={project} />
       <ChangelogSection project={project} />
-      <TechStackSection project={project} />
       <OriginSection project={project} />
       <YesSirPrivacySection project={project} />
+      <TechStackSection project={project} />
     </section>
   )
 }

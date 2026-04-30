@@ -4,6 +4,11 @@ import styles from '../ProjectDetail.module.css'
 function YesSirPrivacySection({ project }) {
   if (project.id !== 'yessir') return null
   const [language, setLanguage] = useState('zh')
+  const [isExpanded, setIsExpanded] = useState(false)
+  const toggleLabel =
+    language === 'zh'
+      ? (isExpanded ? '收起完整政策 ↑' : '阅读完整政策 ↓')
+      : (isExpanded ? 'Collapse full policy ↑' : 'Read full policy ↓')
 
   return (
     <section className={styles.detailPrivacy}>
@@ -21,14 +26,20 @@ function YesSirPrivacySection({ project }) {
             <button
               type="button"
               className={`${styles.privacyLangBtn} ${language === 'zh' ? styles.privacyLangBtnActive : ''}`}
-              onClick={() => setLanguage('zh')}
+              onClick={() => {
+                setLanguage('zh')
+                setIsExpanded(false)
+              }}
             >
               中文
             </button>
             <button
               type="button"
               className={`${styles.privacyLangBtn} ${language === 'en' ? styles.privacyLangBtnActive : ''}`}
-              onClick={() => setLanguage('en')}
+              onClick={() => {
+                setLanguage('en')
+                setIsExpanded(false)
+              }}
             >
               English
             </button>
@@ -38,6 +49,11 @@ function YesSirPrivacySection({ project }) {
 
         {language === 'zh' ? (
           <>
+            <div
+              className={`${styles.privacyContentWrapper} ${
+                isExpanded ? styles.expanded : styles.collapsed
+              }`}
+            >
             <p className={styles.originPara}>
           您好！我是「YesSir」的开发者。作为一款旨在降低浏览器认知负担、提升管理效率的工具，我们深知网页浏览记录是您极其私密的数据。因此，我们在设计之初就确立了「本地优先、最小化权限、透明传输」的核心原则。
             </p>
@@ -56,7 +72,7 @@ function YesSirPrivacySection({ project }) {
                 <li>近期被 AI 处理过的网页标签缓存（用于提升二次打开看板的加载速度）。</li>
               </ul>
             </div>
-
+            <div className={styles.privacyHiddenContent}>
             <div className={styles.privacySection}>
           <h3 className={styles.privacyH3}>🤖 2. AI 功能与数据传输双轨制</h3>
           <p className={styles.originPara}>
@@ -177,11 +193,19 @@ function YesSirPrivacySection({ project }) {
             </a>
           </p>
             </div>
+            </div>
+            {!isExpanded && <div className={styles.fadeOverlay} aria-hidden="true" />}
+            </div>
           </>
         ) : (
           <div className={styles.privacyEnBlock}>
+            <div
+              className={`${styles.privacyContentWrapper} ${
+                isExpanded ? styles.expanded : styles.collapsed
+              }`}
+            >
             <p className={styles.originPara}>
-            Hello! I am the developer of the "Yes Sir" extension. As a tool designed to reduce cognitive load and improve
+            Hello! I am the developer of the "YesSir" extension. As a tool designed to reduce cognitive load and improve
             tab management efficiency, we deeply understand that your browsing history is highly private data. Therefore,
             from the very beginning, we established the core principles of "Local First, Minimal Permissions, and
             Transparent Transmission".
@@ -203,7 +227,7 @@ function YesSirPrivacySection({ project }) {
               <li>Cached page labels and categorizations processed by AI.</li>
             </ul>
             </div>
-
+            <div className={styles.privacyHiddenContent}>
             <div className={styles.privacySection}>
             <h3 className={styles.privacyH3}>🤖 2. AI Features & Data Transmission Dual-Track System</h3>
             <p className={styles.originPara}>
@@ -349,8 +373,20 @@ function YesSirPrivacySection({ project }) {
               </a>
             </p>
             </div>
+            </div>
+            {!isExpanded && <div className={styles.fadeOverlay} aria-hidden="true" />}
+            </div>
           </div>
         )}
+        <div className={styles.privacyActionArea}>
+          <button
+            type="button"
+            className={styles.privacyToggleButton}
+            onClick={() => setIsExpanded((prev) => !prev)}
+          >
+            {toggleLabel}
+          </button>
+        </div>
       </div>
     </section>
   )
