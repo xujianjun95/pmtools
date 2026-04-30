@@ -2,11 +2,68 @@
   padding: 22px 0 28px;
 }
 
+.topNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  flex: 1;
+  min-width: 0;
+}
+
+.breadcrumbList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.breadcrumbItem {
+  min-width: 0;
+}
+
+.breadcrumbLink {
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.breadcrumbLink:hover {
+  color: var(--text-primary);
+}
+
+.breadcrumbSep {
+  flex-shrink: 0;
+  color: var(--border);
+  user-select: none;
+}
+
+.breadcrumbCurrent {
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(52vw, 320px);
+  display: inline-block;
+  vertical-align: bottom;
+}
+
 .backLink {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 24px;
+  flex-shrink: 0;
+  margin-bottom: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -323,6 +380,98 @@
   letter-spacing: 0.05em;
   line-height: 1.4;
   margin-top: 10px;
+}
+
+.detailPrivacy {
+  margin-bottom: 56px;
+}
+
+.privacySection {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.privacyH3 {
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 1.06rem;
+  color: var(--text-primary);
+}
+
+.privacyModeTitle {
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  color: var(--text-primary);
+}
+
+.privacyList {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text-body);
+}
+
+.privacyList li {
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.privacyStrong {
+  color: var(--text-primary);
+}
+
+.privacyPermList {
+  margin-top: 8px;
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.privacyPermList li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.privacyPermName {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+}
+
+.privacyPermDesc {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.privacyContact {
+  margin-top: 10px;
+  margin-bottom: 0;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.privacyContactLabel {
+  color: var(--text-primary);
+}
+
+.privacyEmail {
+  color: var(--accent);
+  transition: color 0.2s;
+}
+
+.privacyEmail:hover {
+  color: var(--accent-hover);
 }
 
 @media (max-width: 768px) {

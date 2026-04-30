@@ -1,0 +1,88 @@
+.teaser {
+  cursor: default;
+}
+
+.teaser:active {
+  transform: none;
+}
+
+.mockInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(122, 96, 64, 0.08), transparent 45%),
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--border-subtle) 55%, transparent) 0%,
+      color-mix(in srgb, var(--bg-alt) 90%, var(--surface)) 100%
+    );
+  border: 1px dashed color-mix(in srgb, var(--border) 75%, transparent);
+}
+
+.mockPlate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+}
+
+.mockGlyph {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  opacity: 0.45;
+}
+
+.mockHint {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.65;
+}
+
+.marker {
+  font-size: 1rem;
+  color: var(--text-muted);
+  opacity: 0.42;
+}
+
+.cursor {
+  animation: teaserBlink 2s step-end infinite;
+}
+
+.teaserFoot {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.55;
+}
+
+@keyframes teaserBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+:global([data-theme='dark']) .mockInner {
+  background:
+    radial-gradient(circle at 28% 18%, rgba(196, 160, 112, 0.07), transparent 42%),
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--surface) 40%, transparent) 0%,
+      var(--surface-hover) 100%
+    );
+  border-color: color-mix(in srgb, var(--border) 90%, transparent);
+}

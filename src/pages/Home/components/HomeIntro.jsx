@@ -4,14 +4,14 @@ import styles from '../Home.module.css'
 const BADGE_COPY = 'Crafting & Building'
 const TITLE_LINE_1 = 'Why suffer poor design'
 const TITLE_LINE_2 = 'when you can build the standard?'
-const SUBTITLE_COPY = '造点顺手的工具，解决真实的小麻烦。'
+const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦。'
 
 function HomeIntro() {
   const n1 = TITLE_LINE_1.trim().split(/\s+/).length
   const n2 = TITLE_LINE_2.trim().split(/\s+/).length
 
   const titleWordDelay = 85
-  /** 徽章无动画，仅保留小段节奏再开始大标题错峰 */
+  /** 与大标题首个词同拍：BlurText delayOffset 与此一致 */
   const gapAfterBadge = 120
   const gapBeforeSubtitle = 220
   const letterDelay = 22
@@ -22,8 +22,10 @@ function HomeIntro() {
 
   return (
     <section className={styles.heroSection}>
-      <div className={styles.heroBadge}>
-        <span className={styles.pulseDot} aria-hidden />
+      <div
+        className={`${styles.heroBadge} fi`}
+        style={{ animationDelay: `${gapAfterBadge}ms` }}
+      >
         <span>{BADGE_COPY}</span>
       </div>
 
