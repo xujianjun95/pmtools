@@ -65,10 +65,10 @@ function ProjectDetailPage() {
     <section className={styles.page}>
       <DetailTopBar currentTitle={project.title} withEnterAnimation />
       <DetailHero project={project} />
-      <OriginSection project={project} />
       <FeaturesSection project={project} />
       <ChangelogSection project={project} />
       <TechStackSection project={project} />
+      <OriginSection project={project} />
       <YesSirPrivacySection project={project} />
     </section>
   )
