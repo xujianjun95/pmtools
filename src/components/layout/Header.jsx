@@ -48,49 +48,53 @@ function Header() {
   }, [location.pathname])
 
   return (
-    <header className={styles.header}>
-      <div className={styles.left}>
-        <NavLink to="/" className={styles.logo}>
-          Pmtools
-        </NavLink>
-        <nav
-          ref={navRef}
-          className={styles.nav}
-          style={{
-            '--indicator-left': `${indicator.left}px`,
-            '--indicator-width': `${indicator.width}px`,
-            '--indicator-opacity': indicator.visible ? 1 : 0,
-          }}
-        >
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `${styles.navLink} ${isActive ? styles.active : ''}`
-            }
-          >
-            构建
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `${styles.navLink} ${isActive ? styles.active : ''}`
-            }
-          >
-            关于
-          </NavLink>
-        </nav>
-      </div>
-      <div className={styles.right}>
-        <div className={styles.statusBar}>
-          <span className={styles.statusItem}>
-            <span className={styles.statusDot} aria-hidden="true" />
-            System Online
-          </span>
-          <span className={styles.statusDivider}>//</span>
-          <span className={styles.statusItem}>Local Time: {localTime}</span>
+    <header className={styles.shell}>
+      <div className={styles.bar}>
+        <div className={styles.barInner}>
+          <div className={styles.left}>
+            <NavLink to="/" className={styles.logo}>
+              Pmtools
+            </NavLink>
+            <nav
+              ref={navRef}
+              className={styles.nav}
+              style={{
+                '--indicator-left': `${indicator.left}px`,
+                '--indicator-width': `${indicator.width}px`,
+                '--indicator-opacity': indicator.visible ? 1 : 0,
+              }}
+            >
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) =>
+                  `${styles.navLink} ${isActive ? styles.active : ''}`
+                }
+              >
+                构建
+              </NavLink>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  `${styles.navLink} ${isActive ? styles.active : ''}`
+                }
+              >
+                关于
+              </NavLink>
+            </nav>
+          </div>
+          <div className={styles.right}>
+            <div className={styles.statusBar}>
+              <span className={styles.statusItem}>
+                <span className={styles.statusDot} aria-hidden="true" />
+                System Online
+              </span>
+              <span className={styles.statusDivider}>//</span>
+              <span className={styles.statusItem}>Local Time: {localTime}</span>
+            </div>
+            <ThemeToggle />
+          </div>
         </div>
-        <ThemeToggle />
       </div>
     </header>
   )

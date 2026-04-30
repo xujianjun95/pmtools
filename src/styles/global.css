@@ -12,6 +12,10 @@
   --font-mono: 'DM Mono', 'Courier New', monospace;
   --margin-page: 100px;
   --radius: 10px;
+  /* fixed 顶栏高度 + 与正文间距（与 Header .bar / MainLayout 共用，避免滚动时顶栏露缝） */
+  --layout-header-fixed-h: 68px;
+  --layout-under-header-gap: 28px;
+  --layout-top-offset: calc(var(--layout-header-fixed-h) + var(--layout-under-header-gap));
 }
 
 [data-theme='light'] {
@@ -62,18 +66,30 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  min-height: 100%;
+  /* 顶栏 fixed 时在亚像素缝中露出的是 html — 底色与正文一致（无 theme 时用浅色兜底） */
+  background-color: var(--bg, #f7f5f2);
 }
 
 body {
   font-family: var(--font-body);
   font-weight: 400;
   color: var(--text-body);
-  background: var(--bg);
+  min-height: 100%;
+  /* 底色素 --bg（与站内变量一致）；极淡 Dot Grid */
+  background-color: var(--bg);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-repeat: repeat;
   line-height: 1.75;
   letter-spacing: 0.01em;
   transition:
-    background 0.4s ease,
+    background-color 0.4s ease,
     color 0.4s ease;
+}
+
+[data-theme='dark'] body {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
 a {
@@ -150,5 +166,7 @@ a {
 @media (max-width: 768px) {
   :root {
     --margin-page: 20px;
+    --layout-header-fixed-h: 56px;
+    --layout-under-header-gap: 24px;
   }
 }

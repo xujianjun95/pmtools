@@ -2,7 +2,7 @@ import styles from '../Home.module.css'
 
 function PlaceholderGrid() {
   return (
-    <div className={`${styles.placeholderGrid} ${styles.placeholderGridSingle} fi d5`}>
+    <div className={`${styles.placeholderGrid} ${styles.placeholderGridSingle} fi d6`}>
       <div className={styles.placeholderCard}>
         <span className={styles.phNum}>03</span>
         <h3 className={styles.phTitle}>

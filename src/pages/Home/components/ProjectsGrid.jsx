@@ -9,7 +9,7 @@ function ProjectsGrid() {
         <ProjectCard
           key={project.id}
           project={project}
-          delayClassName={`fi d${index + 3}`}
+          delayClassName={`fi d${index + 4}`}
         />
       ))}
     </div>
