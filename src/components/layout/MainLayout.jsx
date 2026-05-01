@@ -22,15 +22,13 @@ function MainLayout() {
 
     const fiEls = document.querySelectorAll('.fi')
     fiEls.forEach((el) => {
-      // eslint-disable-next-line no-param-reassign
       el.style.animation = 'none'
       // 强制 reflow，确保动画能重新触发
-      // eslint-disable-next-line no-unused-expressions
       el.offsetHeight
-      // eslint-disable-next-line no-param-reassign
       el.style.animation = ''
     })
     // 注意： deps 仅用 pathname/search。hash 去掉或清空 state 时不重复跑本 effect，否则会 scrollTo(0,0) 顶掉构建区滚动。
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 故意不依赖 hash / state.scrollToBuilds，避免重复跑 effect 打断滚到构建区
   }, [location.pathname, location.search])
 
   return (

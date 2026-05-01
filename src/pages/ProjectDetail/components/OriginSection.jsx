@@ -10,7 +10,7 @@ function OriginSection({ project }) {
 
       <div className={`${styles.originCard} fi d2`}>
         <p className={styles.originPara}>
-          作为一名重度依赖浏览器工作的人，我的日常往往伴随着大量的数据查阅和竞品分析。不知不觉中，浏览器顶端就会挤满几十个密密麻麻的标签页。
+          作为一名重度依赖浏览器工作的人，我的日常往往伴随着大量的产品设计和数据分析工作。不知不觉中，浏览器顶端就会挤满几十个密密麻麻的标签页。
         </p>
         <p className={styles.originPara}>在这个状态下，最打断心流的往往是两个瞬间：</p>
 
@@ -31,7 +31,7 @@ function OriginSection({ project }) {
         <p className={styles.originPara}>
           我试过市面上的各种标签管理插件，但它们大多只是生硬地塞给你一个复杂的侧边栏，依然没有解决“操作繁琐”的根本问题。
         </p>
-        <p className={styles.originEmphasis}>既然找不到顺手的，那就自己造一个。</p>
+        <p className={styles.originEmphasis}>既然找不到趁手的，那就自己造一个。</p>
         <p className={styles.originPara}>
           我希望有一款工具，能包容我的模糊记忆（找不到就用语义直接搜），能让我用最本能的肌肉记忆去操作（不用瞄准，鼠标双击空白处秒关），让“管理标签”这件烦心事，彻底退化成一种无意识的、跟手的享受。
         </p>

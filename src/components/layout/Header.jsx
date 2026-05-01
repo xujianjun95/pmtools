@@ -4,8 +4,16 @@ import { scrollToBuildsGallery, scrollToBuildsNavState } from '../../utils/scrol
 import ThemeToggle from '../common/ThemeToggle'
 import styles from './Header.module.css'
 
+function formatHeaderTime() {
+  return new Intl.DateTimeFormat('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date())
+}
+
 function Header() {
-  const [localTime, setLocalTime] = useState('')
+  const [localTime, setLocalTime] = useState(() => formatHeaderTime())
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false })
   /** 首页点「构建」后把指示线挪到该链接下；点 Logo 或进作者页会清掉 */
   const [buildsNavUnderline, setBuildsNavUnderline] = useState(false)
@@ -16,22 +24,14 @@ function Header() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const formatTime = () =>
-      new Intl.DateTimeFormat('zh-CN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }).format(new Date())
-
-    setLocalTime(formatTime())
-    const timer = window.setInterval(() => setLocalTime(formatTime()), 1000 * 30)
+    const timer = window.setInterval(() => setLocalTime(formatHeaderTime()), 1000 * 30)
     return () => window.clearInterval(timer)
   }, [])
 
   useEffect(() => {
-    if (location.pathname === '/profile') {
-      setBuildsNavUnderline(false)
-    }
+    if (location.pathname !== '/profile') return
+    const id = window.requestAnimationFrame(() => setBuildsNavUnderline(false))
+    return () => window.cancelAnimationFrame(id)
   }, [location.pathname])
 
   useLayoutEffect(() => {
@@ -120,6 +120,7 @@ function Header() {
                 className={({ isActive }) =>
                   `${styles.navLink} ${isActive ? styles.active : ''}`
                 }
+                onClick={() => setBuildsNavUnderline(false)}
               >
                 关于
               </NavLink>

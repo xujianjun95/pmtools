@@ -18,7 +18,8 @@ function DetailHero({ project }) {
               target="_blank"
               rel="noreferrer"
             >
-              前往 Chrome 商店安装 <span className={styles.linkArrow}>↗</span>
+              {project.ctaLabel ?? '前往 Chrome 商店安装'}{' '}
+              <span className={styles.linkArrow}>↗</span>
             </a>
           </div>
           {project.id === 'yessir' && (

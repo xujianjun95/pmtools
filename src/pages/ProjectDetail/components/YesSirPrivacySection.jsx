@@ -2,9 +2,10 @@ import { useState } from 'react'
 import styles from '../ProjectDetail.module.css'
 
 function YesSirPrivacySection({ project }) {
-  if (project.id !== 'yessir') return null
   const [language, setLanguage] = useState('zh')
   const [isExpanded, setIsExpanded] = useState(false)
+
+  if (project.id !== 'yessir') return null
   const toggleLabel =
     language === 'zh'
       ? (isExpanded ? '收起完整政策 ↑' : '阅读完整政策 ↓')
@@ -26,20 +27,14 @@ function YesSirPrivacySection({ project }) {
             <button
               type="button"
               className={`${styles.privacyLangBtn} ${language === 'zh' ? styles.privacyLangBtnActive : ''}`}
-              onClick={() => {
-                setLanguage('zh')
-                setIsExpanded(false)
-              }}
+              onClick={() => setLanguage('zh')}
             >
               中文
             </button>
             <button
               type="button"
               className={`${styles.privacyLangBtn} ${language === 'en' ? styles.privacyLangBtnActive : ''}`}
-              onClick={() => {
-                setLanguage('en')
-                setIsExpanded(false)
-              }}
+              onClick={() => setLanguage('en')}
             >
               English
             </button>

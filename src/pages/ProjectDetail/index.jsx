@@ -7,6 +7,7 @@ import FeaturesSection from './components/FeaturesSection'
 import OriginSection from './components/OriginSection'
 import ChangelogSection from './components/ChangelogSection'
 import TechStackSection from './components/TechStackSection'
+import UseCasesSection from './components/UseCasesSection'
 import YesSirPrivacySection from './components/YesSirPrivacySection'
 
 function DetailTopBar({ currentTitle, withEnterAnimation }) {
@@ -66,6 +67,7 @@ function ProjectDetailPage() {
       <DetailTopBar currentTitle={project.title} withEnterAnimation />
       <DetailHero project={project} />
       <FeaturesSection project={project} />
+      <UseCasesSection project={project} />
       <ChangelogSection project={project} />
       <OriginSection project={project} />
       <YesSirPrivacySection project={project} />

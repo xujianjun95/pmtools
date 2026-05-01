@@ -55,11 +55,11 @@ export const projects = [
     number: '02',
     title: '咔哒 · SnapBuild',
     tagline: '轻量级在线 HTML 编辑工具',
-    description: '让灵感即刻落地的在线编辑器。编辑代码，瞬间转化为真实的交互界面。',
+    description: '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',
     detailDescription:
-      '让灵感即刻落地的在线 HTML 编辑器。编辑代码，瞬间转化为真实的交互界面，告别臃肿的本地开发环境。',
+      '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',
     tags: ['实时预览', '零配置', '草图模式'],
-    techStack: ['HTML / CSS / JS', '实时渲染引擎', '代码格式化', '离线导出', '响应式设计'],
+    techStack: ['HTML / CSS / JS', 'CodeMirror Editor', 'Prettier', 'Blob API', 'CSS3 Media Queries'],
     stats: [
       { value: '实时', label: '预览' },
       { value: '离线', label: '可用' },
@@ -84,10 +84,41 @@ export const projects = [
         description: '支持代码美化、高清截图与离线导出为 HTML 文件，告别需求拉扯。',
       },
     ],
+    useCases: [
+      {
+        icon: '📋',
+        role: '产品经理',
+        scenario: 'PM',
+        description:
+          '一键生成真实交互，告别线框图解释成本，需求评审更直观。',
+      },
+      {
+        icon: '💻',
+        role: '前端开发',
+        scenario: 'FE',
+        description:
+          '随时随地快速验证代码片段，无需启动臃肿的本地 IDE 环境。',
+      },
+      {
+        icon: '📢',
+        role: '运营 / 市场',
+        scenario: 'Op',
+        description:
+          '快速搭建营销活动页草图，所见即所得，沟通无障碍。',
+      },
+      {
+        icon: '🚀',
+        role: '独立开发者',
+        scenario: 'Indie',
+        description:
+          '捕捉稍纵即逝的灵感。',
+      },
+    ],
     links: {
       project: 'https://pmtools.com.cn/kada/',
       source: '#',
     },
+    ctaLabel: '体验一下',
     mockupType: 'kada',
   },
 ]
