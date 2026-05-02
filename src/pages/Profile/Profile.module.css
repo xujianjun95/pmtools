@@ -110,8 +110,154 @@
   border-color: var(--accent);
 }
 
+.profileHeroInner {
+  display: flex;
+  gap: 56px;
+  align-items: flex-start;
+}
+
+.profileHeroLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.profileHeroRight {
+  flex: 0 0 auto;
+}
+
+/* ── Vibe Card (Glassmorphism Terminal) ── */
+
+@keyframes vibeBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.vibeCard {
+  width: 420px;
+  padding: 22px 24px;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-mono);
+}
+
+.vibeDots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.vibeDotRed,
+.vibeDotYellow,
+.vibeDotGreen {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.vibeDotRed { background: #ff5f57; opacity: 0.8; }
+.vibeDotYellow { background: #febc2e; opacity: 0.8; }
+.vibeDotGreen { background: #28c840; opacity: 0.8; }
+
+.vibeLabel {
+  margin-left: 12px;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.vibeCode {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 180px;
+}
+
+.vibeLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 20px;
+  line-height: 1.5;
+}
+
+.vibeNum {
+  width: 16px;
+  text-align: right;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  user-select: none;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.vibeContent {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.vibeKeyword {
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--accent) 70%, var(--text-primary));
+}
+
+.vibeVar {
+  font-size: 0.72rem;
+  color: var(--text-primary);
+}
+
+.vibeText {
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--accent) 60%, green);
+}
+
+.vibeComment {
+  font-size: 0.68rem;
+  font-style: italic;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.vibeSystem {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.vibeCursor {
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  background: var(--accent);
+  opacity: 0.7;
+  animation: vibeBlink 1s step-end infinite;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
   .profileHero {
     padding: 20px 0 32px;
+  }
+
+  .profileHeroInner {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .profileHeroRight {
+    align-self: center;
+  }
+
+  .vibeCard {
+    width: 100%;
+    max-width: 420px;
   }
 }

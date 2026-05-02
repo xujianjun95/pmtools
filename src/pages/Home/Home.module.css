@@ -132,6 +132,13 @@
 .carouselShell {
   flex: 1;
   min-width: 0;
+  -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+  mask-image: linear-gradient(to right, black 88%, transparent 100%);
+}
+
+.carouselShellAtEnd {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .carouselTrack {

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { projects } from '../../../data/projects'
 import PlaceholderProjectCard from '../../../components/common/PlaceholderProjectCard'
 import ProjectCard from '../../../components/common/ProjectCard'
@@ -5,6 +6,23 @@ import { BUILDS_SECTION_ID } from '../../../utils/scrollBuildsGallery'
 import styles from '../Home.module.css'
 
 function ProjectsGrid() {
+  const trackRef = useRef(null)
+  const [atEnd, setAtEnd] = useState(false)
+
+  useEffect(() => {
+    const el = trackRef.current
+    if (!el) return
+
+    const check = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = el
+      setAtEnd(scrollLeft + clientWidth >= scrollWidth - 10)
+    }
+
+    el.addEventListener('scroll', check, { passive: true })
+    check()
+    return () => el.removeEventListener('scroll', check)
+  }, [])
+
   return (
     <section
       id={BUILDS_SECTION_ID}
@@ -19,8 +37,9 @@ function ProjectsGrid() {
         <p className={styles.buildsDesc}>滑动查看更多探索 →</p>
       </div>
 
-      <div className={styles.carouselShell}>
+      <div className={`${styles.carouselShell}${atEnd ? ` ${styles.carouselShellAtEnd}` : ''}`}>
         <div
+          ref={trackRef}
           className={styles.carouselTrack}
           role="region"
           aria-label="构建项目卡片，可横向滑动"

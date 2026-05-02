@@ -7,31 +7,33 @@ function SkillsSection() {
       <h2 className="section-title fi d5">技能</h2>
 
       <div className={`${styles.skillGroup} fi d6`}>
-        <h3 className={styles.skillGroupTitle}>Frontend</h3>
+        <h3 className={styles.skillGroupTitle}>DISCOVERY</h3>
         <div className={styles.skillTags}>
-          <span className={styles.skillTag}>React</span>
-          <span className={styles.skillTag}>JavaScript</span>
-          <span className={styles.skillTag}>HTML</span>
-          <span className={styles.skillTag}>CSS</span>
-          <span className={styles.skillTag}>Vite</span>
+          <span className={styles.skillTag}>G 端/B 端</span>
+          <span className={styles.skillTag}>业务逻辑梳理</span>
+          <span className={styles.skillTag}>竞品分析</span>
+          <span className={styles.skillTag}>产品原型设计</span>
+          <span className={styles.skillTag}>...</span>
         </div>
       </div>
 
       <div className={`${styles.skillGroup} fi d7`}>
-        <h3 className={styles.skillGroupTitle}>Extension</h3>
+        <h3 className={styles.skillGroupTitle}>CRAFTING</h3>
         <div className={styles.skillTags}>
-          <span className={styles.skillTag}>Chrome Extension API</span>
-          <span className={styles.skillTag}>Manifest V3</span>
+          <span className={styles.skillTag}>Figma</span>
+          <span className={styles.skillTag}>Axure</span>
+          <span className={styles.skillTag}>墨刀</span>
+          <span className={styles.skillTag}>...</span>
         </div>
       </div>
 
       <div className={`${styles.skillGroup} fi d8`}>
-        <h3 className={styles.skillGroupTitle}>Design &amp; Tools</h3>
+        <h3 className={styles.skillGroupTitle}>BUILDING</h3>
         <div className={styles.skillTags}>
-          <span className={styles.skillTag}>产品设计</span>
-          <span className={styles.skillTag}>UI / UX</span>
-          <span className={styles.skillTag}>Figma</span>
-          <span className={styles.skillTag}>Git</span>
+          <span className={styles.skillTag}>Vibecoding</span>
+          <span className={styles.skillTag}>Prompt Engineering</span>
+          <span className={styles.skillTag}>前端框架应用</span>
+          <span className={styles.skillTag}>...</span>
         </div>
       </div>
     </section>

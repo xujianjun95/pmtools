@@ -10,14 +10,14 @@ function ContactSection() {
         <div className={styles.contactItem}>
           <span className={styles.contactLabel}>Email</span>
           <span className={styles.contactValue}>
-            <a href="mailto:hello@pmtools.com.cn">hello@pmtools.com.cn</a>
+            <a href="mailto:xujianjun1995@gmail.com">xujianjun1995@gmail.com</a>
           </span>
         </div>
 
         <div className={styles.contactItem}>
           <span className={styles.contactLabel}>GitHub</span>
           <span className={styles.contactValue}>
-            <a href="#">github.com/yourname</a>
+            <a href="https://github.com/xujianjun95">github.com/xujianjun95</a>
           </span>
         </div>
 
