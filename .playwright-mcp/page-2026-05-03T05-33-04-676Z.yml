@@ -1,0 +1,179 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link "Pmtools" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e9]:
+          - link "构建" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "关于" [ref=e11] [cursor=pointer]:
+            - /url: /profile
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: System Online
+          - generic [ref=e16]: //
+          - generic [ref=e17]: "Local Time: 13:33"
+        - button "切换主题" [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]:
+            - generic [ref=e21]: light
+            - generic [ref=e22]: dark
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - navigation "页面位置" [ref=e26]:
+          - list [ref=e27]:
+            - listitem [ref=e28]:
+              - link "首页" [ref=e29] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e30]: /
+            - listitem [ref=e31]:
+              - link "构建" [ref=e32] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e33]: /
+            - listitem [ref=e34]:
+              - generic [ref=e35]: 咔哒 · SnapBuild
+        - link "← 返回" [ref=e36] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e37]: ←
+          - text: 返回
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: Project
+          - heading "咔哒 · SnapBuild" [level=1] [ref=e42]
+          - paragraph [ref=e43]: 轻量级在线 HTML 编辑工具
+          - paragraph [ref=e44]: 专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。
+          - link "体验一下 ↗" [ref=e46] [cursor=pointer]:
+            - /url: https://pmtools.com.cn/kada/
+            - text: 体验一下
+            - generic [ref=e47]: ↗
+        - img "咔哒封面预览" [ref=e51]
+      - generic [ref=e52]:
+        - generic [ref=e53]: Features
+        - heading "核心功能" [level=2] [ref=e54]
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic [ref=e57]: "01"
+            - heading "极速预览" [level=3] [ref=e58]
+            - paragraph [ref=e59]: 编辑代码，右侧即时渲染交互效果，所见即所得的开发体验。
+          - generic [ref=e60]:
+            - generic [ref=e61]: "02"
+            - heading "轻量编辑" [level=3] [ref=e62]
+            - paragraph [ref=e63]: 告别臃肿的本地环境，用快捷标签像搭积木一样创造，结构、布局、表单一键插入。
+          - generic [ref=e64]:
+            - generic [ref=e65]: "03"
+            - heading "草图模式" [level=3] [ref=e66]
+            - paragraph [ref=e67]: 一键切换线框图视图，褪去视觉干扰，专注于业务逻辑和页面结构。
+          - generic [ref=e68]:
+            - generic [ref=e69]: "04"
+            - heading "高效沟通" [level=3] [ref=e70]
+            - paragraph [ref=e71]: 支持代码美化、高清截图与离线导出为 HTML 文件，告别需求拉扯。
+      - generic [ref=e72]:
+        - generic [ref=e73]: Use Cases
+        - heading "适用人群" [level=2] [ref=e74]
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]: PM
+            - heading "产品经理" [level=3] [ref=e78]:
+              - generic [ref=e79]: 📋
+              - text: 产品经理
+            - paragraph [ref=e80]: 一键生成真实交互，告别线框图解释成本，需求评审更直观。
+          - generic [ref=e81]:
+            - generic [ref=e82]: FE
+            - heading "前端开发" [level=3] [ref=e83]:
+              - generic [ref=e84]: 💻
+              - text: 前端开发
+            - paragraph [ref=e85]: 随时随地快速验证代码片段，无需启动臃肿的本地 IDE 环境。
+          - generic [ref=e86]:
+            - generic [ref=e87]: Op
+            - heading "运营 / 市场" [level=3] [ref=e88]:
+              - generic [ref=e89]: 📢
+              - text: 运营 / 市场
+            - paragraph [ref=e90]: 快速搭建营销活动页草图，所见即所得，沟通无障碍。
+          - generic [ref=e91]:
+            - generic [ref=e92]: Indie
+            - heading "独立开发者" [level=3] [ref=e93]:
+              - generic [ref=e94]: 🚀
+              - text: 独立开发者
+            - paragraph [ref=e95]: 捕捉稍纵即逝的灵感。
+      - generic [ref=e96]:
+        - generic [ref=e97]: Changelog
+        - heading "更新日志" [level=2] [ref=e98]
+        - generic [ref=e99]:
+          - article [ref=e100]:
+            - generic [ref=e102]:
+              - time [ref=e103]: 2026 年 5 月 3 日
+              - heading "V1.2.0" [level=3] [ref=e104]
+              - generic [ref=e105]:
+                - paragraph [ref=e106]: ✨ AI 助手上线
+                - list [ref=e107]:
+                  - listitem [ref=e108]:
+                    - strong [ref=e109]: 生成代码：
+                    - text: 用中文描述你想要的页面或组件，AI 自动生成对应的 HTML 代码。
+                  - listitem [ref=e110]:
+                    - strong [ref=e111]: 优化代码：
+                    - text: 一键优化当前代码，支持「更易读」「更简洁」「更兼容」三种方向。
+                  - listitem [ref=e112]:
+                    - strong [ref=e113]: 解释代码：
+                    - text: 看不懂的代码让 AI 用大白话帮你解释，方便理解页面逻辑。
+              - generic [ref=e114]:
+                - paragraph [ref=e115]: 💡 使用说明
+                - list [ref=e116]:
+                  - listitem [ref=e117]:
+                    - strong [ref=e118]: 每日免费额度：
+                    - text: 每位用户每天可免费使用 AI 助手 10 次，零点自动重置。
+                  - listitem [ref=e119]:
+                    - strong [ref=e120]: 绑定自己的 API Key：
+                    - text: 如果你有 DeepSeek 账号，可以在 AI 面板的设置按钮中绑定自己的 API Key，绑定后不受每日次数限制。密钥仅保存在你的浏览器本地，不会上传到服务器，可以放心使用。
+          - article [ref=e121]:
+            - generic [ref=e123]:
+              - time [ref=e124]: 2026 年 4 月 17 日
+              - heading "V1.1.0" [level=3] [ref=e125]
+              - generic [ref=e126]:
+                - paragraph [ref=e127]: ✨ 新功能
+                - list [ref=e128]:
+                  - listitem [ref=e129]:
+                    - strong [ref=e130]: 一键分享：
+                    - text: 右下角新增「分享」功能，快速将你的交互界面生成链接或快照分享给团队成员，进一步缩短沟通链路。
+                  - listitem [ref=e131]:
+                    - strong [ref=e132]: 代码格式化：
+                    - text: 顶部工具栏新增「格式化代码」按钮，一键自动整理代码缩进与排版，保持编辑区清爽易读。
+                  - listitem [ref=e133]:
+                    - strong [ref=e134]: 代码分割：
+                    - text: 顶部新增「分割代码」功能，支持将复杂的代码结构进行拆分与模块化管理，提升长代码的编写与维护效率。
+                  - listitem [ref=e135]:
+                    - strong [ref=e136]: 小窗模式：
+                    - text: 支持将实时预览区域以小窗模式独立悬浮，方便在查阅文档、核对需求或多屏工作时无缝对照。
+          - article [ref=e137]:
+            - generic [ref=e139]:
+              - time [ref=e140]: 2026 年 4 月 15 日
+              - heading "V1.0.0" [level=3] [ref=e141]
+              - paragraph [ref=e142]: 作为一款专为产研团队打造的轻量级 HTML 在线编辑工具，咔哒致力于让灵感即刻落地，告别臃肿的本地环境。
+              - generic [ref=e143]:
+                - paragraph [ref=e144]: ✨ 核心功能
+                - list [ref=e145]:
+                  - listitem [ref=e146]:
+                    - strong [ref=e147]: 极速实时预览：
+                    - text: 左侧编辑代码，右侧瞬间转化为真实的交互界面，提供真正所见即所得的开发体验。
+                  - listitem [ref=e148]:
+                    - strong [ref=e149]: 积木式轻量编辑：
+                    - text: 左侧边栏内置结构、布局、文本、表单等常用快捷标签，点击即可一键插入，像搭积木一样高效创造。
+                  - listitem [ref=e150]:
+                    - strong [ref=e151]: 草图模式：
+                    - text: 支持一键切换至线框图模式，自动褪去视觉样式干扰，帮助团队在项目初期专注核心业务逻辑。
+                  - listitem [ref=e152]:
+                    - strong [ref=e153]: 离线导出与交付：
+                    - text: 支持将当前编辑内容一键「导出为 HTML 文件」，方便离线保存、本地查阅或在团队间无缝流转。
+      - generic [ref=e154]:
+        - generic [ref=e155]: Tech Stack
+        - heading "技术栈" [level=2] [ref=e156]
+        - generic [ref=e157]:
+          - generic [ref=e158]: HTML / CSS / JS
+          - generic [ref=e159]: CodeMirror Editor
+          - generic [ref=e160]: Prettier
+          - generic [ref=e161]: Blob API
+          - generic [ref=e162]: CSS3 Media Queries
+  - contentinfo [ref=e163]:
+    - generic [ref=e164]:
+      - generic [ref=e165]: 2026 PMTOOLS
+      - generic [ref=e166]: Crafted with care
