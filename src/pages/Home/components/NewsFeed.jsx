@@ -26,7 +26,7 @@ function NewsFeed() {
   }, [])
 
   return (
-    <section className={styles.section}>
+    <section id="news-section" className={styles.section}>
       <div className={styles.header}>
         <h2 className={styles.title}>
           资讯

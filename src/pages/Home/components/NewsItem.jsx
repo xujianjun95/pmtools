@@ -85,16 +85,23 @@ function NewsItem({ item, index }) {
               className={styles.aiBtn}
               onClick={handleSummarize}
             >
-              AI 总结
+              <span className={styles.aiBtnIcon}>✦</span>
+              速览
             </button>
           </div>
         </div>
       </article>
 
-      <Modal open={modalOpen} onClose={handleCloseModal} title="AI 总结">
+      <Modal open={modalOpen} onClose={handleCloseModal} title="速览">
         {summaryLoading && <p className={styles.modalLoading}>正在生成总结…</p>}
         {summaryError && <p className={styles.modalError}>总结生成失败，请稍后再试</p>}
-        {summary && <p className={styles.modalText}>{summary}</p>}
+        {summary && (
+          <div className={styles.modalText}>
+            {summary.split('\n').filter(Boolean).map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+        )}
       </Modal>
     </>
   )

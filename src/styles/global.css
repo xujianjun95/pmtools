@@ -7,7 +7,7 @@
 }
 
 :root {
-  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-display: 'New York', 'Noto Serif SC', Georgia, serif;
   --font-body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'DM Mono', 'Courier New', monospace;
   --margin-page: 100px;

@@ -16,11 +16,17 @@
   max-width: 520px;
   max-height: 80vh;
   overflow-y: auto;
-  background: var(--surface);
+  background-color: var(--surface);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-card-hover);
   animation: scaleIn 0.25s ease;
+}
+
+[data-theme='dark'] .modal {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
 .header {

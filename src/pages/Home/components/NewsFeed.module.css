@@ -24,7 +24,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 6px;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: clamp(1.15rem, 2.2vw, 1.5rem);
   font-weight: 400;
   letter-spacing: 0.08em;
