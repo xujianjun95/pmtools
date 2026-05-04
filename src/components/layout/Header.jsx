@@ -2,6 +2,17 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { scrollToBuildsGallery, scrollToBuildsNavState } from '../../utils/scrollBuildsGallery'
 import ThemeToggle from '../common/ThemeToggle'
+
+const NEWS_SECTION_ID = 'news-section'
+const scrollToNewsNavState = Object.freeze({ scrollToNews: true })
+
+function scrollToNewsSection() {
+  const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  document.getElementById(NEWS_SECTION_ID)?.scrollIntoView({
+    behavior: reduced ? 'auto' : 'smooth',
+    block: 'start',
+  })
+}
 import styles from './Header.module.css'
 
 function formatHeaderTime() {
@@ -15,10 +26,11 @@ function formatHeaderTime() {
 function Header() {
   const [localTime, setLocalTime] = useState(() => formatHeaderTime())
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false })
-  /** 首页点「构建」后把指示线挪到该链接下；点 Logo 或进作者页会清掉 */
-  const [buildsNavUnderline, setBuildsNavUnderline] = useState(false)
+  /** 首页点「造物」或「资讯」后把指示线挪到对应链接下；点 Logo 或进作者页会清掉 */
+  const [activeNav, setActiveNav] = useState(null) // 'builds' | 'news' | null
   const navRef = useRef(null)
   const buildsLinkRef = useRef(null)
+  const newsLinkRef = useRef(null)
   const aboutLinkRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
@@ -30,9 +42,16 @@ function Header() {
 
   useEffect(() => {
     if (location.pathname !== '/profile') return
-    const id = window.requestAnimationFrame(() => setBuildsNavUnderline(false))
+    const id = window.requestAnimationFrame(() => setActiveNav(null))
     return () => window.cancelAnimationFrame(id)
   }, [location.pathname])
+
+  // 接收从 HomePage 传来的滚动状态，自动高亮对应导航
+  useEffect(() => {
+    if (location.pathname !== '/') return
+    if (location.state?.scrollToBuilds) setActiveNav('builds')
+    if (location.state?.scrollToNews) setActiveNav('news')
+  }, [location.pathname, location.state])
 
   useLayoutEffect(() => {
     const updateIndicator = () => {
@@ -42,8 +61,9 @@ function Header() {
       let targetEl = null
       if (location.pathname === '/profile') {
         targetEl = aboutLinkRef.current
-      } else if (location.pathname === '/' && buildsNavUnderline) {
-        targetEl = buildsLinkRef.current
+      } else if (location.pathname === '/') {
+        if (activeNav === 'builds') targetEl = buildsLinkRef.current
+        if (activeNav === 'news') targetEl = newsLinkRef.current
       }
 
       if (!targetEl) {
@@ -63,14 +83,14 @@ function Header() {
     updateIndicator()
     window.addEventListener('resize', updateIndicator)
     return () => window.removeEventListener('resize', updateIndicator)
-  }, [location.pathname, buildsNavUnderline])
+  }, [location.pathname, activeNav])
 
   const prefersReducedMotion = () =>
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const handleLogoClick = (e) => {
-    setBuildsNavUnderline(false)
+    setActiveNav(null)
     if (location.pathname !== '/') return
     e.preventDefault()
     window.scrollTo({
@@ -81,12 +101,22 @@ function Header() {
 
   const handleBuildsClick = (e) => {
     e.preventDefault()
-    setBuildsNavUnderline(true)
+    setActiveNav('builds')
     if (location.pathname !== '/') {
       navigate('/', { state: scrollToBuildsNavState })
       return
     }
     scrollToBuildsGallery()
+  }
+
+  const handleNewsClick = (e) => {
+    e.preventDefault()
+    setActiveNav('news')
+    if (location.pathname !== '/') {
+      navigate('/', { state: scrollToNewsNavState })
+      return
+    }
+    scrollToNewsSection()
   }
 
   return (
@@ -112,7 +142,15 @@ function Header() {
                 className={styles.navLink}
                 onClick={handleBuildsClick}
               >
-                构建
+                造物
+              </Link>
+              <Link
+                ref={newsLinkRef}
+                to="/"
+                className={styles.navLink}
+                onClick={handleNewsClick}
+              >
+                资讯
               </Link>
               <NavLink
                 ref={aboutLinkRef}
@@ -120,7 +158,7 @@ function Header() {
                 className={({ isActive }) =>
                   `${styles.navLink} ${isActive ? styles.active : ''}`
                 }
-                onClick={() => setBuildsNavUnderline(false)}
+                onClick={() => setActiveNav(null)}
               >
                 关于
               </NavLink>

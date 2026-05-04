@@ -91,7 +91,7 @@
 .navLink {
   position: relative;
   padding-bottom: 3px;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: 0.08em;
