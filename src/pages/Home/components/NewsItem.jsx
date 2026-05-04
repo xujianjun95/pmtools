@@ -17,24 +17,20 @@ function NewsItem({ item }) {
         }
       }}
     >
-      <span className={styles.category}>{item.category}</span>
       <div className={styles.body}>
         <h4 className={styles.title}>{item.title}</h4>
         <p className={styles.summary}>{item.summary}</p>
-        {expanded && (
-          <div className={styles.expanded}>
-            <p className={styles.description}>{item.description}</p>
-            <a
-              className={styles.link}
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              阅读原文 →
-            </a>
-          </div>
-        )}
+        <div className={`${styles.expanded} ${expanded ? styles.expandedOpen : ''}`}>
+          <a
+            className={styles.link}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            阅读原文 →
+          </a>
+        </div>
       </div>
       <time className={styles.date}>
         {new Date(item.publishedAt).toLocaleDateString('zh-CN', {

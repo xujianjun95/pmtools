@@ -1,0 +1,49 @@
+<h2>资讯卡片样式</h2>
+<p class="subtitle">只展示标题 + 简述，选一种风格</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:20px;background:var(--bg-alt);border-radius:8px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;font-family:var(--font-mono);">2025-05-04 · 机器之心</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;line-height:1.4;">GPT-5 发布：多模态能力全面升级</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">OpenAI 正式发布 GPT-5，在推理、代码、多模态理解等方面均有显著提升，支持实时视频输入...</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · 简洁文字卡</h3>
+      <p>纯文字，日期+来源在上方，标题加粗，简述灰色。最简洁，适合内容密度高的场景。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:20px;background:var(--bg-alt);border-radius:8px;border-left:3px solid var(--accent);">
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;line-height:1.4;">GPT-5 发布：多模态能力全面升级</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;">OpenAI 正式发布 GPT-5，在推理、代码、多模态理解等方面均有显著提升...</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">2025-05-04 · 机器之心</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · 左侧色条卡</h3>
+      <p>左侧加一条品牌色竖线，标题在上，来源在下。更有层次感，和你现有设计风格接近。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:20px;background:var(--surface);border-radius:10px;box-shadow:var(--shadow-card);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:var(--accent-subtle);color:var(--accent);font-size:10px;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);">AI</span>
+          <span style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">2025-05-04</span>
+        </div>
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:6px;line-height:1.4;">GPT-5 发布：多模态能力全面升级</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">OpenAI 正式发布 GPT-5，推理、代码、多模态均有显著提升...</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · 标签+卡片</h3>
+      <p>顶部有分类标签（如 AI、硬件、应用），卡片有轻微阴影。分类一目了然。</p>
+    </div>
+  </div>
+</div>
