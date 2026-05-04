@@ -6,6 +6,7 @@ import {
 } from '../../utils/scrollBuildsGallery'
 import HomeIntro from './components/HomeIntro'
 import ProjectsGrid from './components/ProjectsGrid'
+import NewsFeed from './components/NewsFeed'
 
 function HomePage() {
   const location = useLocation()
@@ -39,6 +40,7 @@ function HomePage() {
     <>
       <HomeIntro />
       <ProjectsGrid />
+      <NewsFeed />
     </>
   )
 }
