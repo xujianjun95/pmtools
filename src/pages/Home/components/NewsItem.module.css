@@ -1,8 +1,5 @@
 .item {
   position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
   padding: 20px 20px 16px;
   background: var(--surface);
   border-radius: 10px;
@@ -21,7 +18,7 @@
 .num {
   position: absolute;
   top: 14px;
-  right: 18px;
+  right: 20px;
   font-family: var(--font-mono);
   font-size: 2rem;
   font-weight: 200;
@@ -32,8 +29,6 @@
 }
 
 .body {
-  flex: 1;
-  min-width: 0;
   padding-right: 48px;
 }
 
@@ -46,11 +41,29 @@
   color: var(--text-primary);
 }
 
+.summaryRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .summary {
   margin: 0;
   font-size: 0.82rem;
   line-height: 1.5;
   color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-right: -48px;
 }
 
 .expanded {
@@ -60,6 +73,8 @@
   margin-top: 0;
   padding-top: 0;
   border-top: 1px solid transparent;
+  margin-left: 0;
+  margin-right: -48px;
   transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease, padding-top 0.3s ease, border-color 0.3s ease;
 }
 
@@ -83,14 +98,6 @@
   color: var(--accent-hover);
 }
 
-.meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
 .source {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -111,15 +118,13 @@
 
 @media (max-width: 768px) {
   .item {
-    flex-wrap: wrap;
-    gap: 8px;
     padding: 16px;
   }
 
   .num {
     font-size: 1.5rem;
     top: 12px;
-    right: 14px;
+    right: 16px;
   }
 
   .body {
@@ -127,8 +132,6 @@
   }
 
   .meta {
-    width: 100%;
-    order: -1;
-    margin-bottom: 2px;
+    display: none;
   }
 }

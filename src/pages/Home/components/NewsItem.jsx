@@ -21,7 +21,19 @@ function NewsItem({ item, index }) {
       <span className={styles.num}>{num}</span>
       <div className={styles.body}>
         <h4 className={styles.title}>{item.title}</h4>
-        <p className={styles.summary}>「{item.summary}」</p>
+        <div className={styles.summaryRow}>
+          <p className={styles.summary}>「{item.summary}」</p>
+          <div className={styles.meta}>
+            <span className={styles.source}>{item.source}</span>
+            <span className={styles.sep} />
+            <time className={styles.date}>
+              {new Date(item.publishedAt).toLocaleDateString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+              })}
+            </time>
+          </div>
+        </div>
         <div className={`${styles.expanded} ${expanded ? styles.expandedOpen : ''}`}>
           <a
             className={styles.link}
@@ -33,16 +45,6 @@ function NewsItem({ item, index }) {
             阅读原文 →
           </a>
         </div>
-      </div>
-      <div className={styles.meta}>
-        <span className={styles.source}>{item.source}</span>
-        <span className={styles.sep} />
-        <time className={styles.date}>
-          {new Date(item.publishedAt).toLocaleDateString('zh-CN', {
-            month: '2-digit',
-            day: '2-digit',
-          })}
-        </time>
       </div>
     </article>
   )
