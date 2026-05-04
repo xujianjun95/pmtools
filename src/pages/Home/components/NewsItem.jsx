@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import styles from './NewsItem.module.css'
 
-function NewsItem({ item }) {
+function NewsItem({ item, index }) {
   const [expanded, setExpanded] = useState(false)
+  const num = String(index + 1).padStart(2, '0')
 
   return (
     <article
@@ -17,9 +18,10 @@ function NewsItem({ item }) {
         }
       }}
     >
+      <span className={styles.num}>{num}</span>
       <div className={styles.body}>
         <h4 className={styles.title}>{item.title}</h4>
-        <p className={styles.summary}>{item.summary}</p>
+        <p className={styles.summary}>「{item.summary}」</p>
         <div className={`${styles.expanded} ${expanded ? styles.expandedOpen : ''}`}>
           <a
             className={styles.link}
@@ -32,12 +34,16 @@ function NewsItem({ item }) {
           </a>
         </div>
       </div>
-      <time className={styles.date}>
-        {new Date(item.publishedAt).toLocaleDateString('zh-CN', {
-          month: '2-digit',
-          day: '2-digit',
-        })}
-      </time>
+      <div className={styles.meta}>
+        <span className={styles.source}>{item.source}</span>
+        <span className={styles.sep} />
+        <time className={styles.date}>
+          {new Date(item.publishedAt).toLocaleDateString('zh-CN', {
+            month: '2-digit',
+            day: '2-digit',
+          })}
+        </time>
+      </div>
     </article>
   )
 }

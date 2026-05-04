@@ -46,7 +46,7 @@ function NewsFeed() {
         )}
 
         {news?.items?.map((item, index) => (
-          <NewsItem key={item.id || index} item={item} />
+          <NewsItem key={item.id || index} item={item} index={index} />
         ))}
       </div>
     </section>
