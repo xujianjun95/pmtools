@@ -58,7 +58,7 @@
 .heroSubtitle {
   margin: 0;
   max-width: 36rem;
-  font-family: var(--font-display);
+  font-family: 'DM Serif Display', Georgia, serif;
   font-size: 1.25rem;
   font-weight: 400;
   font-style: italic;
