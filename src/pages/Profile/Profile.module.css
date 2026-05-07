@@ -186,6 +186,11 @@
   line-height: 1.5;
 }
 
+.vibeLine:last-child {
+  height: 68px;
+  overflow: hidden;
+}
+
 .vibeNum {
   width: 16px;
   text-align: right;
@@ -234,11 +239,12 @@
 .vibeCursor {
   display: inline-block;
   width: 6px;
-  height: 14px;
+  height: 1em;
   background: var(--accent);
   opacity: 0.7;
   animation: vibeBlink 1s step-end infinite;
   margin-left: 2px;
+  vertical-align: text-bottom;
   flex-shrink: 0;
 }
 
@@ -260,4 +266,29 @@
     width: 100%;
     max-width: 420px;
   }
+}
+
+.wechatWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Toast ── */
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 2px 10px;
+  white-space: nowrap;
+  animation: toastIn 0.2s ease;
 }

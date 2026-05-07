@@ -1,6 +1,15 @@
+import { useCallback, useState } from 'react'
 import styles from '../Profile.module.css'
 
 function ContactSection() {
+  const [toast, setToast] = useState(false)
+
+  const copyWechat = useCallback(() => {
+    navigator.clipboard.writeText('Nikola_Xu')
+    setToast(true)
+    setTimeout(() => setToast(false), 2000)
+  }, [])
+
   return (
     <section className={styles.profileSection}>
       <span className="section-label fi">Contact</span>
@@ -25,6 +34,16 @@ function ContactSection() {
           <span className={styles.contactLabel}>Website</span>
           <span className={styles.contactValue}>
             <a href="#">pmtools.com.cn</a>
+          </span>
+        </div>
+
+        <div className={styles.contactItem}>
+          <span className={styles.contactLabel}>WeChat</span>
+          <span className={styles.contactValue}>
+            <span className={styles.wechatWrap}>
+              <a href="#" onClick={(e) => { e.preventDefault(); copyWechat() }}>Nikola_Xu</a>
+              {toast && <span className={styles.toast}>已复制微信号</span>}
+            </span>
           </span>
         </div>
       </div>

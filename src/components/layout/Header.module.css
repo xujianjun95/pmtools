@@ -127,12 +127,18 @@
   gap: 6px;
 }
 
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, #30b56b 24%, transparent); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, #30b56b 10%, transparent); }
+}
+
 .statusDot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #30b56b;
   box-shadow: 0 0 0 4px color-mix(in srgb, #30b56b 24%, transparent);
+  animation: breathe 2.5s ease-in-out infinite;
 }
 
 .statusDivider {

@@ -33,7 +33,7 @@
   --accent-hover: #6a5235;
   --accent-subtle: rgba(122, 96, 64, 0.08);
   --shadow-card: 0 2px 24px rgba(26, 23, 20, 0.06), 0 0 0 1px rgba(26, 23, 20, 0.03);
-  --shadow-card-hover: 0 8px 48px rgba(26, 23, 20, 0.1), 0 0 0 1px rgba(26, 23, 20, 0.04);
+  --shadow-card-hover: 0 4px 20px rgba(26, 23, 20, 0.07), 0 12px 40px rgba(26, 23, 20, 0.05), 0 0 0 1px rgba(26, 23, 20, 0.04);
   --mockup-yessir-bg: linear-gradient(160deg, #12121e 0%, #181830 40%, #1a2548 100%);
   --toggle-bg: #e8e4dd;
   --toggle-dot: #ffffff;
@@ -55,7 +55,7 @@
   --accent-hover: #d4b080;
   --accent-subtle: rgba(196, 160, 112, 0.08);
   --shadow-card: 0 2px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
-  --shadow-card-hover: 0 8px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.25), 0 12px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
   --mockup-yessir-bg: linear-gradient(160deg, #0a0a14 0%, #0e0e20 40%, #101828 100%);
   --toggle-bg: #2e2b26;
   --toggle-dot: #3a3630;

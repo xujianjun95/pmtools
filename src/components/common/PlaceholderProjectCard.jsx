@@ -13,7 +13,7 @@ function PlaceholderProjectCard({ delayClassName = '' }) {
         <div className={`${pc.mockupInner} ${styles.mockInner}`}>
           <div className={styles.mockPlate} aria-hidden>
             <span className={styles.mockGlyph}>⋯</span>
-            <span className={styles.mockHint}>Soon</span>
+            <span className={styles.mockHint}>Coming Soon</span>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@ function PlaceholderProjectCard({ delayClassName = '' }) {
         <div className={pc.tags}>
           <TechTag className={pc.cardTag}>排期中</TechTag>
         </div>
-        <span className={styles.teaserFoot}>敬请期待</span>
+        <span className={styles.teaserFoot}>敬请期待 :)</span>
       </div>
     </div>
   )
