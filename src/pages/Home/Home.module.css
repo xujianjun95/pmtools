@@ -129,6 +129,10 @@
   color: var(--text-muted);
 }
 
+.arrowDown {
+  display: none;
+}
+
 .carouselShell {
   flex: 1;
   min-width: 0;
@@ -146,9 +150,12 @@
   gap: 24px;
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  width: 100%;
   padding-bottom: 28px;
   padding-right: 8px;
   scrollbar-width: none;
@@ -220,8 +227,33 @@
     top: auto;
   }
 
+  .arrowRight {
+    display: none;
+  }
+
+  .arrowDown {
+    display: inline;
+  }
+
+  /* iOS/Safari 上父层 mask 可能导致子层横向滚动失效，移动端关闭 */
+  .carouselShell {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .cardWrapper {
-    flex: 0 0 min(88vw, 420px);
+    flex: none;
+    width: 100%;
+  }
+
+  .carouselTrack {
+    flex-direction: column;
+    gap: 16px;
+    overflow: visible;
+    scroll-snap-type: none;
+    touch-action: pan-y pinch-zoom;
+    padding-right: 0;
+    padding-bottom: 0;
   }
 
 }

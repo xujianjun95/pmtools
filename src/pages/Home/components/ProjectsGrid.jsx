@@ -34,7 +34,11 @@ function ProjectsGrid() {
           造物
           <span className={styles.buildsCount}> / BUILDS</span>
         </h2>
-        <p className={styles.buildsDesc}>滑动探索更多 →</p>
+        <p className={styles.buildsDesc}>
+          滑动探索更多
+          <span className={styles.arrowRight}> →</span>
+          <span className={styles.arrowDown}> ↓</span>
+        </p>
       </div>
 
       <div className={`${styles.carouselShell}${atEnd ? ` ${styles.carouselShellAtEnd}` : ''}`}>
@@ -42,7 +46,7 @@ function ProjectsGrid() {
           ref={trackRef}
           className={styles.carouselTrack}
           role="region"
-          aria-label="造物项目卡片，可横向滑动"
+          aria-label="造物项目卡片列表"
           tabIndex={0}
         >
           {projects.map((project, index) => (
