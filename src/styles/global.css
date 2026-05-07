@@ -12,11 +12,10 @@
   --font-mono: 'DM Mono', 'Courier New', monospace;
   --margin-page: 100px;
   --radius: 10px;
-  --layout-safe-top: env(safe-area-inset-top, 0px);
   /* fixed 顶栏高度 + 与正文间距（与 Header .bar / MainLayout 共用，避免滚动时顶栏露缝） */
   --layout-header-fixed-h: 68px;
   --layout-under-header-gap: 28px;
-  --layout-top-offset: calc(var(--layout-safe-top) + var(--layout-header-fixed-h) + var(--layout-under-header-gap));
+  --layout-top-offset: calc(var(--layout-header-fixed-h) + var(--layout-under-header-gap));
 }
 
 [data-theme='light'] {
