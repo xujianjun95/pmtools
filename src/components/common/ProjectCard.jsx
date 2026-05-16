@@ -4,8 +4,10 @@ import TechTag from './TechTag'
 import styles from './ProjectCard.module.css'
 
 function ProjectCard({ project, delayClassName = '' }) {
+  const cardClass = `${styles.card} ${delayClassName}`.trim()
+
   return (
-    <Link to={`/project/${project.id}`} className={`${styles.card} ${delayClassName}`.trim()}>
+    <Link to={`/project/${project.id}`} className={cardClass}>
       <div className={styles.mockupWrap}>
         <div className={styles.mockupInner}>
           <ProjectMockup type={project.mockupType} />

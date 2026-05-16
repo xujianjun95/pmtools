@@ -51,8 +51,56 @@ export const projects = [
     mockupType: 'yessir',
   },
   {
-    id: 'kada',
+    id: 'dang-analysis',
     number: '02',
+    title: 'Dang Analysis',
+    tagline: 'Mr Dang 投资分析智能体',
+    description: '以 Mr Dang 的视角分析 A 股投资机会。输入任意问题，系统自动调取实时行情、机构研报与知识库，输出符合 Dang 老师风格的投资判断。',
+    detailDescription: '以 Mr Dang 的视角分析 A 股投资机会。Agentic Loop 两阶段决策引擎自动调取实时行情、机构研报、热点题材与 213 篇原创知识库，用 Dang 老师的语气和框架输出投资判断。',
+    tags: ['Agentic AI', '投资分析', '知识库 RAG'],
+    techStack: ['DeepSeek Chat', 'LangChain Tool Calling', 'ChromaDB + BM25', 'FastAPI', 'React + TypeScript', 'Siliconflow Embedding'],
+    stats: [
+      { value: '200+', label: '原创文章' },
+      { value: '两阶段', label: 'Agentic Loop' },
+      { value: '实时', label: 'A股行情' },
+    ],
+    features: [
+      {
+        title: '🤖 两阶段 Agentic Loop',
+        description: 'Phase 1 规则驱动自动采集：识别股票代码/名称调实时估值研报，识别热点词调同花顺强势股，识别 Dang 相关词调知识库。Phase 2 LLM 二次决策补充联网搜索，全程无需手动切换。',
+      },
+      {
+        title: '📚 Dang 原创知识库 RAG',
+        description: '基于 200+ 篇 Mr Dang 原创文章构建向量索引，BM25 + 语义双路检索 RRF 融合排序，确保财经早餐、功法系列、行情点评等内容精准命中。',
+      },
+      {
+        title: '📈 A 股实时数据接入',
+        description: '腾讯财经提供实时行情与 PE/PB/市值，东方财富聚合机构研报与 EPS 预测，同花顺捕捉当日热点题材，akshare 提供机构 EPS 一致预期与 PEG 计算。',
+      },
+      {
+        title: '🗣️ Mr Dang 人格输出',
+        description: '完整复现 Dang 老师的表达风格与分析框架——直接、坦率，强调安全边际与赔率，拒绝模棱两可。所有回答以知识库内容为锚点，有据可查。',
+      },
+    ],
+    links: {
+      project: 'https://pmtools.com.cn/dang-analysis/',
+      source: '#',
+    },
+    origin: {
+      title: '💡 开发初衷',
+      paras: [
+        '我长期跟踪 Mr Dang 的投资文章，他的分析框架——强调赔率、安全边际、反共识——对我影响很深。但随着文章积累越来越多，想快速找到"他对某只股票怎么看"或"地阶功法第几卷讲了什么"变得很麻烦。',
+        '同时，我发现自己在做投资决策时，总要在多个地方切换：行情 App 看估值，东财看研报，然后再回忆 Dang 老师的观点。信息是碎片化的，决策过程是割裂的。',
+      ],
+      emphasis: '我想要一个能把这些全部整合的入口——问一个问题，系统自动把数据、研报和 Dang 的原创观点都给我聚合好，再用他的语气输出。',
+      ending: '这就是 Dang Analysis 的起点。不是要替代 Dang 老师，而是把他的思考方式和积累的内容，变成一个随时可以调用的分析助手。',
+    },
+    ctaLabel: '开始提问',
+    mockupType: 'dang-analysis',
+  },
+  {
+    id: 'kada',
+    number: '03',
     title: '咔哒 · SnapBuild',
     tagline: '轻量级在线 HTML 编辑工具',
     description: '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',

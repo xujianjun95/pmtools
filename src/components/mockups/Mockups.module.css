@@ -243,3 +243,140 @@
 .w80 {
   width: 80%;
 }
+
+/* ── Dang Analysis mockup ── */
+.mockDang {
+  display: flex;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 50%, #f5f0ff 100%);
+  overflow: hidden;
+}
+
+.dangSidebar {
+  width: 28%;
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dangSidebarLogo {
+  width: 32px;
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  margin-bottom: 6px;
+  opacity: 0.7;
+}
+
+.dangSidebarItem {
+  height: 20px;
+  border-radius: 5px;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.dangSidebarItem:first-of-type {
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.dangMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 10px 8px;
+}
+
+.dangMsgRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.dangAvatar {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  opacity: 0.75;
+}
+
+.dangBubble {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dangLine {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(60, 60, 100, 0.12);
+}
+
+.dangSources {
+  display: flex;
+  gap: 4px;
+  margin-left: 19px;
+}
+
+.dangSourceChip {
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  font-size: 0.42rem;
+  color: rgba(99, 102, 241, 0.7);
+  letter-spacing: 0.02em;
+}
+
+.dangMsgRowUser {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dangBubbleUser {
+  max-width: 70%;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dangInput {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.dangInputPlaceholder {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(60, 60, 100, 0.1);
+}
+
+.dangInputSend {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
