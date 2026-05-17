@@ -10,6 +10,9 @@ function DetailHero({ project }) {
           <span className="section-label fi d1">Project</span>
           <h1 className={`${styles.detailName} fi d2`}>{project.title}</h1>
           <p className={`${styles.detailTagline} fi d3`}>{project.tagline}</p>
+          {project.badge && (
+            <span className={`${styles.detailBadge} fi d4`}>⭐ {project.badge}</span>
+          )}
           <p className={`${styles.detailDesc} fi d4`}>{project.detailDescription}</p>
           <div className={`${styles.heroActions} fi d5`}>
             <a

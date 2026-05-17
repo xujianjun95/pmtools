@@ -19,7 +19,12 @@ function ProjectCard({ project, delayClassName = '' }) {
           <span className={styles.num}>{project.number}</span>
           <span className={styles.arrow}>↗</span>
         </div>
-        <h3 className={styles.name}>{project.title}</h3>
+        <div className={styles.nameRow}>
+          <h3 className={styles.name}>{project.title}</h3>
+          {project.badge && (
+            <span className={styles.badge}>⭐ {project.badge}</span>
+          )}
+        </div>
         <p className={styles.tagline}>{project.tagline}</p>
         <p className={styles.desc}>{project.description}</p>
         <div className={styles.tags}>

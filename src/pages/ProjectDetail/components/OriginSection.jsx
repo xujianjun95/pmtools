@@ -40,14 +40,27 @@ function OriginSection({ project }) {
   // 其他项目：读 project.origin 数据
   if (!project.origin) return null
 
-  const { title, paras, emphasis, ending } = project.origin
+  const { title, quote, paras, sections, emphasis, ending } = project.origin
   return (
     <section className={styles.detailOrigin}>
       <span className="section-label fi">Why I Built This</span>
       <h2 className="section-title fi d1">{title}</h2>
       <div className={`${styles.originCard} fi d2`}>
-        {paras.map((para, i) => (
+        {quote && (
+          <div className={styles.originPoint}>
+            <p className={styles.originEmphasis}>{quote}</p>
+          </div>
+        )}
+        {paras && paras.map((para, i) => (
           <p key={i} className={styles.originPara}>{para}</p>
+        ))}
+        {sections && sections.map((sec, i) => (
+          <div key={i} style={{ marginBottom: '18px' }}>
+            <h3 className={styles.originPointTitle}>{sec.header}</h3>
+            {sec.paras.map((para, j) => (
+              <p key={j} className={styles.originPara}>{para}</p>
+            ))}
+          </div>
         ))}
         {emphasis && (
           <div className={styles.originPoint}>
