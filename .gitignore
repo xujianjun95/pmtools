@@ -20,7 +20,6 @@ dist-ssr
 
 # Screenshots
 *.png
-!src/assets/mockups/*.png
 
 # Editor directories and files
 .vscode/*
