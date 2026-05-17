@@ -1,5 +1,5 @@
 import styles from './Mockups.module.css'
-import dangCover from '../../assets/mockups/dang-analysis-cover@2x.png'
+import dangCover from '../../assets/mockups/dang-analysis-cover@2x.jpg'
 
 function MockupDangAnalysis() {
   return (
