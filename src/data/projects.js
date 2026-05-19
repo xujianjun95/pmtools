@@ -6,9 +6,9 @@ export const projects = [
     tagline: 'Chrome 标签页管理 · AI 聚合搜索',
     badge: '100+ 用户的选择',
     description:
-      'Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效。',
+      '一款优雅、简洁的Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效。',
     detailDescription:
-      '一款 Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效、更智能。',
+      '一款优雅、简洁的 Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效、更智能。',
     tags: ['Chrome Extension', 'AI', '标签页管理'],
     techStack: [
       'Chrome Extension API',
@@ -31,7 +31,7 @@ export const projects = [
       {
         title: '📌 置顶槽·核心任务常驻',
         description:
-          '面板左右各三个固定位，把最重要的标签页拖进去，随时一键直达，再也不用在一堆标签里翻找。',
+          '拖动标签页越过面板边界，置顶槽伴随「雾化浮层」动画从侧边优雅浮现——三个固定位，把最重要的标签页拖进去，随时一键直达，再也不用在一堆标签里翻找。',
       },
       {
         title: '⚡ 指尖微操·告别鼠标寻叉',
