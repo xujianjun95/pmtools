@@ -103,7 +103,7 @@ function DetailHero({ project }) {
                 className={`${styles.dlBtn} ${styles.accent}`}
                 onClick={() => setShowModal(true)}
               >
-                ↓ 离线下载
+                ↓ 下载安装包
               </button>
             )}
           </div>
