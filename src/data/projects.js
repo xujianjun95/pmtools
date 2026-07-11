@@ -1,10 +1,10 @@
-export const projects = [
+const projectData = [
   {
     id: 'yessir',
-    number: '01',
+    number: '02',
     title: 'YesSir',
     tagline: 'Chrome 标签页管理 · AI 聚合搜索',
-    badge: '200+ 用户的选择',
+    badge: '300+ 用户的选择',
     description:
       '一款优雅、简洁的Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效。',
     detailDescription:
@@ -54,9 +54,10 @@ export const projects = [
   },
   {
     id: 'dang-analysis',
-    number: '02',
+    number: '03',
     title: 'Dang Analysis',
     tagline: '投资分析智能体',
+    badge: '内测中',
     description: 'AI 驱动 A 股投资洞察。Agentic Loop 双阶段决策引擎实时捕获市场数据、机构动向与热点题材，结合涵盖数百篇深度研报的专属知识库进行交叉验证，为您输出专业、体系化的投资策略。',
     detailDescription: 'AI 驱动 A 股投资洞察。Agentic Loop 双阶段决策引擎实时捕获市场数据、机构动向与热点题材，结合涵盖数百篇深度研报的专属知识库进行交叉验证，为您输出专业、体系化的投资策略。',
     tags: ['Agentic AI', '投资分析', '知识库 RAG'],
@@ -128,9 +129,10 @@ export const projects = [
   },
   {
     id: 'kada',
-    number: '03',
+    number: '01',
     title: '咔哒 · SnapBuild',
     tagline: '轻量级在线 HTML 编辑工具',
+    badge: '500+ 用户的选择',
     description: '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',
     detailDescription:
       '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',
@@ -198,6 +200,19 @@ export const projects = [
     mockupType: 'kada',
   },
 ]
+
+const PROJECT_DISPLAY_ORDER = ['kada', 'yessir', 'dang-analysis']
+const projectById = new Map(projectData.map((project) => [project.id, project]))
+
+export const projects = PROJECT_DISPLAY_ORDER.map((id) => {
+  const project = projectById.get(id)
+
+  if (!project) {
+    throw new Error(`未找到项目配置：${id}`)
+  }
+
+  return project
+})
 
 export function getProjectById(id) {
   return projects.find((project) => project.id === id)

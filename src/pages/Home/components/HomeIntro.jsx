@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import BlurText from '../../../components/common/BlurText'
 import styles from '../Home.module.css'
 
@@ -6,7 +7,7 @@ const TITLE_LINE_1 = 'Why suffer poor design'
 const TITLE_LINE_2 = 'when you can build the standard?'
 const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦。'
 
-function HomeIntro() {
+function HomeIntro({ onComplete }) {
   const n1 = TITLE_LINE_1.trim().split(/\s+/).length
   const n2 = TITLE_LINE_2.trim().split(/\s+/).length
 
@@ -19,6 +20,17 @@ function HomeIntro() {
   const title1Offset = gapAfterBadge
   const title2Offset = title1Offset + n1 * titleWordDelay
   const subtitleOffset = title2Offset + n2 * titleWordDelay + gapBeforeSubtitle
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const subtitleDuration = (SUBTITLE_COPY.length - 1) * letterDelay + 560
+    const timer = window.setTimeout(
+      onComplete,
+      reduceMotion ? 0 : subtitleOffset + subtitleDuration
+    )
+
+    return () => window.clearTimeout(timer)
+  }, [letterDelay, onComplete, subtitleOffset])
 
   return (
     <section className={styles.heroSection}>
@@ -64,9 +76,9 @@ function HomeIntro() {
           direction="top"
           delay={letterDelay}
           delayOffset={subtitleOffset}
-          stepDuration={0.28}
-          threshold={0.08}
-        />
+            stepDuration={0.28}
+            threshold={0.08}
+          />
       </p>
     </section>
   )

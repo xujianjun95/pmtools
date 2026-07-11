@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   BUILDS_SECTION_HASH,
@@ -17,10 +17,17 @@ function scrollToNewsSection() {
 import HomeIntro from './components/HomeIntro'
 import ProjectsGrid from './components/ProjectsGrid'
 import NewsFeed from './components/NewsFeed'
+import styles from './Home.module.css'
+import { useHomeScrollAnimations } from './useHomeScrollAnimations'
 
 function HomePage() {
   const location = useLocation()
   const navigate = useNavigate()
+  const homeRef = useRef(null)
+  const [isHeroComplete, setIsHeroComplete] = useState(false)
+  const handleHeroComplete = useCallback(() => setIsHeroComplete(true), [])
+
+  useHomeScrollAnimations(homeRef, isHeroComplete)
 
   useEffect(() => {
     if (location.pathname !== '/') return undefined
@@ -53,11 +60,11 @@ function HomePage() {
   ])
 
   return (
-    <>
-      <HomeIntro />
+    <div ref={homeRef} className={styles.homePage}>
+      <HomeIntro onComplete={handleHeroComplete} />
       <ProjectsGrid />
-      <NewsFeed />
-    </>
+      <NewsFeed isHeroComplete={isHeroComplete} />
+    </div>
   )
 }
 

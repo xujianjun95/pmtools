@@ -137,7 +137,9 @@ function BlurText({
               ease: easing,
             }}
             onAnimationComplete={
-              index === elements.length - 1 ? onAnimationComplete : undefined
+              inView && index === elements.length - 1
+                ? onAnimationComplete
+                : undefined
             }
           >
             {segment}

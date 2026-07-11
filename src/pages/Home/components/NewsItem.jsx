@@ -45,6 +45,7 @@ function NewsItem({ item, index }) {
     <>
       <article
         className={styles.item}
+        data-home-news-item
         onClick={() => setExpanded((v) => !v)}
         role="button"
         tabIndex={0}
