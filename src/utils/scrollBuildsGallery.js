@@ -15,10 +15,10 @@ function prefersReducedMotion() {
 }
 
 /** 纵向滚到构建区（尊重 scroll-margin-top，避让固定顶栏） */
-export function scrollToBuildsGallery() {
-  const reduced = prefersReducedMotion()
+export function scrollToBuildsGallery({ behavior } = {}) {
+  const scrollBehavior = behavior || (prefersReducedMotion() ? 'auto' : 'smooth')
   document.getElementById(BUILDS_SECTION_ID)?.scrollIntoView({
-    behavior: reduced ? 'auto' : 'smooth',
+    behavior: scrollBehavior,
     block: 'start',
   })
 }

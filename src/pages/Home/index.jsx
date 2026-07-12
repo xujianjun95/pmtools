@@ -7,10 +7,12 @@ import {
 
 const NEWS_SECTION_ID = 'news-section'
 
-function scrollToNewsSection() {
-  const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+function scrollToNewsSection({ behavior } = {}) {
+  const reduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
   document.getElementById(NEWS_SECTION_ID)?.scrollIntoView({
-    behavior: reduced ? 'auto' : 'smooth',
+    behavior: behavior || (reduced ? 'auto' : 'smooth'),
     block: 'start',
   })
 }
@@ -42,19 +44,29 @@ function HomePage() {
     const fromNews = Boolean(location.state?.scrollToNews)
     if (!fromHash && !fromBuilds && !fromNews) return undefined
 
-    const id = window.setTimeout(() => {
+    let cancelled = false
+    const scrollAfterLayout = () => {
+      if (cancelled) return
+
       if (fromNews) {
-        scrollToNewsSection()
+        scrollToNewsSection({ behavior: 'auto' })
       } else {
-        scrollToBuildsGallery()
+        scrollToBuildsGallery({ behavior: 'auto' })
       }
       navigate(
         { pathname: '/', search: location.search },
         { replace: true, state: {} }
       )
-    }, 0)
+    }
 
-    return () => window.clearTimeout(id)
+    const firstFrame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(scrollAfterLayout)
+    })
+
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(firstFrame)
+    }
   }, [
     location.pathname,
     location.hash,
