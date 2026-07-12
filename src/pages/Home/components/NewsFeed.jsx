@@ -13,7 +13,7 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function NewsFeed({ isHeroComplete }) {
+function NewsFeed({ isHeroComplete, skipEntranceAnimation }) {
   const sectionRef = useRef(null)
   const [news, setNews] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -40,9 +40,13 @@ function NewsFeed({ isHeroComplete }) {
       loading ||
       error ||
       !news?.items?.length ||
-      !isHeroComplete ||
-      prefersReducedMotion()
+      !isHeroComplete
     ) return
+
+    if (skipEntranceAnimation || prefersReducedMotion()) {
+      ScrollTrigger.refresh()
+      return
+    }
 
     gsap.fromTo(
       '[data-home-news-item]',
@@ -63,7 +67,13 @@ function NewsFeed({ isHeroComplete }) {
 
     ScrollTrigger.refresh()
   }, {
-    dependencies: [loading, error, isHeroComplete, news?.items?.length],
+    dependencies: [
+      loading,
+      error,
+      isHeroComplete,
+      news?.items?.length,
+      skipEntranceAnimation,
+    ],
     revertOnUpdate: true,
     scope: sectionRef,
   })

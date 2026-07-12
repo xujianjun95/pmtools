@@ -24,10 +24,15 @@ function HomePage() {
   const location = useLocation()
   const navigate = useNavigate()
   const homeRef = useRef(null)
-  const [isHeroComplete, setIsHeroComplete] = useState(false)
+  const skipEntranceAnimation = useRef(
+    location.hash === BUILDS_SECTION_HASH ||
+      Boolean(location.state?.scrollToBuilds) ||
+      Boolean(location.state?.scrollToNews)
+  ).current
+  const [isHeroComplete, setIsHeroComplete] = useState(skipEntranceAnimation)
   const handleHeroComplete = useCallback(() => setIsHeroComplete(true), [])
 
-  useHomeScrollAnimations(homeRef, isHeroComplete)
+  useHomeScrollAnimations(homeRef, isHeroComplete, skipEntranceAnimation)
 
   useEffect(() => {
     if (location.pathname !== '/') return undefined
@@ -63,7 +68,10 @@ function HomePage() {
     <div ref={homeRef} className={styles.homePage}>
       <HomeIntro onComplete={handleHeroComplete} />
       <ProjectsGrid />
-      <NewsFeed isHeroComplete={isHeroComplete} />
+      <NewsFeed
+        isHeroComplete={isHeroComplete}
+        skipEntranceAnimation={skipEntranceAnimation}
+      />
     </div>
   )
 }

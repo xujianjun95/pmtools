@@ -8,13 +8,35 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-export function useHomeScrollAnimations(scopeRef, isHeroComplete) {
+export function useHomeScrollAnimations(
+  scopeRef,
+  isHeroComplete,
+  skipEntranceAnimation
+) {
   useGSAP(() => {
     if (prefersReducedMotion()) return
 
     const select = gsap.utils.selector(scopeRef)
     const buildsSection = select('[data-home-builds-section]')
     const newsSection = select('[data-home-news-section]')
+    const buildsHeader = select('[data-home-builds-header]')
+    const buildCards = select('[data-home-build-card]')
+    const newsHeader = select('#news-section [data-home-scroll-header]')
+
+    if (skipEntranceAnimation) {
+      gsap.set(
+        [
+          ...buildsSection,
+          ...newsSection,
+          ...buildsHeader,
+          ...buildCards,
+          ...newsHeader,
+        ],
+        { autoAlpha: 1, y: 0, scale: 1 }
+      )
+
+      return
+    }
 
     if (!isHeroComplete) {
       gsap.set([...buildsSection, ...newsSection], { autoAlpha: 0, y: 24 })
@@ -30,13 +52,13 @@ export function useHomeScrollAnimations(scopeRef, isHeroComplete) {
     entranceTimeline
       .to(buildsSection, { autoAlpha: 1, y: 0, duration: 0.42 })
       .fromTo(
-        select('[data-home-builds-header]'),
+        buildsHeader,
         { autoAlpha: 0, y: 16 },
         { autoAlpha: 1, y: 0, duration: 0.52 },
         '<0.08'
       )
       .fromTo(
-        select('[data-home-build-card]'),
+        buildCards,
         { autoAlpha: 0, y: 28, scale: 0.985 },
         {
           autoAlpha: 1,
@@ -49,7 +71,7 @@ export function useHomeScrollAnimations(scopeRef, isHeroComplete) {
       )
       .to(newsSection, { autoAlpha: 1, y: 0, duration: 0.42 }, '+=0.12')
       .fromTo(
-        select('#news-section [data-home-scroll-header]'),
+        newsHeader,
         { autoAlpha: 0, y: 16 },
         { autoAlpha: 1, y: 0, duration: 0.52 },
         '<0.08'
@@ -66,7 +88,7 @@ export function useHomeScrollAnimations(scopeRef, isHeroComplete) {
       },
     })
   }, {
-    dependencies: [isHeroComplete],
+    dependencies: [isHeroComplete, skipEntranceAnimation],
     revertOnUpdate: true,
     scope: scopeRef,
   })

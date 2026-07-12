@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './Modal.module.css'
 
 function Modal({ open, onClose, title, children }) {
@@ -19,7 +20,7 @@ function Modal({ open, onClose, title, children }) {
 
   if (!open) return null
 
-  return (
+  return createPortal(
     <div
       className={styles.backdrop}
       ref={backdropRef}
@@ -36,7 +37,8 @@ function Modal({ open, onClose, title, children }) {
         </div>
         <div className={styles.body}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
