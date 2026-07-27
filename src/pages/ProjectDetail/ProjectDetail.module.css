@@ -115,11 +115,17 @@
   color: var(--accent);
 }
 
+.detailBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
 .detailBadge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  margin-bottom: 24px;
   padding: 3px 10px;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -128,6 +134,12 @@
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.detailFeaturedBadge {
+  color: #188038;
+  background: color-mix(in srgb, #188038 10%, transparent);
+  border-color: color-mix(in srgb, #188038 30%, transparent);
 }
 
 .detailDesc {

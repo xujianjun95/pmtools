@@ -72,6 +72,7 @@
 
 .nameRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
@@ -99,6 +100,12 @@
   color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   transform: translateY(-1px);
+}
+
+.featuredBadge {
+  color: #188038;
+  background: color-mix(in srgb, #188038 10%, transparent);
+  border-color: color-mix(in srgb, #188038 30%, transparent);
 }
 
 .desc {

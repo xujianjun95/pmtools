@@ -21,6 +21,11 @@ function ProjectCard({ project, delayClassName = '' }) {
         </div>
         <div className={styles.nameRow}>
           <h3 className={styles.name}>{project.title}</h3>
+          {project.featuredBadge && (
+            <span className={`${styles.badge} ${styles.featuredBadge}`}>
+              ✦ {project.featuredBadge}
+            </span>
+          )}
           {project.badge && (
             <span className={styles.badge}>⭐ {project.badge}</span>
           )}
