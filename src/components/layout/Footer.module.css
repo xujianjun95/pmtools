@@ -10,7 +10,7 @@
 
 .gradientStage {
   position: relative;
-  height: 100svh;
+  height: 50svh;
   margin: 28px calc(var(--margin-page) * -1) 0;
   overflow: hidden;
 }
@@ -26,6 +26,8 @@
 
 .gradient[data-reveal-state='active'] {
   position: fixed;
+  top: auto;
+  height: 50svh;
 }
 
 .gradient[data-reveal-state='complete'] {
@@ -73,7 +75,7 @@
   }
 
   .gradientStage {
-    height: 100svh;
+    height: 50svh;
     margin-top: 20px;
   }
 }

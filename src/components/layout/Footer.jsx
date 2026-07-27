@@ -23,9 +23,14 @@ function Footer() {
       frameId = undefined
 
       const viewportHeight = window.innerHeight || 1
-      const stageTop = stage.getBoundingClientRect().top
+      const stageRect = stage.getBoundingClientRect()
+      const stageTop = stageRect.top
       const revealStart = viewportHeight
-      const revealEnd = 0
+      const revealDistance = Math.max(
+        1,
+        Math.min(viewportHeight, stageRect.height)
+      )
+      const revealEnd = revealStart - revealDistance
       const rawProgress =
         (revealStart - stageTop) / (revealStart - revealEnd)
       const progress = reduceMotion.matches
