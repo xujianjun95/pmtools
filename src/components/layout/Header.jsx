@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { scrollToBuildsGallery, scrollToBuildsNavState } from '../../utils/scrollBuildsGallery'
 import ThemeToggle from '../common/ThemeToggle'
 
@@ -26,12 +26,11 @@ function formatHeaderTime() {
 function Header() {
   const [localTime, setLocalTime] = useState(() => formatHeaderTime())
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false })
-  /** 首页点「造物」或「资讯」后把指示线挪到对应链接下；点 Logo 或进作者页会清掉 */
+  /** 首页点「造物」或「资讯」后把指示线挪到对应链接下；点 Logo 会清掉 */
   const [activeNav, setActiveNav] = useState(null) // 'builds' | 'news' | null
   const navRef = useRef(null)
   const buildsLinkRef = useRef(null)
   const newsLinkRef = useRef(null)
-  const aboutLinkRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -39,12 +38,6 @@ function Header() {
     const timer = window.setInterval(() => setLocalTime(formatHeaderTime()), 1000 * 30)
     return () => window.clearInterval(timer)
   }, [])
-
-  useEffect(() => {
-    if (location.pathname !== '/profile') return
-    const id = window.requestAnimationFrame(() => setActiveNav(null))
-    return () => window.cancelAnimationFrame(id)
-  }, [location.pathname])
 
   // 接收从 HomePage 传来的滚动状态，自动高亮对应导航
   useEffect(() => {
@@ -59,9 +52,7 @@ function Header() {
       if (!nav) return
 
       let targetEl = null
-      if (location.pathname === '/profile') {
-        targetEl = aboutLinkRef.current
-      } else if (location.pathname === '/') {
+      if (location.pathname === '/') {
         if (activeNav === 'builds') targetEl = buildsLinkRef.current
         if (activeNav === 'news') targetEl = newsLinkRef.current
       }
@@ -152,16 +143,6 @@ function Header() {
               >
                 资讯
               </Link>
-              <NavLink
-                ref={aboutLinkRef}
-                to="/profile"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.active : ''}`
-                }
-                onClick={() => setActiveNav(null)}
-              >
-                关于
-              </NavLink>
             </nav>
           </div>
           <div className={styles.right}>
