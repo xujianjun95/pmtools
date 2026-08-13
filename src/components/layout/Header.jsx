@@ -31,6 +31,7 @@ function Header() {
   const navRef = useRef(null)
   const buildsLinkRef = useRef(null)
   const newsLinkRef = useRef(null)
+  const aboutLinkRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -52,7 +53,9 @@ function Header() {
       if (!nav) return
 
       let targetEl = null
-      if (location.pathname === '/') {
+      if (location.pathname === '/about') {
+        targetEl = aboutLinkRef.current
+      } else if (location.pathname === '/') {
         if (activeNav === 'builds') targetEl = buildsLinkRef.current
         if (activeNav === 'news') targetEl = newsLinkRef.current
       }
@@ -142,6 +145,18 @@ function Header() {
                 onClick={handleNewsClick}
               >
                 资讯
+              </Link>
+              <span className={styles.navLink} aria-disabled="true">
+                文章
+              </span>
+              <Link
+                ref={aboutLinkRef}
+                to="/about"
+                className={styles.navLink}
+                aria-current={location.pathname === '/about' ? 'page' : undefined}
+                onClick={() => setActiveNav(null)}
+              >
+                关于我
               </Link>
             </nav>
           </div>

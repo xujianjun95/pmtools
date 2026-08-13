@@ -7,6 +7,20 @@ export const BUILDS_SECTION_HASH = `#${BUILDS_SECTION_ID}`
 /** 用 React Router `location.state` 触发滚动，避免 URL 带 # */
 export const scrollToBuildsNavState = Object.freeze({ scrollToBuilds: true })
 
+const PROJECT_ANCHOR_PREFIX = 'build-project-'
+
+export function getProjectAnchorId(projectId) {
+  const normalizedId = typeof projectId === 'string' ? projectId.trim() : ''
+  return normalizedId ? `${PROJECT_ANCHOR_PREFIX}${normalizedId}` : null
+}
+
+export function createScrollToProjectNavState(projectId) {
+  const normalizedId = typeof projectId === 'string' ? projectId.trim() : ''
+  return normalizedId
+    ? { scrollToProjectId: normalizedId }
+    : scrollToBuildsNavState
+}
+
 function prefersReducedMotion() {
   return (
     typeof window !== 'undefined' &&
@@ -21,4 +35,18 @@ export function scrollToBuildsGallery({ behavior } = {}) {
     behavior: scrollBehavior,
     block: 'start',
   })
+}
+
+/** 返回首页时优先定位来源产品；目标不存在时由调用方回退到构建区 */
+export function scrollToProjectCard(projectId, { behavior } = {}) {
+  const anchorId = getProjectAnchorId(projectId)
+  const projectCard = anchorId ? document.getElementById(anchorId) : null
+  if (!projectCard) return false
+
+  const scrollBehavior = behavior || (prefersReducedMotion() ? 'auto' : 'smooth')
+  projectCard.scrollIntoView({
+    behavior: scrollBehavior,
+    block: 'start',
+  })
+  return true
 }

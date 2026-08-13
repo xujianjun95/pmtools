@@ -1,0 +1,741 @@
+.demo {
+  --loop: 12s;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  color: #d4d4d4;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.workspace {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(69, 83, 111, 0.16);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(42, 55, 78, 0.1);
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  animation: cameraMove var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.editorPanel,
+.previewPanel {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.editorPanel {
+  background: #1e1e1e;
+}
+
+.previewPanel {
+  background: #fff;
+  color: #334155;
+}
+
+.resizer {
+  background: #30343b;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.panelHeader,
+.panelTitle,
+.editorActions,
+.previewActions,
+.browserChrome,
+.windowDots,
+.browserAddress {
+  display: flex;
+  align-items: center;
+}
+
+.panelHeader {
+  flex: 0 0 clamp(26px, 5.2vw, 40px);
+  justify-content: space-between;
+  gap: clamp(4px, 0.8vw, 8px);
+  padding: 0 clamp(7px, 1.4vw, 14px);
+  border-bottom: 1px solid #333;
+  background: #252526;
+  font-size: clamp(0.3rem, 0.62vw, 0.5rem);
+  white-space: nowrap;
+}
+
+.previewHeader {
+  border-color: #e5e7eb;
+  background: #f8fafc;
+  color: #374151;
+}
+
+.panelTitle {
+  gap: clamp(4px, 0.7vw, 7px);
+  letter-spacing: 0.01em;
+}
+
+.codeMark,
+.previewMark {
+  color: #8b8b8b;
+  font-family: var(--font-mono);
+  font-size: clamp(0.28rem, 0.58vw, 0.46rem);
+}
+
+.previewMark {
+  color: #94a3b8;
+}
+
+.editorActions,
+.previewActions {
+  gap: clamp(3px, 0.58vw, 7px);
+  font-size: clamp(0.21rem, 0.43vw, 0.34rem);
+}
+
+.editorActions span,
+.previewActions span {
+  padding: clamp(2px, 0.36vw, 4px) clamp(3px, 0.54vw, 6px);
+  border: 1px solid #4b5563;
+  border-radius: 3px;
+  color: #c8c8c8;
+}
+
+.editorActions .formatAction {
+  border-color: #14b8a6;
+  color: #2dd4bf;
+}
+
+.editorActions .splitAction {
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+.editorActions .exportAction {
+  border-color: #10b981;
+  background: #10b981;
+  color: white;
+}
+
+.previewActions span {
+  border-color: #d8dee7;
+  background: rgba(255, 255, 255, 0.78);
+  color: #64748b;
+}
+
+.editorBody {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.editorSidebar {
+  display: flex;
+  flex: 0 0 clamp(24px, 4.8vw, 38px);
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(5px, 1vw, 9px);
+  padding-top: clamp(8px, 1.5vw, 14px);
+  border-right: 1px solid #2d2d2d;
+  background: #252526;
+  color: #707070;
+  font-family: var(--font-mono);
+  font-size: clamp(0.25rem, 0.5vw, 0.4rem);
+}
+
+.editorSidebar .activeTool {
+  color: #60a5fa;
+}
+
+.codeViewport {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(8px, 1.6vw, 16px) clamp(8px, 1.5vw, 14px);
+  background: #1e1e1e;
+}
+
+.codeGuide {
+  position: absolute;
+  top: clamp(7px, 1.4vw, 13px);
+  left: clamp(9px, 1.8vw, 18px);
+  color: rgba(212, 212, 212, 0.2);
+  font-family: var(--font-mono);
+  font-size: clamp(0.21rem, 0.43vw, 0.34rem);
+  animation: guideFade var(--loop) linear infinite;
+  animation-play-state: paused;
+}
+
+.codeLines {
+  position: relative;
+  z-index: 1;
+  padding-top: clamp(4px, 0.8vw, 8px);
+}
+
+.codeLine {
+  display: flex;
+  gap: clamp(6px, 1vw, 11px);
+  min-width: max-content;
+  min-height: clamp(12px, 2.05vw, 17px);
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  font-size: clamp(0.27rem, 0.56vw, 0.44rem);
+  line-height: 1.55;
+  animation: codeReveal var(--loop) linear infinite;
+  animation-delay: calc(var(--line) * 0.14s);
+  animation-play-state: paused;
+}
+
+.lineNumber {
+  width: 1.4em;
+  color: #5b5b5b;
+  text-align: right;
+  user-select: none;
+}
+
+.tag { color: #569cd6; }
+.attr { color: #9cdcfe; }
+.string { color: #ce9178; }
+.selector { color: #d7ba7d; }
+.number { color: #b5cea8; }
+.plain { color: #d4d4d4; }
+
+.previewPage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 76% 34%, rgba(59, 130, 246, 0.08), transparent 26%),
+    #fff;
+  color: #0f172a;
+}
+
+.previewHero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 78%;
+  padding: clamp(15px, 3vw, 30px) 0 0 clamp(18px, 3.4vw, 34px);
+}
+
+.previewPart {
+  opacity: 0;
+  transform: translateY(7px);
+  animation: previewReveal var(--loop) var(--ease) infinite;
+  animation-delay: calc(var(--part) * 0.1s);
+  animation-play-state: paused;
+}
+
+.previewEyebrow {
+  margin-bottom: clamp(5px, 0.9vw, 9px);
+  color: #3b82f6;
+  font-family: var(--font-mono);
+  font-size: clamp(0.18rem, 0.38vw, 0.3rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.previewTitle {
+  margin-bottom: clamp(4px, 0.8vw, 8px);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.72rem, 1.65vw, 1.3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.previewCopy {
+  margin: 0 0 clamp(7px, 1.25vw, 12px);
+  color: #64748b;
+  font-size: clamp(0.2rem, 0.43vw, 0.34rem);
+  line-height: 1.5;
+}
+
+.previewButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: clamp(4px, 0.7vw, 7px) clamp(7px, 1.2vw, 12px);
+  border-radius: 3px;
+  background: #111827;
+  color: white;
+  font-size: clamp(0.19rem, 0.4vw, 0.31rem);
+  font-weight: 650;
+}
+
+.previewCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(4px, 0.8vw, 8px);
+  padding: clamp(12px, 2vw, 20px) clamp(18px, 3.4vw, 34px) 0;
+}
+
+.previewCards span {
+  min-height: clamp(18px, 3.6vw, 30px);
+  border: 1px solid #e6e9ee;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #fff, #f5f7fa);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.shareButton {
+  position: absolute;
+  right: clamp(8px, 1.5vw, 14px);
+  bottom: clamp(8px, 1.5vw, 14px);
+  z-index: 3;
+  padding: clamp(4px, 0.7vw, 7px) clamp(7px, 1.2vw, 12px);
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.3);
+  color: white;
+  font-size: clamp(0.2rem, 0.42vw, 0.33rem);
+  font-weight: 650;
+  animation: shareButtonTap var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.shareClickPulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: clamp(7px, 1.1vw, 11px);
+  height: clamp(7px, 1.1vw, 11px);
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 7px color-mix(in srgb, var(--accent) 38%, transparent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  animation: shareClickPulse var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.shareClickPulse::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 68%, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  animation: shareClickRing var(--loop) ease-out infinite;
+  animation-play-state: paused;
+}
+
+.shareBackdrop {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  background: rgba(15, 18, 28, 0.52);
+  opacity: 0;
+  backdrop-filter: blur(2px);
+  animation: shareBackdropAppear var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.shareModal {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: min(68%, 330px);
+  flex-direction: column;
+  gap: clamp(6px, 1vw, 10px);
+  padding: clamp(10px, 1.8vw, 18px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: clamp(8px, 1.35vw, 14px);
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.28);
+  color: #1e293b;
+  opacity: 0;
+  transform: translate(-50%, -44%) scale(0.9);
+  animation: shareModalAppear var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.shareModalHeader,
+.shareModalHint,
+.shareModalActions {
+  display: flex;
+  align-items: center;
+}
+
+.shareModalHeader {
+  justify-content: space-between;
+}
+
+.shareModalHeader strong {
+  font-size: clamp(0.4rem, 0.82vw, 0.68rem);
+}
+
+.shareModalHeader > span {
+  color: #94a3b8;
+  font-size: clamp(0.5rem, 0.9vw, 0.76rem);
+  line-height: 1;
+}
+
+.shareModalCopy,
+.shareModalUrl {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.5vw, 5px);
+}
+
+.shareModalCopy > span,
+.shareModalHint > span,
+.shareModalUrl > span {
+  display: block;
+  height: clamp(3px, 0.55vw, 5px);
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.shareModalCopy > span:first-child { width: 86%; }
+.shareModalCopy > span:last-child { width: 62%; }
+
+.shareModalHint {
+  gap: clamp(4px, 0.7vw, 7px);
+  margin-top: clamp(1px, 0.25vw, 3px);
+}
+
+.shareModalHint i {
+  width: clamp(5px, 0.85vw, 8px);
+  height: clamp(5px, 0.85vw, 8px);
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #f4c95d;
+}
+
+.shareModalHint > span { width: 72%; }
+
+.shareModalUrl {
+  padding: clamp(6px, 1vw, 10px);
+  border-radius: clamp(5px, 0.8vw, 8px);
+  background: #f1f5f9;
+}
+
+.shareModalUrl > span {
+  background: #94a3b8;
+}
+
+.shareModalUrl > span:first-child { width: 92%; }
+.shareModalUrl > span:last-child { width: 48%; }
+
+.shareModalActions {
+  gap: clamp(5px, 0.8vw, 8px);
+  margin-top: clamp(1px, 0.25vw, 3px);
+}
+
+.shareModalActions > span {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 50%;
+  height: clamp(16px, 2.7vw, 27px);
+  border-radius: clamp(4px, 0.65vw, 7px);
+  background: #eef2f7;
+}
+
+.shareModalActions > span:last-child {
+  background: #3b82f6;
+}
+
+.openShareLinkButton {
+  overflow: visible;
+  color: #fff;
+  font-size: clamp(0.21rem, 0.43vw, 0.36rem);
+  font-weight: 700;
+  white-space: nowrap;
+  animation: openLinkButtonTap var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.openLinkClickPulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  display: block;
+  width: clamp(7px, 1.1vw, 11px);
+  height: clamp(7px, 1.1vw, 11px);
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 7px color-mix(in srgb, var(--accent) 38%, transparent);
+  opacity: 0;
+  animation: openLinkClickPulse var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.openLinkClickPulse::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 68%, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  animation: openLinkClickRing var(--loop) ease-out infinite;
+  animation-play-state: paused;
+}
+
+.sharedBrowser {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(71, 85, 105, 0.2);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 20px 54px rgba(15, 23, 42, 0.24);
+  opacity: 0;
+  transform: translateY(12px) scale(0.84);
+  animation: browserOpen var(--loop) var(--ease) infinite;
+  animation-play-state: paused;
+}
+
+.browserChrome {
+  height: clamp(24px, 4.4vw, 34px);
+  gap: clamp(6px, 1vw, 10px);
+  padding: 0 clamp(7px, 1.2vw, 12px);
+  border-bottom: 1px solid #dfe3e8;
+  background: #eef1f5;
+}
+
+.windowDots {
+  gap: 3px;
+}
+
+.windowDots span {
+  width: clamp(3px, 0.55vw, 5px);
+  height: clamp(3px, 0.55vw, 5px);
+  border-radius: 50%;
+  background: #9ca3af;
+}
+
+.windowDots span:first-child { background: #ee6a5f; }
+.windowDots span:nth-child(2) { background: #eab84d; }
+.windowDots span:last-child { background: #62bf68; }
+
+.browserAddress {
+  flex: 1;
+  gap: 5px;
+  height: clamp(14px, 2.4vw, 19px);
+  padding: 0 clamp(7px, 1.2vw, 12px);
+  border: 1px solid #dde2e8;
+  border-radius: 999px;
+  background: #fff;
+  color: #596579;
+  font-family: var(--font-mono);
+  font-size: clamp(0.2rem, 0.4vw, 0.31rem);
+}
+
+.browserAddress span {
+  color: #429667;
+}
+
+.browserOpen {
+  color: #64748b;
+  font-size: clamp(0.35rem, 0.68vw, 0.54rem);
+}
+
+.browserCanvas {
+  height: calc(100% - clamp(24px, 4.4vw, 34px));
+}
+
+.compactPreview {
+  height: 100%;
+}
+
+.compactPreview .previewHero {
+  width: 64%;
+  padding-top: clamp(12px, 2.2vw, 22px);
+}
+
+.compactPreview .previewPart {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.demo[data-active='true'] .workspace,
+.demo[data-active='true'] .codeGuide,
+.demo[data-active='true'] .codeLine,
+.demo[data-active='true'] .previewPart,
+.demo[data-active='true'] .shareButton,
+.demo[data-active='true'] .shareClickPulse,
+.demo[data-active='true'] .shareClickPulse::after,
+.demo[data-active='true'] .shareBackdrop,
+.demo[data-active='true'] .shareModal,
+.demo[data-active='true'] .openShareLinkButton,
+.demo[data-active='true'] .openLinkClickPulse,
+.demo[data-active='true'] .openLinkClickPulse::after,
+.demo[data-active='true'] .sharedBrowser {
+  animation-play-state: running;
+}
+
+@keyframes cameraMove {
+  0%, 12% {
+    filter: brightness(0.98) blur(0);
+    transform: scale(1) translateX(0);
+  }
+  20%, 50% {
+    filter: brightness(1) blur(0);
+    transform: scale(1.6) translateX(15.5%);
+  }
+  58%, 78% {
+    filter: brightness(1) blur(0);
+    transform: scale(1) translateX(0);
+  }
+  84%, 96% {
+    filter: brightness(0.78) blur(4px);
+    transform: scale(1) translateX(0);
+  }
+  100% {
+    filter: brightness(0.98) blur(0);
+    transform: scale(1) translateX(0);
+  }
+}
+
+@keyframes guideFade {
+  0%, 18% { opacity: 0.2; }
+  24%, 100% { opacity: 0; }
+}
+
+@keyframes codeReveal {
+  0%, 23% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  27%, 79% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+  84%, 100% {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes previewReveal {
+  0%, 49% { opacity: 0; transform: translateY(7px); }
+  56%, 82% { opacity: 1; transform: translateY(0); }
+  88%, 100% { opacity: 0; transform: translateY(0); }
+}
+
+@keyframes shareButtonTap {
+  0%, 72% { transform: scale(1); }
+  76% { transform: scale(0.92); }
+  79%, 100% { transform: scale(1); }
+}
+
+@keyframes shareClickPulse {
+  0%, 70%, 82%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  73%, 76% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  78% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.78);
+  }
+}
+
+@keyframes shareClickRing {
+  0%, 75%, 82%, 100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  77% { opacity: 0.72; }
+  81% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@keyframes shareBackdropAppear {
+  0%, 76% { opacity: 0; }
+  80%, 89% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes shareModalAppear {
+  0%, 76% { opacity: 0; transform: translate(-50%, -44%) scale(0.9); }
+  80%, 89% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  92%, 100% { opacity: 0; transform: translate(-50%, -56%) scale(0.98); }
+}
+
+@keyframes openLinkButtonTap {
+  0%, 84%, 100% { transform: scale(1); }
+  87% { transform: scale(0.92); }
+  90% { transform: scale(1); }
+}
+
+@keyframes openLinkClickPulse {
+  0%, 82%, 92%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  85%, 87% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  89% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.78);
+  }
+}
+
+@keyframes openLinkClickRing {
+  0%, 86%, 92%, 100% { opacity: 0; transform: scale(0.6); }
+  88% { opacity: 0.72; }
+  91% { opacity: 0; transform: scale(1.4); }
+}
+
+@keyframes browserOpen {
+  0%, 90% { opacity: 0; transform: translateY(12px) scale(0.84); }
+  94%, 98% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(1.01); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace {
+    animation: none;
+    filter: none;
+    transform: scale(1);
+  }
+
+  .codeGuide,
+  .shareClickPulse,
+  .shareClickPulse::after,
+  .shareBackdrop,
+  .shareModal,
+  .openShareLinkButton,
+  .openLinkClickPulse,
+  .openLinkClickPulse::after,
+  .sharedBrowser {
+    display: none;
+  }
+
+  .codeLine,
+  .previewPart,
+  .shareButton {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+    transform: none;
+  }
+}

@@ -3,10 +3,17 @@
 }
 
 .heroSection {
+  position: relative;
+  isolation: isolate;
   padding: 120px 0 100px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.heroSection > :not(.heroArtwork) {
+  position: relative;
+  z-index: 1;
 }
 
 .heroBadge {
@@ -70,6 +77,102 @@
   color: var(--text-secondary);
 }
 
+/* 首屏右侧黄金分割构造图：先画分割线，再一笔完成螺旋。 */
+.heroArtwork {
+  position: absolute;
+  top: 50%;
+  right: clamp(-32px, -1.8vw, -10px);
+  z-index: 0;
+  width: clamp(330px, 34vw, 500px);
+  aspect-ratio: 26 / 21;
+  color: var(--text-secondary);
+  opacity: 0.78;
+  transform: translateY(-50%);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 22%);
+  mask-image: linear-gradient(to right, transparent 0%, black 22%);
+}
+
+.heroArtwork svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.heroArtworkStroke {
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation-name: none;
+  animation-duration: 0.42s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.heroSection[data-hero-animation='playing'] .heroArtworkStroke {
+  stroke-dashoffset: 1;
+  animation-name: heroArtworkDraw;
+}
+
+.heroArtworkFrame {
+  stroke: color-mix(in srgb, currentColor 62%, transparent);
+  stroke-width: 1.2;
+  stroke-linecap: square;
+  animation-duration: 0.82s;
+}
+
+.heroArtworkConstruction {
+  stroke: color-mix(in srgb, currentColor 68%, transparent);
+  stroke-width: 1;
+  stroke-linecap: square;
+}
+
+.heroArtworkSpiral {
+  stroke: var(--text-primary);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation-duration: 2.05s;
+  animation-delay: 2.42s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.heroArtworkCenter {
+  fill: var(--accent);
+  opacity: 0.85;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: none;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+  animation-delay: 4.36s;
+  animation-fill-mode: forwards;
+}
+
+.heroSection[data-hero-animation='playing'] .heroArtworkCenter {
+  opacity: 0;
+  transform: scale(0.35);
+  animation-name: heroArtworkCenterIn;
+}
+
+@keyframes heroArtworkDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes heroArtworkCenterIn {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+}
+
 :global([data-theme='dark']) .heroBadge {
   color: var(--text-muted);
 }
@@ -82,26 +185,23 @@
   color: var(--text-secondary);
 }
 
-/* 构建区：左侧锚点 + 横向 scroll-snap 画廊 */
+/* 构建区：纵向交替的产品舞台 */
 .buildsSection {
   /* 固定顶栏会盖住 block:start 对齐点；与 MainLayout padding-top 一致，锚点滚动时整块露在导航下方 */
   scroll-margin-top: var(--layout-top-offset);
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(24px, 4vw, 40px);
   width: 100%;
-  margin-top: 48px;
-  margin-bottom: 28px;
+  margin-top: 56px;
+  margin-bottom: 88px;
 }
 
 .buildsHeader {
-  flex: 0 0 clamp(128px, 14vw, 160px);
-  position: sticky;
-  top: calc(var(--layout-top-offset) + 16px);
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 1;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
 }
 
 .buildsTitle {
@@ -122,143 +222,47 @@
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 .buildsDesc {
   margin: 0;
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.035em;
   line-height: 1.45;
   color: var(--text-muted);
 }
 
-.carouselControls {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px 28px;
-  pointer-events: none;
+.buildsList {
+  display: grid;
+  gap: clamp(20px, 2.7vw, 34px);
 }
 
-.carouselButton {
-  appearance: none;
-  display: inline-grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid color-mix(in srgb, var(--text-primary) 12%, transparent);
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
-  box-shadow: 0 10px 28px color-mix(in srgb, var(--text-primary) 10%, transparent);
-  color: var(--text-primary);
-  cursor: pointer;
-  pointer-events: auto;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease,
-    opacity 180ms ease;
-}
-
-.carouselButtonIcon {
-  display: block;
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.carouselButton:hover:not(:disabled) {
-  transform: translateY(-1px) scale(1.03);
-  border-color: color-mix(in srgb, var(--text-primary) 22%, transparent);
-  background: var(--surface);
-  color: var(--text-primary);
-}
-
-.carouselButton:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent);
-}
-
-.carouselButton:disabled {
-  cursor: default;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.arrowDown {
-  display: none;
-}
-
-.carouselShell {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-.carouselShell:not(.carouselShellAtEnd) .carouselTrack {
-  -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
-  mask-image: linear-gradient(to right, black 88%, transparent 100%);
-}
-
-.carouselShellAtEnd .carouselTrack {
-  -webkit-mask-image: none;
-  mask-image: none;
-}
-
-.carouselTrack {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
-  width: 100%;
-  padding-bottom: 28px;
-  padding-right: 8px;
-  scrollbar-width: none;
-  outline: none;
-}
-
-.carouselTrack::-webkit-scrollbar {
-  display: none;
-}
-
-.cardWrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 clamp(300px, 46vw, 520px);
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
+.buildCardShell {
   min-height: 1px;
-}
-
-.cardWrapper > a {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.carouselTrack:focus-visible {
-  border-radius: 6px;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent);
+  min-width: 0;
+  scroll-margin-top: calc(var(--layout-top-offset) + 16px);
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .carouselTrack {
-    scroll-behavior: auto;
+  .heroArtworkStroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .heroArtworkCenter {
+    animation: none;
+    opacity: 0.85;
+  }
+
+  .buildCardShell,
+  .buildCardShell > * {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
@@ -283,50 +287,32 @@
     font-size: 1.12rem;
   }
 
+  .heroArtwork {
+    display: none;
+  }
+
   .buildsSection {
-    flex-direction: column;
-    gap: 20px;
     margin-top: 28px;
+    margin-bottom: 56px;
   }
 
   .buildsHeader {
-    position: static;
-    flex: none;
-    width: 100%;
-    top: auto;
-  }
-
-  .arrowRight {
-    display: none;
-  }
-
-  .arrowDown {
-    display: inline;
-  }
-
-  .carouselControls {
-    display: none;
-  }
-
-  /* iOS/Safari 上父层 mask 可能导致子层横向滚动失效，移动端关闭 */
-  .carouselShell {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .cardWrapper {
-    flex: none;
-    width: 100%;
-  }
-
-  .carouselTrack {
     flex-direction: column;
-    gap: 16px;
-    overflow: visible;
-    scroll-snap-type: none;
-    touch-action: pan-y pinch-zoom;
-    padding-right: 0;
-    padding-bottom: 0;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
   }
 
+  .buildsList {
+    gap: 16px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  .heroArtwork {
+    right: -18px;
+    width: clamp(280px, 34vw, 360px);
+    opacity: 0.46;
+  }
 }

@@ -3,16 +3,34 @@ import pc from './ProjectCard.module.css'
 import styles from './PlaceholderProjectCard.module.css'
 
 /** 与同页 ProjectCard 同骨架的「下一款」占位，非链接、不可跳转 */
-function PlaceholderProjectCard({ delayClassName = '' }) {
+function PlaceholderProjectCard() {
   return (
     <div
-      className={`${pc.card} ${styles.teaser} ${delayClassName}`.trim()}
+      className={`${pc.card} ${pc.reversed} ${styles.teaser}`}
       aria-label="占位卡片：Backlog 待排期"
     >
       <div className={pc.mockupWrap}>
-        <div className={`${pc.mockupInner} ${styles.mockInner}`}>
+        <div
+          className={`${pc.mockupInner} ${styles.mockInner}`}
+          data-project-preview
+        >
+          <div className={styles.ideaPool} aria-hidden>
+            <span className={`${styles.ideaSheet} ${styles.ideaSheetBack}`}>
+              <i /><i /><i />
+            </span>
+            <span className={`${styles.ideaSheet} ${styles.ideaSheetMiddle}`}>
+              <i /><i /><i />
+            </span>
+            <span className={`${styles.ideaSheet} ${styles.ideaSheetFront}`}>
+              <i /><i /><i />
+            </span>
+          </div>
           <div className={styles.mockPlate} aria-hidden>
-            <span className={styles.mockGlyph}>⋯</span>
+            <span className={styles.mockGlyph}>
+              <i />
+              <i />
+              <i />
+            </span>
             <span className={styles.mockHint}>Coming Soon</span>
           </div>
         </div>
@@ -20,7 +38,7 @@ function PlaceholderProjectCard({ delayClassName = '' }) {
 
       <div className={pc.content}>
         <div className={pc.header}>
-          <span className={pc.num}>03</span>
+          <span className={pc.num}>04</span>
           <span className={styles.marker} aria-hidden>
             ◇
           </span>

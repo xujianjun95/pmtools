@@ -20,7 +20,7 @@ export function useHomeScrollAnimations(
     const buildsSection = select('[data-home-builds-section]')
     const newsSection = select('[data-home-news-section]')
     const buildsHeader = select('[data-home-builds-header]')
-    const buildCards = select('[data-home-build-card]')
+    const projectMotionCards = select('[data-project-motion-card]')
     const newsHeader = select('#news-section [data-home-scroll-header]')
 
     if (skipEntranceAnimation) {
@@ -29,55 +29,38 @@ export function useHomeScrollAnimations(
           ...buildsSection,
           ...newsSection,
           ...buildsHeader,
-          ...buildCards,
           ...newsHeader,
         ],
         { autoAlpha: 1, y: 0, scale: 1 }
       )
-
-      return
-    }
-
-    if (!isHeroComplete) {
+    } else if (!isHeroComplete) {
       gsap.set([...buildsSection, ...newsSection], { autoAlpha: 0, y: 24 })
       return
+    } else {
+      gsap.set([...buildsSection, ...newsSection], { autoAlpha: 0, y: 24 })
+
+      const entranceTimeline = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+      })
+
+      entranceTimeline
+        .to(buildsSection, { autoAlpha: 1, y: 0, duration: 0.42 })
+        .fromTo(
+          buildsHeader,
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 0.52 },
+          '<0.08'
+        )
+        .to(newsSection, { autoAlpha: 1, y: 0, duration: 0.42 }, '+=0.12')
+        .fromTo(
+          newsHeader,
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 0.52 },
+          '<0.08'
+        )
     }
 
-    gsap.set([...buildsSection, ...newsSection], { autoAlpha: 0, y: 24 })
-
-    const entranceTimeline = gsap.timeline({
-      defaults: { ease: 'power3.out' },
-    })
-
-    entranceTimeline
-      .to(buildsSection, { autoAlpha: 1, y: 0, duration: 0.42 })
-      .fromTo(
-        buildsHeader,
-        { autoAlpha: 0, y: 16 },
-        { autoAlpha: 1, y: 0, duration: 0.52 },
-        '<0.08'
-      )
-      .fromTo(
-        buildCards,
-        { autoAlpha: 0, y: 28, scale: 0.985 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.58,
-          stagger: 0.08,
-        },
-        '<0.1'
-      )
-      .to(newsSection, { autoAlpha: 1, y: 0, duration: 0.42 }, '+=0.12')
-      .fromTo(
-        newsHeader,
-        { autoAlpha: 0, y: 16 },
-        { autoAlpha: 1, y: 0, duration: 0.52 },
-        '<0.08'
-      )
-
-    gsap.to('[data-home-builds-header]', {
+    gsap.to(buildsHeader, {
       y: -18,
       ease: 'none',
       scrollTrigger: {
@@ -87,6 +70,66 @@ export function useHomeScrollAnimations(
         scrub: 0.7,
       },
     })
+
+    const motionMedia = gsap.matchMedia()
+
+    motionMedia.add('(min-width: 769px)', () => {
+      projectMotionCards.forEach((card) => {
+        const previewMedia = card.querySelector('[data-project-preview] img')
+        const activeTargets = previewMedia ? [card, previewMedia] : [card]
+
+        const cardTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 94%',
+            end: 'bottom 6%',
+            scrub: 0.65,
+            onToggle: ({ isActive }) => {
+              gsap.set(activeTargets, {
+                willChange: isActive ? 'transform, opacity' : 'auto',
+              })
+            },
+          },
+        })
+
+        cardTimeline
+          .fromTo(
+            card,
+            {
+              autoAlpha: 0.7,
+              y: 24,
+              rotationX: -7,
+              transformOrigin: '50% 100%',
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              rotationX: 0,
+              duration: 0.38,
+              ease: 'none',
+            }
+          )
+          .to(card, {
+            autoAlpha: 0.86,
+            y: -12,
+            rotationX: 6,
+            transformOrigin: '50% 0%',
+            duration: 0.62,
+            ease: 'none',
+          })
+
+        if (previewMedia) {
+          cardTimeline.fromTo(
+            previewMedia,
+            { scale: 1.025, yPercent: 2 },
+            { scale: 1.065, yPercent: -2.5, duration: 1, ease: 'none' },
+            0
+          )
+        }
+      })
+    })
+
+    return () => motionMedia.revert()
   }, {
     dependencies: [isHeroComplete, skipEntranceAnimation],
     revertOnUpdate: true,

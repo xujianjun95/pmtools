@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import ProjectBadges from '../../../components/common/ProjectBadges'
 import ProjectMockup from '../../../components/mockups/ProjectMockup'
 import styles from '../ProjectDetail.module.css'
 
@@ -84,20 +85,11 @@ function DetailHero({ project }) {
           <span className="section-label fi d1">Project</span>
           <h1 className={`${styles.detailName} fi d2`}>{project.title}</h1>
           <p className={`${styles.detailTagline} fi d3`}>{project.tagline}</p>
-          {(project.featuredBadge || project.badge) && (
-            <div className={`${styles.detailBadges} fi d4`}>
-              {project.featuredBadge && (
-                <span
-                  className={`${styles.detailBadge} ${styles.detailFeaturedBadge}`}
-                >
-                  ✦ {project.featuredBadge}
-                </span>
-              )}
-              {project.badge && (
-                <span className={styles.detailBadge}>⭐ {project.badge}</span>
-              )}
-            </div>
-          )}
+          <ProjectBadges
+            featuredBadge={project.featuredBadge}
+            badge={project.badge}
+            className={`${styles.detailBadges} fi d4`}
+          />
           <p className={`${styles.detailDesc} fi d4`}>{project.detailDescription}</p>
           <div className={`${styles.heroActions} fi d5`}>
             <a
@@ -125,7 +117,7 @@ function DetailHero({ project }) {
 
         <div className={`${styles.detailHeroVisual} fi d6`}>
           <div className={styles.detailVisualMockup}>
-            <ProjectMockup type={project.mockupType} />
+            <ProjectMockup type={project.mockupType} isActive />
           </div>
         </div>
       </div>

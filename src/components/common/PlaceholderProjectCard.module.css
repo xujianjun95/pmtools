@@ -7,6 +7,7 @@
 }
 
 .mockInner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,34 +17,131 @@
       160deg,
       color-mix(in srgb, var(--border-subtle) 55%, transparent) 0%,
       color-mix(in srgb, var(--bg-alt) 90%, var(--surface)) 100%
-    );
-  border: 1px dashed color-mix(in srgb, var(--border) 75%, transparent);
+  );
+  border: 0;
+}
+
+.mockInner::before {
+  content: '';
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--text-muted) 8%, transparent),
+    transparent 68%
+  );
+  opacity: 0.45;
+  transform: scale(0.92);
+  animation: poolBreath 7s ease-in-out infinite;
+}
+
+.ideaPool {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ideaSheet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: clamp(74px, 18vw, 160px);
+  height: clamp(42px, 9.5vw, 84px);
+  flex-direction: column;
+  gap: clamp(4px, 0.65vw, 7px);
+  padding: clamp(10px, 1.5vw, 15px);
+  border: 1px solid color-mix(in srgb, var(--text-muted) 24%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--bg-alt));
+  box-shadow:
+    0 12px 30px color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 1px 0 color-mix(in srgb, white 68%, transparent) inset;
+  opacity: 0.7;
+  will-change: transform, opacity;
+}
+
+.ideaSheet i {
+  display: block;
+  width: 68%;
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 42%, transparent);
+}
+
+.ideaSheet i:nth-child(2) {
+  width: 86%;
+}
+
+.ideaSheet i:nth-child(3) {
+  width: 48%;
+}
+
+.ideaSheetBack {
+  animation: queueFlow 7s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.ideaSheetMiddle {
+  animation: queueFlow 7s cubic-bezier(0.45, 0, 0.2, 1) -2.333s infinite;
+}
+
+.ideaSheetFront {
+  animation: queueFlow 7s cubic-bezier(0.45, 0, 0.2, 1) -4.666s infinite;
 }
 
 .mockPlate {
+  position: absolute;
+  bottom: clamp(14px, 2vw, 22px);
+  left: clamp(14px, 2vw, 22px);
+  z-index: 5;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
-  padding: 20px;
+  gap: 9px;
+  padding: 8px 11px;
+  border: 1px solid color-mix(in srgb, var(--text-muted) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--bg-alt));
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--text-primary) 8%, transparent);
 }
 
 .mockGlyph {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-family: var(--font-mono);
-  font-size: 1.75rem;
-  letter-spacing: 0.2em;
   color: var(--text-muted);
-  opacity: 0.45;
+  opacity: 0.72;
+}
+
+.mockGlyph i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: backlogDot 1.6s ease-in-out infinite;
+}
+
+.mockGlyph i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.mockGlyph i:nth-child(3) {
+  animation-delay: 0.36s;
 }
 
 .mockHint {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 500;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--text-muted);
-  opacity: 0.65;
+  opacity: 0.78;
+  animation: hintBreathe 7s ease-in-out infinite;
 }
 
 .marker {
@@ -73,6 +171,104 @@
   }
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes poolBreath {
+  0%, 100% {
+    opacity: 0.32;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.58;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes queueFlow {
+  0%, 15% {
+    z-index: 1;
+    opacity: 0.7;
+    transform: translate3d(-12%, -76%, 0) rotate(5deg) scale(0.88);
+  }
+  33% {
+    z-index: 2;
+    opacity: 0.84;
+    transform: translate3d(-34%, -60%, 0) rotate(2deg) scale(0.94);
+  }
+  58%, 68% {
+    z-index: 3;
+    opacity: 0.96;
+    transform: translate3d(-56%, -44%, 0) rotate(0deg) scale(1);
+  }
+  82% {
+    z-index: 3;
+    opacity: 0;
+    transform: translate3d(-108%, -24%, 0) rotate(-5deg) scale(0.94);
+  }
+  82.1% {
+    z-index: 1;
+    opacity: 0;
+    transform: translate3d(-12%, -76%, 0) rotate(5deg) scale(0.88);
+  }
+  88%, 100% {
+    z-index: 1;
+    opacity: 0.7;
+    transform: translate3d(-12%, -76%, 0) rotate(5deg) scale(0.88);
+  }
+}
+
+@keyframes backlogDot {
+  0%, 60%, 100% {
+    opacity: 0.28;
+    transform: translateY(0) scale(0.82);
+  }
+  30% {
+    opacity: 0.92;
+    transform: translateY(-2px) scale(1);
+  }
+}
+
+@keyframes hintBreathe {
+  0%, 100% {
+    opacity: 0.68;
+    letter-spacing: 0.16em;
+  }
+  50% {
+    opacity: 0.9;
+    letter-spacing: 0.2em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor,
+  .mockInner::before,
+  .ideaSheet,
+  .mockGlyph i,
+  .mockHint {
+    animation: none;
+  }
+
+  .cursor {
+    opacity: 1;
+  }
+
+  .ideaSheetBack {
+    z-index: 1;
+    opacity: 0.7;
+    transform: translate3d(-12%, -76%, 0) rotate(5deg) scale(0.88);
+  }
+
+  .ideaSheetMiddle {
+    z-index: 2;
+    opacity: 0.84;
+    transform: translate3d(-34%, -60%, 0) rotate(2deg) scale(0.94);
+  }
+
+  .ideaSheetFront {
+    z-index: 3;
+    opacity: 0.96;
+    transform: translate3d(-56%, -44%, 0) scale(1);
   }
 }
 

@@ -1,6 +1,9 @@
 import { Link, useParams } from 'react-router-dom'
 import { getProjectById } from '../../data/projects'
-import { scrollToBuildsNavState } from '../../utils/scrollBuildsGallery'
+import {
+  createScrollToProjectNavState,
+  scrollToBuildsNavState,
+} from '../../utils/scrollBuildsGallery'
 import styles from './ProjectDetail.module.css'
 import DetailHero from './components/DetailHero'
 import FeaturesSection from './components/FeaturesSection'
@@ -10,8 +13,11 @@ import TechStackSection from './components/TechStackSection'
 import UseCasesSection from './components/UseCasesSection'
 import YesSirPrivacySection from './components/YesSirPrivacySection'
 
-function DetailTopBar({ currentTitle, withEnterAnimation }) {
+function DetailTopBar({ currentTitle, currentProjectId, withEnterAnimation }) {
   const wrapClass = withEnterAnimation ? `${styles.topNav} fi` : styles.topNav
+  const returnState = currentProjectId
+    ? createScrollToProjectNavState(currentProjectId)
+    : scrollToBuildsNavState
 
   return (
     <div className={wrapClass}>
@@ -26,7 +32,7 @@ function DetailTopBar({ currentTitle, withEnterAnimation }) {
             /
           </li>
           <li className={styles.breadcrumbItem}>
-            <Link to="/" state={scrollToBuildsNavState} className={styles.breadcrumbLink}>
+            <Link to="/" state={returnState} className={styles.breadcrumbLink}>
               构建
             </Link>
           </li>
@@ -40,7 +46,7 @@ function DetailTopBar({ currentTitle, withEnterAnimation }) {
           </li>
         </ol>
       </nav>
-      <Link to="/" className={styles.backLink}>
+      <Link to="/" state={returnState} className={styles.backLink}>
         <span className={styles.backArrow}>←</span> 返回
       </Link>
     </div>
@@ -64,7 +70,11 @@ function ProjectDetailPage() {
 
   return (
     <section className={styles.page}>
-      <DetailTopBar currentTitle={project.title} withEnterAnimation />
+      <DetailTopBar
+        currentTitle={project.title}
+        currentProjectId={project.id}
+        withEnterAnimation
+      />
       <DetailHero project={project} />
       <FeaturesSection project={project} />
       <UseCasesSection project={project} />
