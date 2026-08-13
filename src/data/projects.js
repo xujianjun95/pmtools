@@ -58,7 +58,7 @@ const projectData = [
     number: '03',
     title: 'Dang Analysis',
     tagline: '投资分析智能体',
-    badge: '内测中',
+    badge: '限时优惠 · 19.99 元/月',
     description: 'AI 驱动 A 股投资洞察。Agentic Loop 双阶段决策引擎实时捕获市场数据、机构动向与热点题材，结合涵盖数百篇深度研报的专属知识库进行交叉验证，为您输出专业、体系化的投资策略。',
     detailDescription: 'AI 驱动 A 股投资洞察。Agentic Loop 双阶段决策引擎实时捕获市场数据、机构动向与热点题材，结合涵盖数百篇深度研报的专属知识库进行交叉验证，为您输出专业、体系化的投资策略。',
     tags: ['Agentic AI', '投资分析', '知识库 RAG'],
@@ -89,6 +89,7 @@ const projectData = [
     links: {
       project: 'https://pmtools.com.cn/dang-analysis/',
       source: '#',
+      purchase: 'https://m.tb.cn/h.8h3oc7X?tk=05bdT0ctpeG',
     },
     origin: {
       title: '💡 开发初衷：重构被割裂的决策链路',

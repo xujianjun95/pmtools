@@ -9,15 +9,26 @@ function ProjectCard({ project, reversed = false }) {
   const [isPreviewActive, setIsPreviewActive] = useState(false)
   const cardClass = `${styles.card}${reversed ? ` ${styles.reversed}` : ''}`
 
+  const handleCardBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setIsPreviewActive(false)
+    }
+  }
+
   return (
-    <Link
-      to={`/project/${project.id}`}
+    <article
       className={cardClass}
       onMouseEnter={() => setIsPreviewActive(true)}
       onMouseLeave={() => setIsPreviewActive(false)}
       onFocus={() => setIsPreviewActive(true)}
-      onBlur={() => setIsPreviewActive(false)}
+      onBlur={handleCardBlur}
     >
+      <Link
+        to={`/project/${project.id}`}
+        className={styles.cardLink}
+        aria-label={`查看 ${project.title} 项目详情`}
+      />
+
       <div className={styles.mockupWrap}>
         <div className={styles.mockupInner} data-project-preview>
           <ProjectMockup type={project.mockupType} isActive={isPreviewActive} />
@@ -32,10 +43,11 @@ function ProjectCard({ project, reversed = false }) {
         <div className={styles.nameRow}>
           <h3 className={styles.name}>{project.title}</h3>
         </div>
-        {(project.featuredBadge || project.badge) && (
+        {(project.featuredBadge || project.badge || project.links?.purchase) && (
           <ProjectBadges
             featuredBadge={project.featuredBadge}
             badge={project.badge}
+            purchaseUrl={project.links?.purchase}
             className={styles.cardBadges}
           />
         )}
@@ -51,7 +63,7 @@ function ProjectCard({ project, reversed = false }) {
           </div>
         </div>
       </div>
-    </Link>
+    </article>
   )
 }
 

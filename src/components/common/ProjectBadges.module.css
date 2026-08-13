@@ -24,3 +24,48 @@
   background: color-mix(in srgb, #188038 10%, transparent);
   color: #188038;
 }
+
+.purchaseButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border: 1px solid #9a513d;
+  border-radius: 20px;
+  background: #9a513d;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  pointer-events: auto;
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.purchaseButton:hover {
+  border-color: #81402f;
+  background: #81402f;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.purchaseButton:focus-visible {
+  outline: 2px solid color-mix(in srgb, #9a513d 45%, transparent);
+  outline-offset: 2px;
+}
+
+.purchaseButton:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .purchaseButton {
+    transition: none;
+  }
+}

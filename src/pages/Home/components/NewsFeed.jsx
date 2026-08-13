@@ -90,7 +90,7 @@ function NewsFeed({ isHeroComplete, skipEntranceAnimation }) {
           资讯
           <span className={styles.count}> / NEWS</span>
         </h2>
-        <p className={styles.desc}>AI 前沿，每日精选</p>
+        <p className={styles.desc}>AI 前沿资讯，每日精选</p>
       </div>
 
       <div className={styles.list}>

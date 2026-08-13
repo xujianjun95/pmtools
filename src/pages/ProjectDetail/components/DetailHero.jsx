@@ -88,6 +88,8 @@ function DetailHero({ project }) {
           <ProjectBadges
             featuredBadge={project.featuredBadge}
             badge={project.badge}
+            purchaseUrl={project.links?.purchase}
+            purchaseLabel="点击购买"
             className={`${styles.detailBadges} fi d4`}
           />
           <p className={`${styles.detailDesc} fi d4`}>{project.detailDescription}</p>

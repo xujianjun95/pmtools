@@ -25,7 +25,7 @@ function ProjectsGrid() {
           <span className={styles.buildsCount}> / BUILDS</span>
         </h2>
         <p className={styles.buildsDesc}>
-          滚动探索更多 <span aria-hidden="true">↓</span>
+          向下滑动探索更多 <span aria-hidden="true">↓</span>
         </p>
       </div>
 

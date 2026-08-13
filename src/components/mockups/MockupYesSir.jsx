@@ -89,54 +89,33 @@ function MockupYesSir({ isActive = false }) {
         </div>
 
         <div className={styles.pageCanvas}>
-          <div className={styles.pmHomeHeader}>
-            <strong>PMTOOLS</strong>
-            <div className={styles.pmHomeNav}>
-              <span className={styles.pmHomeNavActive}>造物</span>
-              <span>资讯</span>
-              <span>文章</span>
-              <span>关于我</span>
-            </div>
-            <div className={styles.pmHomeStatus}>
+          <div className={styles.pageTopline}>
+            <span className={styles.placeholderBrand} />
+            <div className={styles.placeholderNavGroup}>
               <i />
-              <span>System Online</span>
-              <b>light</b>
+              <i />
+              <i />
             </div>
+            <span className={styles.placeholderNavAction} />
           </div>
-          <div className={styles.pmHomeBody}>
-            <section className={styles.pmHomeHero}>
-              <div className={styles.pmHomeHeroCopy}>
-                <span className={styles.pmHomeEyebrow}>CRAFTING &amp; BUILDING</span>
-                <strong>
-                  Why suffer poor design<br />
-                  when you can build the standard?
-                </strong>
-                <p>造点顺手的工具，解决一些小麻烦。</p>
+          <div className={styles.pageBody}>
+            <section className={styles.placeholderHero}>
+              <div className={styles.placeholderCopyStack}>
+                <span className={styles.placeholderEyebrow} />
+                <span className={styles.placeholderTitle} />
+                <span className={styles.placeholderTitleShort} />
+                <span className={styles.placeholderCopy} />
+                <span className={styles.placeholderButton} />
               </div>
-              <div className={styles.pmHomeArtwork}>
-                <svg viewBox="0 0 160 120" role="presentation">
-                  <rect x="10" y="18" width="138" height="86" />
-                  <path d="M95 18V104M95 71H148M115 71V104M95 84H115" />
-                  <path className={styles.pmHomeSpiral} d="M10 104A86 86 0 0 1 96 18A52 52 0 0 1 148 70A33 33 0 0 1 115 103A20 20 0 0 1 95 83A13 13 0 0 1 108 70" />
-                  <circle cx="108" cy="70" r="2" />
-                </svg>
-              </div>
+              <span className={styles.placeholderVisual} />
             </section>
 
-            <div className={styles.pmBuildsHeader}>
-              <span><b>造物</b> / BUILDS</span>
-              <i />
-            </div>
-            <div className={styles.pmBuildsList}>
-              {[1, 2].map((item) => (
-                <div key={item} className={styles.pmBuildCard}>
-                  <span className={styles.pmBuildPreview} />
-                  <span className={styles.pmBuildCopy}>
-                    <small>0{item}</small>
-                    <i />
-                    <i />
-                  </span>
-                  <b>↗</b>
+            <div className={styles.pageCards}>
+              {[1, 2, 3].map((item) => (
+                <div key={item}>
+                  <i />
+                  <span />
+                  <small />
                 </div>
               ))}
             </div>

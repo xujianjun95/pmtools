@@ -88,7 +88,7 @@
   color: var(--text-secondary);
   opacity: 0.78;
   transform: translateY(-50%);
-  pointer-events: none;
+  pointer-events: auto;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 22%);
   mask-image: linear-gradient(to right, transparent 0%, black 22%);
 }
@@ -104,6 +104,7 @@
   fill: none;
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
+  vector-effect: non-scaling-stroke;
   animation-name: none;
   animation-duration: 0.42s;
   animation-timing-function: ease-out;
@@ -138,9 +139,112 @@
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.heroArtworkSpiralDetail {
+  stroke: color-mix(in srgb, var(--text-primary) 52%, transparent);
+  stroke-width: 0.85;
+  stroke-linecap: round;
+  animation-duration: 2.05s;
+  animation-delay: 2.42s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.heroArtworkSpiralTexture {
+  stroke-width: 0.55;
+  opacity: 0.55;
+}
+
+.heroArtworkAnnotations {
+  color: var(--text-secondary);
+}
+
+.heroArtworkAnnotation {
+  opacity: 0.42;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.heroSection[data-hero-animation='playing'] .heroArtworkAnnotation {
+  opacity: 0;
+  animation: heroArtworkAnnotationIn 0.72s ease-out var(--annotation-delay) forwards;
+}
+
+.heroArtworkLabel,
+.heroArtworkFormula,
+.heroArtworkScript,
+.heroArtworkScriptSmall,
+.heroArtworkDimensionText {
+  fill: currentColor;
+}
+
+.heroArtworkLabel {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 6px;
+  font-weight: 600;
+  letter-spacing: 1.7px;
+}
+
+.heroArtworkFormula {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 9px;
+  font-style: italic;
+}
+
+.heroArtworkScript,
+.heroArtworkScriptSmall,
+.heroArtworkDimensionText {
+  font-family: 'Snell Roundhand', 'Bradley Hand', 'Segoe Print', cursive;
+  font-style: italic;
+}
+
+.heroArtworkScript {
+  font-size: 9px;
+}
+
+.heroArtworkScriptSmall {
+  font-size: 7px;
+}
+
+.heroArtworkDimensionText {
+  font-size: 6px;
+}
+
+.heroArtworkAnnotationLine,
+.heroArtworkDimension,
+.heroArtworkColumn,
+.heroArtworkColumnGuide {
+  fill: none;
+  stroke: currentColor;
+  vector-effect: non-scaling-stroke;
+}
+
+.heroArtworkAnnotationLine {
+  stroke-width: 0.7;
+}
+
+.heroArtworkDimension {
+  stroke-width: 0.55;
+}
+
+.heroArtworkColumn,
+.heroArtworkColumnGuide {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.heroArtworkColumn {
+  stroke-width: 0.9;
+}
+
+.heroArtworkColumnGuide {
+  stroke-width: 0.5;
+  stroke-dasharray: 3 5;
+  opacity: 0.55;
+}
+
 .heroArtworkCenter {
   fill: var(--accent);
   opacity: 0.85;
+  pointer-events: none;
   transform-box: fill-box;
   transform-origin: center;
   animation-name: none;
@@ -170,6 +274,15 @@
   to {
     opacity: 0.85;
     transform: scale(1);
+  }
+}
+
+@keyframes heroArtworkAnnotationIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.42;
   }
 }
 
@@ -249,6 +362,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .heroArtwork {
+    pointer-events: none;
+  }
+
   .heroArtworkStroke {
     animation: none;
     stroke-dashoffset: 0;
@@ -257,6 +374,11 @@
   .heroArtworkCenter {
     animation: none;
     opacity: 0.85;
+  }
+
+  .heroArtworkAnnotation {
+    animation: none;
+    opacity: 0.42;
   }
 
   .buildCardShell,

@@ -908,16 +908,16 @@
 }
 
 @keyframes cameraMove {
-  0%, 16% {
+  0%, 3.1% {
     transform: scale(1) translate3d(0, 0, 0);
   }
-  22%, 39% {
+  6.9%, 31.3% {
     transform: scale(1.5) translate3d(-8%, -15%, 0);
   }
-  45%, 79% {
+  35%, 75% {
     transform: scale(1.17) translate3d(-3%, 7%, 0);
   }
-  82%, 95% {
+  78.8%, 95% {
     transform: scale(1) translate3d(0, 0, 0);
   }
   98%, 100% {
@@ -926,29 +926,29 @@
 }
 
 @keyframes topBarVisibility {
-  0%, 39%, 98%, 100% { opacity: 1; transform: translateY(0); }
-  44%, 95% { opacity: 0; transform: translateY(-5px); }
+  0%, 31.3%, 98%, 100% { opacity: 1; transform: translateY(0); }
+  35%, 95% { opacity: 0; transform: translateY(-5px); }
 }
 
 @keyframes landingVisibility {
-  0%, 40% { opacity: 1; }
-  45%, 95% { opacity: 0; }
+  0%, 31.3% { opacity: 1; }
+  35%, 95% { opacity: 0; }
   98%, 100% { opacity: 1; }
 }
 
 @keyframes heroMove {
-  0%, 16% { opacity: 1; transform: translateY(0); }
-  22%, 40% { opacity: 0.42; transform: translateY(-12px) scale(0.96); }
+  0%, 3.1% { opacity: 1; transform: translateY(0); }
+  6.9%, 31.3% { opacity: 0.42; transform: translateY(-12px) scale(0.96); }
   98%, 100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes composerFocus {
-  0%, 17%, 98%, 100% {
+  0%, 6.9%, 98%, 100% {
     border-color: rgba(24, 31, 42, 0.11);
     box-shadow: 0 12px 32px rgba(29, 39, 57, 0.08);
     transform: scale(1);
   }
-  22%, 38% {
+  10.6%, 31.3% {
     border-color: rgba(23, 109, 243, 0.58);
     box-shadow: 0 14px 38px rgba(29, 39, 57, 0.1), 0 0 0 3px rgba(23, 109, 243, 0.09);
     transform: scale(1.025);
@@ -956,113 +956,113 @@
 }
 
 @keyframes placeholderFade {
-  0%, 20%, 98%, 100% { opacity: 1; }
-  22%, 95% { opacity: 0; }
+  0%, 9.4%, 98%, 100% { opacity: 1; }
+  10.6%, 95% { opacity: 0; }
 }
 
 @keyframes typeQuery {
-  0%, 21%, 98%, 100% { width: 0; opacity: 0; }
-  22% { width: 0; opacity: 1; }
-  30%, 40% { width: 13em; opacity: 1; }
-  45%, 95% { width: 13em; opacity: 0; }
+  0%, 9.4%, 98%, 100% { width: 0; opacity: 0; }
+  10.6% { width: 0; opacity: 1; }
+  18.1%, 31.3% { width: 13em; opacity: 1; }
+  35%, 95% { width: 13em; opacity: 0; }
 }
 
 @keyframes sendReady {
-  0%, 21%, 98%, 100% { background: #edf0f4; color: #a1a7b1; transform: scale(1); }
-  30%, 37% { background: #176df3; color: white; transform: scale(1); }
-  38% { background: #176df3; color: white; transform: scale(0.82); }
-  40%, 43% { background: #176df3; color: white; transform: scale(1); }
+  0%, 9.4%, 98%, 100% { background: #edf0f4; color: #a1a7b1; transform: scale(1); }
+  18.1%, 27.5% { background: #176df3; color: white; transform: scale(1); }
+  28.8% { background: #176df3; color: white; transform: scale(0.82); }
+  30%, 33.8% { background: #176df3; color: white; transform: scale(1); }
 }
 
 @keyframes suggestionFade {
-  0%, 17%, 98%, 100% { opacity: 1; }
-  23%, 95% { opacity: 0.18; }
+  0%, 6.9%, 98%, 100% { opacity: 1; }
+  10.6%, 95% { opacity: 0.18; }
 }
 
 @keyframes answerSceneVisibility {
-  0%, 40%, 84%, 100% { opacity: 0; transform: translateY(12%); }
-  46%, 79% { opacity: 1; transform: translateY(0); }
+  0%, 31.3%, 78.8%, 100% { opacity: 0; transform: translateY(12%); }
+  35%, 75% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes conversationPush {
-  0%, 56% { transform: translateY(0); }
-  74%, 82% { transform: translateY(-48%); }
+  0%, 50% { transform: translateY(0); }
+  62.5%, 75% { transform: translateY(-48%); }
 }
 
 @keyframes thinkingVisibility {
-  0%, 43%, 84%, 100% { opacity: 0; transform: translateY(5px); }
-  48%, 79% { opacity: 1; transform: translateY(0); }
+  0%, 32.5%, 78.8%, 100% { opacity: 0; transform: translateY(5px); }
+  36.3%, 75% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes answerCardVisibility {
-  0%, 54%, 84%, 100% { opacity: 0; transform: translateY(8px); }
-  60%, 79% { opacity: 1; transform: translateY(0); }
+  0%, 46.3%, 78.8%, 100% { opacity: 0; transform: translateY(8px); }
+  50%, 75% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes reportReadyVisibility {
-  0%, 67%, 84%, 100% { opacity: 0; transform: translateY(9px); }
-  72%, 79% { opacity: 1; transform: translateY(0); }
+  0%, 58.8%, 78.8%, 100% { opacity: 0; transform: translateY(9px); }
+  62.5%, 75% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes reportButtonPulse {
-  0%, 73%, 78%, 100% { transform: scale(1); box-shadow: none; }
-  75% { transform: scale(1.04); box-shadow: 0 0 0 4px rgba(23, 109, 243, 0.12); }
-  77% { transform: scale(0.95); box-shadow: 0 0 0 2px rgba(23, 109, 243, 0.08); }
+  0%, 68.8%, 75%, 100% { transform: scale(1); box-shadow: none; }
+  70% { transform: scale(1.04); box-shadow: 0 0 0 4px rgba(23, 109, 243, 0.12); }
+  72.5% { transform: scale(0.95); box-shadow: 0 0 0 2px rgba(23, 109, 243, 0.08); }
 }
 
 @keyframes reportSceneVisibility {
-  0%, 79%, 98%, 100% { opacity: 0; transform: translateY(10%) scale(0.97); }
-  84%, 95% { opacity: 1; transform: translateY(0) scale(1); }
+  0%, 75%, 98%, 100% { opacity: 0; transform: translateY(10%) scale(0.97); }
+  78.8%, 95% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes sendClickPulseLoop {
-  0%, 33%, 43%, 100% {
+  0%, 24.4%, 34.4%, 100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.8);
   }
-  35%, 37% {
+  26.9%, 28.1% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
-  38% {
+  28.8% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(0.78);
   }
 }
 
 @keyframes reportClickPulseLoop {
-  0%, 68%, 81%, 100% {
+  0%, 65%, 76.3%, 100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.8);
   }
-  73%, 75% {
+  68.8%, 70% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
-  77% {
+  72.5% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(0.78);
   }
 }
 
 @keyframes sendClickRingLoop {
-  0%, 37%, 42%, 100% {
+  0%, 28.1%, 34.4%, 100% {
     opacity: 0;
     transform: scale(0.5);
   }
-  38% {
+  28.8% {
     opacity: 0.8;
   }
-  41% {
+  33.1% {
     opacity: 0;
     transform: scale(1.75);
   }
 }
 
 @keyframes reportClickRingLoop {
-  0%, 74%, 80%, 100% { opacity: 0; transform: scale(0.5); }
-  76% { opacity: 0.8; }
-  79% { opacity: 0; transform: scale(1.75); }
+  0%, 70%, 76.3%, 100% { opacity: 0; transform: scale(0.5); }
+  71.3% { opacity: 0.8; }
+  75% { opacity: 0; transform: scale(1.75); }
 }
 
 @keyframes skeletonShimmer {
