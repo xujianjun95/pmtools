@@ -4,36 +4,6 @@
   padding: 28px var(--margin-page);
 }
 
-.footerWithGradient {
-  padding-bottom: 0;
-}
-
-.gradientStage {
-  position: relative;
-  height: 50svh;
-  margin: 28px calc(var(--margin-page) * -1) 0;
-  overflow: hidden;
-}
-
-.gradient {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  transform: scaleY(var(--gradient-scale-y, 0));
-  transform-origin: bottom;
-  will-change: transform;
-}
-
-.gradient[data-reveal-state='active'] {
-  position: fixed;
-  top: auto;
-  height: 50svh;
-}
-
-.gradient[data-reveal-state='complete'] {
-  position: absolute;
-}
-
 .inner {
   width: 100%;
   max-width: 1400px;
@@ -64,24 +34,9 @@
     padding: 20px var(--margin-page);
   }
 
-  .footerWithGradient {
-    padding-bottom: 0;
-  }
-
   .inner {
     flex-direction: column;
     gap: 6px;
     text-align: center;
-  }
-
-  .gradientStage {
-    height: 50svh;
-    margin-top: 20px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gradient {
-    will-change: auto;
   }
 }
