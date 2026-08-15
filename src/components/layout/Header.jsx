@@ -13,6 +13,7 @@ function scrollToNewsSection() {
     block: 'start',
   })
 }
+
 import styles from './Header.module.css'
 
 function formatHeaderTime() {
@@ -31,6 +32,7 @@ function Header() {
   const navRef = useRef(null)
   const buildsLinkRef = useRef(null)
   const newsLinkRef = useRef(null)
+  const articlesLinkRef = useRef(null)
   const aboutLinkRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
@@ -55,6 +57,8 @@ function Header() {
       let targetEl = null
       if (location.pathname === '/about') {
         targetEl = aboutLinkRef.current
+      } else if (location.pathname === '/articles') {
+        targetEl = articlesLinkRef.current
       } else if (location.pathname === '/') {
         if (activeNav === 'builds') targetEl = buildsLinkRef.current
         if (activeNav === 'news') targetEl = newsLinkRef.current
@@ -146,9 +150,15 @@ function Header() {
               >
                 资讯
               </Link>
-              <span className={styles.navLink} aria-disabled="true">
+              <Link
+                ref={articlesLinkRef}
+                to="/articles"
+                className={styles.navLink}
+                aria-current={location.pathname === '/articles' ? 'page' : undefined}
+                onClick={() => setActiveNav(null)}
+              >
                 文章
-              </span>
+              </Link>
               <Link
                 ref={aboutLinkRef}
                 to="/about"

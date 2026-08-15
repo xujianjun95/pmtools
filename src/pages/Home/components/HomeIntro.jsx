@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import BlurText from '../../../components/common/BlurText'
+import SplitText from '../../../components/common/SplitText'
 import styles from '../Home.module.css'
 
 const BADGE_COPY = 'Crafting & Building'
 const TITLE_LINE_1 = 'Why suffer poor design'
 const TITLE_LINE_2 = 'when you can build the standard?'
 const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦。'
-/** 黄金分割图中心圆点落定：4.36s delay + 0.4s duration。 */
+/** 黄金分割图中心圆点落定：4.52s delay + 0.24s duration。 */
 const HERO_ANIMATION_END_MS = 4760
 const SUBTITLE_STEP_DURATION_MS = 560
 const SPIRAL_SAMPLE_COUNT = 180
@@ -101,7 +101,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
   const n2 = TITLE_LINE_2.trim().split(/\s+/).length
 
   const titleWordDelay = 260
-  /** 与大标题首个词同拍：BlurText delayOffset 与此一致 */
+  /** 与大标题首个词同拍：SplitText 起始 delay（注入 to.delay）与此一致 */
   const gapAfterBadge = 120
   const gapBeforeSubtitle = 220
   const title1Offset = gapAfterBadge
@@ -113,6 +113,15 @@ function HomeIntro({ shouldAnimate, onComplete }) {
     (HERO_ANIMATION_END_MS - subtitleOffset - SUBTITLE_STEP_DURATION_MS) /
       subtitleStaggerCount
   )
+  /** 与原 BlurText 一致的「自上方模糊落入」关键帧 */
+  const titleFrom = { opacity: 0, y: -28, filter: 'blur(10px)' }
+  const titleTo = (startOffsetMs) => ({
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    // SplitText 无行间错峰参数，用 gsap tween 的 delay 实现
+    delay: startOffsetMs / 1000,
+  })
 
   useEffect(() => {
     interactionReadyRef.current = !playAnimation && !prefersReducedMotion
@@ -259,30 +268,34 @@ function HomeIntro({ shouldAnimate, onComplete }) {
       <h1 className={styles.heroTitle}>
         <span className={styles.heroTitleMotion}>
           {playAnimation ? (
-            <BlurText
-              component="span"
-              className={styles.heroTitleLine}
+            <SplitText
+              tag="span"
               text={TITLE_LINE_1}
-              animateBy="words"
-              direction="top"
+              splitType="words"
               delay={titleWordDelay}
-              delayOffset={title1Offset}
-              stepDuration={0.4}
+              duration={0.4}
+              from={titleFrom}
+              to={titleTo(title1Offset)}
+              threshold={0}
+              rootMargin="0px"
+              textAlign="left"
             />
           ) : (
             <span className={styles.heroTitleLine}>{TITLE_LINE_1}</span>
           )}
           <br />
           {playAnimation ? (
-            <BlurText
-              component="span"
-              className={styles.heroTitleLine}
+            <SplitText
+              tag="span"
               text={TITLE_LINE_2}
-              animateBy="words"
-              direction="top"
+              splitType="words"
               delay={titleWordDelay}
-              delayOffset={title2Offset}
-              stepDuration={0.4}
+              duration={0.4}
+              from={titleFrom}
+              to={titleTo(title2Offset)}
+              threshold={0}
+              rootMargin="0px"
+              textAlign="left"
             />
           ) : (
             <span className={styles.heroTitleLine}>{TITLE_LINE_2}</span>
@@ -292,16 +305,17 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
       <p className={styles.heroSubtitle}>
         {playAnimation ? (
-          <BlurText
-            component="span"
-            className={styles.heroSubtitleBlur}
+          <SplitText
+            tag="span"
             text={SUBTITLE_COPY}
-            animateBy="letters"
-            direction="top"
+            splitType="chars"
             delay={letterDelay}
-            delayOffset={subtitleOffset}
-            stepDuration={0.28}
-            threshold={0.08}
+            duration={0.45}
+            from={titleFrom}
+            to={titleTo(subtitleOffset)}
+            threshold={0}
+            rootMargin="0px"
+            textAlign="left"
           />
         ) : (
           <span className={styles.heroSubtitleBlur}>{SUBTITLE_COPY}</span>

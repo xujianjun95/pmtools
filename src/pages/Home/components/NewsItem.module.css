@@ -63,7 +63,6 @@
   gap: 8px;
   flex-shrink: 0;
   white-space: nowrap;
-  margin-right: -48px;
 }
 
 .expanded {
@@ -73,8 +72,6 @@
   margin-top: 0;
   padding-top: 0;
   border-top: 1px solid transparent;
-  margin-left: 0;
-  margin-right: -48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -213,7 +210,17 @@
     padding-right: 40px;
   }
 
+  /* 移动端不丢信息：来源/日期折到第二行，而不是 display:none */
+  .summaryRow {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .summary {
+    flex-basis: 100%;
+  }
+
   .meta {
-    display: none;
+    font-size: 0.7rem;
   }
 }

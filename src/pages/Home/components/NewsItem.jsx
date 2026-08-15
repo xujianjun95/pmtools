@@ -49,6 +49,7 @@ function NewsItem({ item, index }) {
         onClick={() => setExpanded((v) => !v)}
         role="button"
         tabIndex={0}
+        aria-expanded={expanded}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()

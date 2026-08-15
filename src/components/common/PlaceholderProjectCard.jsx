@@ -2,8 +2,17 @@ import TechTag from './TechTag'
 import pc from './ProjectCard.module.css'
 import styles from './PlaceholderProjectCard.module.css'
 
+/** 需求池里待捞的点子：三张便签各写一条，随层叠动画轮流浮到最上面 */
+const BACKLOG_IDEAS = ['Tiny Tools', 'Life Automation', 'Fun with AI']
+
 /** 与同页 ProjectCard 同骨架的「下一款」占位，非链接、不可跳转 */
 function PlaceholderProjectCard() {
+  const sheetClasses = [
+    styles.ideaSheetBack,
+    styles.ideaSheetMiddle,
+    styles.ideaSheetFront,
+  ]
+
   return (
     <div
       className={`${pc.card} ${pc.reversed} ${styles.teaser}`}
@@ -15,23 +24,16 @@ function PlaceholderProjectCard() {
           data-project-preview
         >
           <div className={styles.ideaPool} aria-hidden>
-            <span className={`${styles.ideaSheet} ${styles.ideaSheetBack}`}>
-              <i /><i /><i />
-            </span>
-            <span className={`${styles.ideaSheet} ${styles.ideaSheetMiddle}`}>
-              <i /><i /><i />
-            </span>
-            <span className={`${styles.ideaSheet} ${styles.ideaSheetFront}`}>
-              <i /><i /><i />
-            </span>
-          </div>
-          <div className={styles.mockPlate} aria-hidden>
-            <span className={styles.mockGlyph}>
-              <i />
-              <i />
-              <i />
-            </span>
-            <span className={styles.mockHint}>Coming Soon</span>
+            {BACKLOG_IDEAS.map((idea, index) => (
+              <span
+                key={idea}
+                className={`${styles.ideaSheet} ${sheetClasses[index]}`}
+              >
+                <span className={styles.ideaTitle}>{idea}</span>
+                <i />
+                <i />
+              </span>
+            ))}
           </div>
         </div>
       </div>
@@ -48,7 +50,7 @@ function PlaceholderProjectCard() {
         </h3>
         <p className={pc.tagline}>Backlog · 待办</p>
         <p className={pc.desc}>
-          日常工作里积攒的吐槽都扔进需求池了，等哪天有空了，就捞一个出来做。
+          留白的结构，等灵光来填。
         </p>
         <div className={pc.tags}>
           <TechTag className={pc.cardTag}>排期中</TechTag>

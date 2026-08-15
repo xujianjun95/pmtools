@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow-x: clip;
   /* 顶栏为 position:fixed，避免正文被遮住；与原 margin-bottom 下方留白等价 */
   padding-top: var(--layout-top-offset);
 }

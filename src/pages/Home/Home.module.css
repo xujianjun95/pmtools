@@ -69,10 +69,12 @@
 .heroSubtitle {
   margin: 0;
   max-width: 36rem;
-  font-family: 'DM Serif Display', Georgia, serif;
+  font-family: 'DM Serif Display', 'Noto Serif SC', Georgia, serif;
   font-size: 1.25rem;
   font-weight: 400;
-  font-style: italic;
+  /* 中文无斜体字形，italic 只会得到合成伪斜体（笔画变形）；用字距做层次感 */
+  font-style: normal;
+  letter-spacing: 0.02em;
   line-height: 1.6;
   color: var(--text-secondary);
 }
@@ -106,7 +108,7 @@
   stroke-dashoffset: 0;
   vector-effect: non-scaling-stroke;
   animation-name: none;
-  animation-duration: 0.42s;
+  animation-duration: 0.5s;
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
 }
@@ -134,18 +136,18 @@
   stroke-width: 2.25;
   stroke-linecap: round;
   stroke-linejoin: round;
-  animation-duration: 2.05s;
-  animation-delay: 2.42s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 2.85s;
+  animation-delay: 1.85s;
+  animation-timing-function: ease-out;
 }
 
 .heroArtworkSpiralDetail {
   stroke: color-mix(in srgb, var(--text-primary) 52%, transparent);
   stroke-width: 0.85;
   stroke-linecap: round;
-  animation-duration: 2.05s;
-  animation-delay: 2.42s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 2.85s;
+  animation-delay: 1.85s;
+  animation-timing-function: ease-out;
 }
 
 .heroArtworkSpiralTexture {
@@ -248,9 +250,9 @@
   transform-box: fill-box;
   transform-origin: center;
   animation-name: none;
-  animation-duration: 0.4s;
+  animation-duration: 0.24s;
   animation-timing-function: ease-out;
-  animation-delay: 4.36s;
+  animation-delay: 4.52s;
   animation-fill-mode: forwards;
 }
 

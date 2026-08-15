@@ -28,7 +28,7 @@
   --text-primary: #1a1714;
   --text-body: #3a3530;
   --text-secondary: #555048;
-  --text-muted: #8a8478;
+  --text-muted: #6f6a5e; /* WCAG AA: on --bg ≈ 4.85:1 */
   --accent: #7a6040;
   --accent-hover: #6a5235;
   --accent-subtle: rgba(122, 96, 64, 0.08);
@@ -50,7 +50,7 @@
   --text-primary: #ede8e0;
   --text-body: #c8c2b8;
   --text-secondary: #a09888;
-  --text-muted: #6a6258;
+  --text-muted: #8f877c; /* WCAG AA: on --bg ≈ 5.3:1 */
   --accent: #c4a070;
   --accent-hover: #d4b080;
   --accent-subtle: rgba(196, 160, 112, 0.08);

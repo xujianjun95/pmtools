@@ -60,28 +60,6 @@
   transition: box-shadow 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.mockupWrap::before {
-  content: '';
-  position: absolute;
-  z-index: 2;
-  top: -60%;
-  left: -45%;
-  width: 28%;
-  height: 220%;
-  opacity: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, white 34%, transparent),
-    transparent
-  );
-  transform: translateX(-160%) rotate(14deg);
-  transition:
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 240ms ease;
-  pointer-events: none;
-}
-
 .mockupWrap::after {
   content: '';
   position: absolute;
@@ -96,18 +74,19 @@
   height: auto;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 400ms ease;
+}
+
+/* 暗色模式：mockup 为亮色烘焙图，降亮降饱和避免白块刺眼 */
+:global([data-theme='dark']) .mockupInner {
+  filter: brightness(0.85) saturate(0.9);
 }
 
 .card:hover .mockupWrap,
 .card:has(.cardLink:focus-visible) .mockupWrap {
   box-shadow: var(--shadow-card-hover);
-}
-
-.card:hover .mockupWrap::before,
-.card:has(.cardLink:focus-visible) .mockupWrap::before {
-  opacity: 1;
-  transform: translateX(620%) rotate(14deg);
 }
 
 .card:hover .mockupInner,
@@ -273,7 +252,6 @@
 @media (prefers-reduced-motion: reduce) {
   .card,
   .mockupWrap,
-  .mockupWrap::before,
   .mockupInner,
   .arrow,
   .num,

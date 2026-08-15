@@ -1,0 +1,55 @@
+/* 启用自定义光标后，全站隐藏系统光标 */
+:global(html.has-custom-cursor),
+:global(html.has-custom-cursor *) {
+  cursor: none !important;
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10001; /* 高于 body::after 噪点层 (9999) */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+/* 常态：黑色三角箭头（尖端即光标热点，位于容器原点） */
+.arrow {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.28));
+  transition:
+    opacity 0.1s ease,
+    transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* hover 可交互元素：箭头收起，切换为主题色半透明圆点（以光标为中心，1px 黑描边） */
+.dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #16130f;
+  background: var(--accent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.35);
+  transition:
+    opacity 0.12s ease,
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cursor.hover .arrow {
+  opacity: 0;
+  transform: scale(0.55);
+}
+
+.cursor.hover .dot {
+  opacity: 0.42;
+  transform: translate(-50%, -50%) scale(1);
+}

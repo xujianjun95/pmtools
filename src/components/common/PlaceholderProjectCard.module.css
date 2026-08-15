@@ -64,20 +64,28 @@
   will-change: transform, opacity;
 }
 
+/* 便签上的点子标题 + 两条假文横线 */
+.ideaTitle {
+  font-family: var(--font-mono);
+  font-size: clamp(0.52rem, 0.85vw, 0.66rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .ideaSheet i {
   display: block;
-  width: 68%;
+  width: 82%;
   height: 2px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--text-muted) 42%, transparent);
 }
 
-.ideaSheet i:nth-child(2) {
-  width: 86%;
-}
-
-.ideaSheet i:nth-child(3) {
-  width: 48%;
+.ideaSheet i:nth-of-type(2) {
+  width: 55%;
 }
 
 .ideaSheetBack {
@@ -90,58 +98,6 @@
 
 .ideaSheetFront {
   animation: queueFlow 7s cubic-bezier(0.45, 0, 0.2, 1) -4.666s infinite;
-}
-
-.mockPlate {
-  position: absolute;
-  bottom: clamp(14px, 2vw, 22px);
-  left: clamp(14px, 2vw, 22px);
-  z-index: 5;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 11px;
-  border: 1px solid color-mix(in srgb, var(--text-muted) 18%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 94%, var(--bg-alt));
-  box-shadow: 0 7px 18px color-mix(in srgb, var(--text-primary) 8%, transparent);
-}
-
-.mockGlyph {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  opacity: 0.72;
-}
-
-.mockGlyph i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: backlogDot 1.6s ease-in-out infinite;
-}
-
-.mockGlyph i:nth-child(2) {
-  animation-delay: 0.18s;
-}
-
-.mockGlyph i:nth-child(3) {
-  animation-delay: 0.36s;
-}
-
-.mockHint {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  opacity: 0.78;
-  animation: hintBreathe 7s ease-in-out infinite;
 }
 
 .marker {
@@ -218,34 +174,10 @@
   }
 }
 
-@keyframes backlogDot {
-  0%, 60%, 100% {
-    opacity: 0.28;
-    transform: translateY(0) scale(0.82);
-  }
-  30% {
-    opacity: 0.92;
-    transform: translateY(-2px) scale(1);
-  }
-}
-
-@keyframes hintBreathe {
-  0%, 100% {
-    opacity: 0.68;
-    letter-spacing: 0.16em;
-  }
-  50% {
-    opacity: 0.9;
-    letter-spacing: 0.2em;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .cursor,
   .mockInner::before,
-  .ideaSheet,
-  .mockGlyph i,
-  .mockHint {
+  .ideaSheet {
     animation: none;
   }
 

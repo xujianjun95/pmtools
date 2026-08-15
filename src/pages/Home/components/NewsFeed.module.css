@@ -56,7 +56,8 @@
 }
 
 .skeleton {
-  height: 64px;
+  /* 与 NewsItem 实际高度（padding 20+16 + 标题 + 两行摘要）对齐，避免加载完成时列表跳动 */
+  height: 104px;
   background: var(--bg-alt);
   border-radius: 10px;
   animation: pulse 1.5s ease-in-out infinite;

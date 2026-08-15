@@ -100,8 +100,28 @@
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
   color: var(--text-muted);
   transition: color 0.2s;
+}
+
+/* 键盘焦点可见：与整站 accent 语义一致 */
+.navLink:focus-visible,
+.logo:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* 禁用态（如「文章」未上线）：与可点链接做出视觉区分 */
+.navLinkDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.navLinkDisabled:hover {
+  color: var(--text-muted);
 }
 
 .navLink:hover {
@@ -154,12 +174,40 @@
     position: sticky;
   }
 
-  .left {
-    gap: 20px;
+  .barInner {
+    gap: 12px;
   }
 
+  .left {
+    flex: 1;
+    min-width: 0;
+    gap: 16px;
+  }
+
+  .logo {
+    flex-shrink: 0;
+  }
+
+  /* 窄屏导航可横向滑动，坚决不换行；滑动时下划线指示器会错位，直接隐藏 */
   .nav {
-    gap: 22px;
+    flex: 1;
+    min-width: 0;
+    gap: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav::after {
+    display: none;
+  }
+
+  .right {
+    flex-shrink: 0;
   }
 
   .statusBar {
