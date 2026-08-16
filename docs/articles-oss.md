@@ -64,3 +64,50 @@ pmtools/articles/
 - 远程地址请求失败：显示现有本地文章，并在控制台记录原因。
 - OSS 清单请求失败：显示现有本地文章，并在控制台记录原因。
 - 清单中的单篇正文请求失败：跳过该条目，不影响其他已加载文章。
+
+## 一键发布（本地）
+
+项目已经提供本地发布脚本。它默认读取：
+
+```text
+~/Desktop/黑曜石/网站文章
+```
+
+脚本会自动完成以下工作：
+
+1. 读取每个文章目录中的 Markdown 正文和 `images/` 图片。
+2. 去掉 Obsidian 的 YAML 配置头，并把 `![[图片.png]]` 转成网站可读取的图片链接。
+3. 根据文章信息重新生成 `articles.json`。
+4. 先上传正文和图片，最后覆盖 OSS 根目录下的 `articles.json`。
+
+首次使用需要在本机安装并配置阿里云官方 `ossutil`，配置文件只保存在本机，不要提交到 Git：
+
+```bash
+ossutil config
+```
+
+配置时使用北京地域的 Endpoint：
+
+```text
+https://oss-cn-beijing.aliyuncs.com
+```
+
+以后在项目目录执行：
+
+```bash
+npm run articles:publish
+```
+
+正式上传前可以先预览：
+
+```bash
+npm run articles:publish:dry
+```
+
+只发布某一篇文章：
+
+```bash
+npm run articles:publish -- --article ai-codex-guide
+```
+
+脚本只会新增或覆盖上传，不会自动删除 OSS 上的旧文件；这样可以避免误删仍被旧文章引用的图片。草稿可以在文章 frontmatter 中写 `draft: true`，脚本会跳过它。
