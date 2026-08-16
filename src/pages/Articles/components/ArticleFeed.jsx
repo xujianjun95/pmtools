@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { getArticles, getArticleWithNeighbors } from '../../../data/articles'
+import {
+  getArticles,
+  getArticleWithNeighbors,
+  loadArticles,
+} from '../../../data/articles'
 import Markdown, { extractHeadings } from '../../../utils/markdown'
 import styles from './ArticleFeed.module.css'
 
@@ -35,9 +39,21 @@ function ArticleFeed() {
   const sectionRef = useRef(null)
   const firstRunRef = useRef(true)
   const [activeId, setActiveId] = useState(null)
+  const [articles, setArticles] = useState(() => getArticles())
 
-  const articles = getArticles()
-  const detail = activeId ? getArticleWithNeighbors(activeId) : null
+  useEffect(() => {
+    let cancelled = false
+
+    loadArticles().then((result) => {
+      if (!cancelled) setArticles(result.articles)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const detail = activeId ? getArticleWithNeighbors(activeId, articles) : null
   const hasNeighbors = articles.length > 1
   const headings = detail ? extractHeadings(detail.current.content) : []
 

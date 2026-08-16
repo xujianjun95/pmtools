@@ -1,7 +1,9 @@
 /**
- * 文章数据
- * 新增文章：在 articles 数组里追加一个对象即可，列表/详情/上一篇下一篇循环均自动适配。
- * content 为 Markdown 字符串，由 utils/markdown.js 解析渲染。
+ * 本地文章兜底数据。
+ *
+ * 页面默认从公开 OSS manifest 加载文章；也可以用
+ * VITE_ARTICLES_MANIFEST_URL 覆盖地址。远程请求失败时继续使用这里的
+ * 数据，避免文章区白屏。
  */
 
 export const articles = [
@@ -112,16 +114,157 @@ Codex 到底是干什么的？
   },
 ]
 
-/** 按日期倒序，便于列表展示 */
-export function getArticles() {
-  return [...articles].sort(
+const DEFAULT_ARTICLES_MANIFEST_URL =
+  'https://pmtools27.oss-cn-beijing.aliyuncs.com/articles/articles.json'
+const ARTICLES_MANIFEST_URL =
+  import.meta.env?.VITE_ARTICLES_MANIFEST_URL || DEFAULT_ARTICLES_MANIFEST_URL
+const ARTICLE_REQUEST_TIMEOUT_MS = 8000
+const OBSIDIAN_IMAGE_RE = /!\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g
+const MARKDOWN_IMAGE_RE = /!\[([^\]]*)\]\(([^)]+)\)/g
+
+function sortArticles(sourceArticles) {
+  return [...sourceArticles].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   )
 }
 
+function resolveUrl(resource, baseUrl) {
+  if (!resource || typeof resource !== 'string') return ''
+  try {
+    return new URL(resource, baseUrl).toString()
+  } catch {
+    return ''
+  }
+}
+
+function resolveObsidianImage(resource, articleBaseUrl) {
+  const normalizedResource = resource.trim().replace(/\\/g, '/')
+  const fileName = normalizedResource.split('/').pop()
+  if (!fileName) return ''
+  return resolveUrl(`images/${encodeURIComponent(fileName)}`, articleBaseUrl)
+}
+
+/** 将 Obsidian 的 ![[图片.png]] 转成浏览器可直接加载的图片地址。 */
+export function normalizeArticleContent(content, articleBaseUrl) {
+  if (!content || !articleBaseUrl) return content || ''
+  const normalizedObsidianContent = content.replace(
+    OBSIDIAN_IMAGE_RE,
+    (_match, resource, alt) => {
+      const imageUrl = resolveObsidianImage(resource, articleBaseUrl)
+      if (!imageUrl) return _match
+      return `![${alt || resource}](${imageUrl})`
+    }
+  )
+
+  return normalizedObsidianContent.replace(
+    MARKDOWN_IMAGE_RE,
+    (_match, alt, resource) => {
+      if (/^(?:https?:|data:|\/\/|\/)/i.test(resource)) return _match
+      const imageUrl = resolveUrl(resource, articleBaseUrl)
+      if (!imageUrl) return _match
+      return `![${alt}](${imageUrl})`
+    }
+  )
+}
+
+async function fetchText(url) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), ARTICLE_REQUEST_TIMEOUT_MS)
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      cache: 'no-store',
+    })
+    if (!response.ok) {
+      throw new Error(`文章请求失败：${response.status}`)
+    }
+    return await response.text()
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
+async function loadRemoteArticle(entry, manifestUrl) {
+  if (!entry || typeof entry !== 'object') {
+    throw new Error('文章清单中存在无效条目')
+  }
+
+  const contentResource = entry.contentUrl || entry.contentPath || entry.content
+  if (!contentResource || typeof contentResource !== 'string') {
+    throw new Error(`文章 ${entry.id || 'unknown'} 缺少正文地址`)
+  }
+
+  const isInlineContent = contentResource.includes('\n')
+  const contentUrl = isInlineContent
+    ? manifestUrl
+    : resolveUrl(contentResource, manifestUrl)
+  if (!isInlineContent && !contentUrl) {
+    throw new Error(`文章 ${entry.id || 'unknown'} 的正文地址无效`)
+  }
+  const rawContent = isInlineContent ? contentResource : await fetchText(contentUrl)
+  const articleBaseUrl = entry.assetBaseUrl
+    ? resolveUrl(entry.assetBaseUrl, manifestUrl)
+    : resolveUrl('.', contentUrl)
+  const coverResource = entry.coverUrl || entry.cover
+  const coverBaseUrl = entry.coverBaseUrl
+    ? resolveUrl(entry.coverBaseUrl, manifestUrl)
+    : manifestUrl
+
+  return {
+    ...entry,
+    id: entry.id || entry.slug,
+    content: normalizeArticleContent(rawContent, articleBaseUrl),
+    cover: coverResource ? resolveUrl(coverResource, coverBaseUrl) : '',
+  }
+}
+
+/** 按日期倒序，便于列表展示。 */
+export function getArticles(sourceArticles = articles) {
+  return sortArticles(sourceArticles)
+}
+
+export function getArticlesManifestUrl() {
+  return ARTICLES_MANIFEST_URL
+}
+
+/**
+ * 加载远程文章；远程不可用时返回本地兜底数据。
+ * 返回 source 便于调用方在需要时区分当前数据来源。
+ */
+export async function loadArticles() {
+  if (!ARTICLES_MANIFEST_URL) {
+    return { articles: getArticles(), source: 'local' }
+  }
+
+  try {
+    const payload = JSON.parse(await fetchText(ARTICLES_MANIFEST_URL))
+    const entries = Array.isArray(payload) ? payload : payload?.articles
+    if (!Array.isArray(entries)) {
+      throw new Error('文章清单格式错误：缺少 articles 数组')
+    }
+
+    const results = await Promise.allSettled(
+      entries.map((entry) => loadRemoteArticle(entry, ARTICLES_MANIFEST_URL))
+    )
+    const remoteArticles = results
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value)
+      .filter((article) => article.id && article.title && article.content)
+
+    if (!remoteArticles.length) {
+      throw new Error('文章清单中没有可用文章')
+    }
+
+    return { articles: getArticles(remoteArticles), source: 'remote' }
+  } catch (error) {
+    console.warn('[articles] 远程文章加载失败，使用本地兜底数据。', error)
+    return { articles: getArticles(), source: 'local', error }
+  }
+}
+
 /** 取指定 id 的文章，并附带上一篇/下一篇（循环） */
-export function getArticleWithNeighbors(id) {
-  const list = getArticles()
+export function getArticleWithNeighbors(id, sourceArticles = articles) {
+  const list = getArticles(sourceArticles)
   const index = list.findIndex((a) => a.id === id)
   if (index === -1) return null
   const len = list.length
