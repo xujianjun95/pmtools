@@ -1,0 +1,380 @@
+.tableCard {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead th {
+  padding: 12px 20px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+td {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.fundRow {
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+.fundRow:hover,
+.expanded {
+  background: var(--surface-hover);
+}
+
+.fcode {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.fname {
+  display: block;
+  position: relative;
+  /* 名称完整显示优先：压缩次要列+砍赎回列换来的宽度 */
+  max-width: min(520px, 40vw);
+  overflow: visible;
+  white-space: nowrap;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* 单元格文本自身的省略号（放在内层，避免剪切 tooltip） */
+.fname .txt {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 自定义 tooltip：仅在名称被截断时显示（trunc 类由 JS 检测溢出后添加） */
+.fname:global(.trunc):hover::after {
+  content: attr(data-fullname);
+  position: absolute;
+  left: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: var(--shadow-card);
+  white-space: nowrap;
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: var(--text-body);
+  pointer-events: none;
+}
+
+.idxTag {
+  display: inline-flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 9px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 25px;
+  padding: 0 11px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.statusBadge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.sOpen {
+  color: var(--status-open);
+  background: var(--status-open-bg);
+  border: 1px solid var(--status-open-border);
+}
+
+.sLimited {
+  color: var(--status-limited);
+  background: var(--status-limited-bg);
+  border: 1px solid var(--status-limited-border);
+}
+
+.sSuspended {
+  color: var(--status-suspended);
+  background: var(--status-susp-bg);
+  border: 1px solid var(--status-susp-border);
+}
+
+.sOther {
+  color: var(--text-secondary);
+  background: var(--accent-subtle);
+  border: 1px solid var(--border);
+}
+
+.limitCell {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.unit {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+}
+
+/* 压缩次要列（跟踪误差/手续费/箭头）间距，把宽度让给名称列 */
+td.tte,
+td.tfee {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+th:nth-of-type(6),
+th:nth-of-type(7) {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+td.tchev {
+  padding-left: 6px;
+  padding-right: 14px;
+}
+
+thead th:last-child {
+  padding-left: 6px;
+  padding-right: 14px;
+}
+
+.chev {
+  display: inline-block;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chevOpen {
+  transform: rotate(90deg);
+}
+
+/* 展开的历史时间线 */
+.historyRow > td {
+  padding: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.historyInner {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.open {
+  grid-template-rows: 1fr;
+}
+
+.historyClip {
+  overflow: hidden;
+}
+
+.timeline {
+  padding: 18px 20px 20px;
+  background: color-mix(in srgb, var(--accent-subtle) 55%, transparent);
+}
+
+.tlTitle {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.tlItem {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 0 0 12px 20px;
+}
+
+.tlItem::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.tlItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 19px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--border);
+}
+
+.latest::before {
+  background: var(--accent);
+}
+
+.tlDate {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.tlStatus {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.tlLimit {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tlTag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 20px;
+  padding: 0 8px;
+}
+
+.noResult {
+  padding: 36px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* 表格底部：图例 + 数据来源同一行 */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.legendSource {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  /* 表格改卡片流 */
+  thead {
+    display: none;
+  }
+
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+  }
+
+  .fundRow {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 8px 4px;
+  }
+
+  .fundRow td {
+    border: none;
+    padding: 3px 16px;
+  }
+
+  .fcode {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+
+  .fcode::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .tname,
+  .tstatus,
+  .tlimit,
+  .tte,
+  .tfee {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tname::before,
+  .tstatus::before,
+  .tlimit::before,
+  .tte::before,
+  .tfee::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tchev {
+    display: none;
+  }
+
+  .fname {
+    max-width: none;
+  }
+}

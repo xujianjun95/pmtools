@@ -34,6 +34,7 @@ function Header() {
   const newsLinkRef = useRef(null)
   const articlesLinkRef = useRef(null)
   const aboutLinkRef = useRef(null)
+  const qdiiLinkRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -59,6 +60,8 @@ function Header() {
         targetEl = aboutLinkRef.current
       } else if (location.pathname === '/articles') {
         targetEl = articlesLinkRef.current
+      } else if (location.pathname === '/qdii') {
+        targetEl = qdiiLinkRef.current
       } else if (location.pathname === '/') {
         if (activeNav === 'builds') targetEl = buildsLinkRef.current
         if (activeNav === 'news') targetEl = newsLinkRef.current
@@ -149,6 +152,15 @@ function Header() {
                 onClick={handleNewsClick}
               >
                 资讯
+              </Link>
+              <Link
+                ref={qdiiLinkRef}
+                to="/qdii"
+                className={styles.navLink}
+                aria-current={location.pathname === '/qdii' ? 'page' : undefined}
+                onClick={() => setActiveNav(null)}
+              >
+                QDII 监控
               </Link>
               <Link
                 ref={articlesLinkRef}

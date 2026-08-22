@@ -1,0 +1,60 @@
+.changeList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.changeItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  font-size: 0.92rem;
+  color: var(--text-body);
+  box-shadow: var(--shadow-card);
+  transition: background-color 0.25s ease;
+}
+
+.changeItem:hover {
+  background: var(--surface-hover);
+}
+
+.cdate {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+
+.cname {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ccode {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.arrow {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.old {
+  font-family: var(--font-mono);
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.new {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--accent);
+}

@@ -1,0 +1,89 @@
+/* QDII 监控页面：状态色变量（pmtools global.css 未含，随主题切换） */
+.page {
+  --status-open: #188038;
+  --status-open-bg: rgba(24, 128, 56, 0.09);
+  --status-open-border: rgba(24, 128, 56, 0.3);
+  --status-limited: #8a6a2a;
+  --status-limited-bg: rgba(138, 106, 42, 0.1);
+  --status-limited-border: rgba(138, 106, 42, 0.32);
+  --status-suspended: #9a513d;
+  --status-susp-bg: rgba(154, 81, 61, 0.09);
+  --status-susp-border: rgba(154, 81, 61, 0.32);
+  width: 100%;
+}
+
+:global([data-theme='dark']) .page {
+  --status-open: #5cb87e;
+  --status-open-bg: rgba(92, 184, 126, 0.1);
+  --status-open-border: rgba(92, 184, 126, 0.32);
+  --status-limited: #d4b080;
+  --status-limited-bg: rgba(196, 160, 112, 0.1);
+  --status-limited-border: rgba(196, 160, 112, 0.32);
+  --status-suspended: #d08168;
+  --status-susp-bg: rgba(208, 129, 104, 0.1);
+  --status-susp-border: rgba(208, 129, 104, 0.32);
+}
+
+.section {
+  margin-top: 44px;
+}
+
+/* "全部基金"标题与搜索框同行，垂直居中 */
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.titleRow :global(.section-title) {
+  margin-bottom: 0;
+}
+
+.search {
+  margin-left: auto;
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text-body);
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.search:focus {
+  border-color: var(--accent);
+}
+
+.search::placeholder {
+  color: var(--text-muted);
+}
+
+.errorBox {
+  margin-top: 40px;
+  padding: 24px;
+  border: 1px solid var(--status-susp-border);
+  background: var(--status-susp-bg);
+  border-radius: var(--radius);
+  color: var(--text-body);
+}
+
+.footer {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  justify-content: space-between;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}

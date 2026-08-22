@@ -6,6 +6,7 @@ import ProfilePage from './pages/Profile/index.jsx'
 import ProjectDetailPage from './pages/ProjectDetail/index.jsx'
 import ResumePage from './pages/Resume/index.jsx'
 import ArticlesPage from './pages/Articles/index.jsx'
+import QdiiMonitorPage from './pages/QdiiMonitor/index.jsx'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/project/:id" element={<ProjectDetailPage />} />
           <Route path="/resume" element={<ResumePage />} />
           <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/qdii" element={<QdiiMonitorPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

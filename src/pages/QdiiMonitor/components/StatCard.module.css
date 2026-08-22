@@ -1,0 +1,49 @@
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 16px 18px 13px;
+  box-shadow: var(--shadow-card);
+  transition: background-color 0.25s ease;
+}
+
+.stat:hover {
+  background: var(--surface-hover);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.lbl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--accent);
+}
+
+.open {
+  background: var(--status-open);
+}
+
+.limited {
+  background: var(--status-limited);
+}
+
+.suspended {
+  background: var(--status-suspended);
+}
