@@ -8,6 +8,8 @@
 
 table {
   width: 100%;
+  /* 固定列宽：切换筛选时表头不因内容变化而抖动 */
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.9rem;
 }
@@ -25,6 +27,16 @@ thead th {
   color: var(--text-muted);
   white-space: nowrap;
 }
+
+/* 列宽分配：让「基金简称」列吃剩余宽度，其余列固定（右侧列加宽留间距） */
+thead th:nth-of-type(1) { width: 96px; }
+thead th:nth-of-type(2) { width: auto; }
+thead th:nth-of-type(3) { width: 136px; text-align: center; }
+thead th:nth-of-type(4) { width: 128px; text-align: center; }
+thead th:nth-of-type(5) { width: 156px; text-align: center; }
+thead th:nth-of-type(6) { width: 120px; text-align: center; }
+thead th:nth-of-type(7) { width: 92px; text-align: center; }
+thead th:nth-of-type(8) { width: 44px; text-align: center; }
 
 td {
   padding: 12px 20px;
@@ -52,7 +64,7 @@ td {
 .fname {
   display: block;
   position: relative;
-  /* 名称完整显示优先：压缩次要列+砍赎回列换来的宽度 */
+  /* 名称列跟随分配到的列宽，仅超长名称截断 */
   max-width: min(520px, 40vw);
   overflow: visible;
   white-space: nowrap;
@@ -157,6 +169,16 @@ td {
   font-size: 0.74rem;
 }
 
+/* 除代码/名称外各列内容居中 */
+tbody td:nth-of-type(3),
+td.tstatus,
+td.tlimit,
+td.tte,
+td.tfee,
+td.tchev {
+  text-align: center;
+}
+
 /* 压缩次要列（跟踪误差/手续费/箭头）间距，把宽度让给名称列 */
 td.tte,
 td.tfee {
@@ -194,6 +216,10 @@ thead th:last-child {
 /* 展开的历史时间线 */
 .historyRow > td {
   padding: 0;
+  border-bottom: none;
+}
+
+.historyRow:has(.open) > td {
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -209,6 +235,14 @@ thead th:last-child {
 
 .historyClip {
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.open .historyClip {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .timeline {
@@ -290,22 +324,6 @@ thead th:last-child {
   padding: 36px;
   text-align: center;
   color: var(--text-muted);
-}
-
-/* 表格底部：图例 + 数据来源同一行 */
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 6px 16px;
-  padding: 10px 20px;
-  border-top: 1px solid var(--border-subtle);
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.legendSource {
-  white-space: nowrap;
 }
 
 @media (max-width: 768px) {

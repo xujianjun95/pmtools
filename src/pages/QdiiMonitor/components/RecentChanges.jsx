@@ -5,7 +5,7 @@ export default function RecentChanges({ changes }) {
   if (!changes.length) return null
 
   return (
-    <section className={`section fi d5`}>
+    <section className={`section fi d6`}>
       <span className="section-label">Recent Changes</span>
       <h2 className="section-title">最近变更</h2>
       <div className={styles.changeList}>

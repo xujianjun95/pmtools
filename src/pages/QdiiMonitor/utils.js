@@ -6,6 +6,12 @@ export function statusRank(s) {
   return 2
 }
 
+// 状态展示文案：数据源原始值 → 页面展示名
+export function statusLabel(s) {
+  if (s === '限大额') return '限大额申购'
+  return s
+}
+
 // 返回 FundTable.module.css 中的状态类名（CSS Modules 驼峰命名）
 export function statusClass(s) {
   if (s === '开放申购') return 'sOpen'
@@ -20,11 +26,13 @@ export function fmtLimit(v) {
   return n >= 1e8 ? `${(n / 1e8).toFixed(0)} 亿` : n.toLocaleString('zh-CN')
 }
 
-// 变更值展示：仅限额字段做数值格式化，状态类字段原样返回
+// 变更值展示：仅限额字段做数值格式化，状态类字段走展示文案映射
 export function fmtChangeVal(field, v) {
-  if (field !== 'limit_amount') return v
-  const n = Number(v)
-  return n > 0 ? `${n.toLocaleString('zh-CN')} 元/日` : '不限'
+  if (field === 'limit_amount') {
+    const n = Number(v)
+    return n > 0 ? `${n.toLocaleString('zh-CN')} 元/日` : '不限'
+  }
+  return statusLabel(v)
 }
 
 // 历史降采样：只保留与前一快照不同的节点 + 首个节点，时间线只画变化点

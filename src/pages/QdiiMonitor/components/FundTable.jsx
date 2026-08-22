@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { compactHistory, statusClass, statusRank } from '../utils'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { compactHistory, statusClass, statusLabel } from '../utils'
 import styles from './FundTable.module.css'
+
+gsap.registerPlugin(useGSAP)
 
 function HistoryTimeline({ fund }) {
   const pts = compactHistory(fund.history)
@@ -19,7 +23,7 @@ function HistoryTimeline({ fund }) {
       {items.map((h, i) => (
         <div key={h.date} className={`${styles.tlItem} ${i === 0 ? styles.latest : ''}`}>
           <span className={styles.tlDate}>{h.date}</span>
-          <span className={styles.tlStatus}>{h.status}</span>
+          <span className={styles.tlStatus}>{statusLabel(h.status)}</span>
           <span className={styles.tlLimit}>{limitTextIfOpen(h)}</span>
           {i === 0 ? (
             items.length === 1 ? <span className={styles.tlTag}>首日监控</span> : <span className={styles.tlTag}>当前</span>
@@ -30,9 +34,29 @@ function HistoryTimeline({ fund }) {
   )
 }
 
-export default function FundTable({ funds, rules }) {
+export default function FundTable({ funds, rules, filterVersion }) {
   const [expanded, setExpanded] = useState(null)
   const tableRef = useRef(null)
+
+  // 筛选切换后：收起展开行，并让新行逐行淡入
+  useGSAP(
+    () => {
+      if (!filterVersion) return
+      setExpanded(null)
+      const rows = tableRef.current?.querySelectorAll(`.${styles.fundRow}`)
+      if (rows?.length) {
+        gsap.from(rows, {
+          opacity: 0,
+          y: 12,
+          duration: 0.4,
+          stagger: 0.015,
+          ease: 'power2.out',
+          clearProps: 'transform,opacity',
+        })
+      }
+    },
+    { dependencies: [filterVersion], scope: tableRef }
+  )
 
   // 检测名称是否被截断：只有截断的才加 truncated 类（显示 hover tooltip）
   useEffect(() => {
@@ -50,13 +74,13 @@ export default function FundTable({ funds, rules }) {
   }, [funds])
 
   const sorted = [...funds].sort((a, b) => {
-    const ra = statusRank(a.status)
-    const rb = statusRank(b.status)
-    if (ra !== rb) return ra - rb
-    // 暂停申购的残留限额不参与排序
-    const la = String(a.status).includes('暂停') ? Infinity : a.limit_amount || Infinity
-    const lb = String(b.status).includes('暂停') ? Infinity : b.limit_amount || Infinity
-    return la - lb
+    // 暂停申购无有效限额，沉底
+    const suspended = (s) => String(s).includes('暂停')
+    if (suspended(a.status) !== suspended(b.status)) return suspended(a.status) ? 1 : -1
+    const la = a.limit_amount || 0
+    const lb = b.limit_amount || 0
+    // 限额由高往低
+    return lb - la
   })
 
   const limitCell = (f) => {
@@ -114,7 +138,7 @@ export default function FundTable({ funds, rules }) {
                   </td>
                   <td className={styles.tstatus} data-label="申购状态">
                     <span className={`${styles.statusBadge} ${styles[statusClass(f.status)]}`}>
-                      {f.status}
+                      {statusLabel(f.status)}
                     </span>
                   </td>
                   <td className={styles.tlimit} data-label="日累计限额">
@@ -150,7 +174,7 @@ export default function FundTable({ funds, rules }) {
                     <span className={`${styles.chev} ${isOpen ? styles.chevOpen : ''}`}>▶</span>
                   </td>
                 </tr>,
-                <tr key={`${f.code}-hist`} className={styles.historyRow} hidden={!isOpen}>
+                <tr key={`${f.code}-hist`} className={styles.historyRow}>
                   <td colSpan={8}>
                     <div className={`${styles.historyInner} ${isOpen ? styles.open : ''}`}>
                       <div className={styles.historyClip}>
@@ -165,12 +189,6 @@ export default function FundTable({ funds, rules }) {
         </tbody>
       </table>
       {!sorted.length && <div className={styles.noResult}>没有符合条件的基金</div>}
-      {!!sorted.length && (
-        <div className={styles.legend}>
-          <span>— 暂停申购（无限额信息）或暂无数据</span>
-          <span className={styles.legendSource}>数据来源：天天基金</span>
-        </div>
-      )}
     </div>
   )
 }

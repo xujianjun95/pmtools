@@ -123,7 +123,7 @@
   stroke-width: 1.2;
   stroke-linecap: square;
   /* 外框放慢并接近匀速，读起来是「画」出来的而不是浮现 */
-  animation-duration: 2.3s;
+  animation-duration: 1.4s;
   animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
 }
 
@@ -139,8 +139,8 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   /* 压轴一笔：起笔稍缓、收笔不拖沓，终点与文字末字对齐 */
-  animation-duration: 2.08s;
-  animation-delay: 5.2s;
+  animation-duration: 1.65s;
+  animation-delay: 3.3s;
   animation-timing-function: cubic-bezier(0.42, 0, 0.35, 1);
 }
 
@@ -148,8 +148,8 @@
   stroke: color-mix(in srgb, var(--text-primary) 52%, transparent);
   stroke-width: 0.85;
   stroke-linecap: round;
-  animation-duration: 2.08s;
-  animation-delay: 5.2s;
+  animation-duration: 1.65s;
+  animation-delay: 3.3s;
   animation-timing-function: cubic-bezier(0.42, 0, 0.35, 1);
 }
 
@@ -255,8 +255,8 @@
   animation-name: none;
   animation-duration: 0.24s;
   animation-timing-function: ease-out;
-  /* 螺旋笔尖到达终点（5.2s + 2.08s ≈ 7.28s）时落定，与文字末字（~7.29s）同步收尾 */
-  animation-delay: 7.06s;
+  /* 螺旋笔尖到达终点（3.3s + 1.65s ≈ 4.95s）时落定，与文字末字（~4.9s）同步收尾 */
+  animation-delay: 4.71s;
   animation-fill-mode: forwards;
 }
 

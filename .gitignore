@@ -21,6 +21,9 @@ dist-ssr
 # Screenshots
 *.png
 
+# 运行时数据（服务器 cron 生成，不入库）
+public/qdii/data.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

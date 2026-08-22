@@ -3,6 +3,7 @@ import HeroSection from './components/HeroSection'
 import RecentChanges from './components/RecentChanges'
 import FilterBar from './components/FilterBar'
 import FundTable from './components/FundTable'
+import { statusLabel } from './utils'
 import styles from './QdiiMonitor.module.css'
 
 const STATUS_ORDER = ['开放申购', '限大额', '暂停申购']
@@ -13,6 +14,7 @@ function QdiiMonitorPage() {
   const [indexKey, setIndexKey] = useState('all')
   const [status, setStatus] = useState('all')
   const [keyword, setKeyword] = useState('')
+  const [filterVersion, setFilterVersion] = useState(0)
 
   useEffect(() => {
     fetch('/qdii/data.json', { cache: 'no-store' })
@@ -20,7 +22,16 @@ function QdiiMonitorPage() {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
       })
-      .then(setData)
+      .then((json) =>
+        setData({
+          ...json,
+          // 去掉无有效限额的份额（美元现汇/封闭期等）与美元现汇/现钞份额，只看人民币可买
+          funds: json.funds.filter((f) => {
+            if (/美元|美汇|美钞|现汇|现钞/.test(f.name)) return false
+            return String(f.status).includes('暂停') || Number(f.limit_amount) > 0
+          }),
+        })
+      )
       .catch((err) => setError(String(err)))
   }, [])
 
@@ -36,7 +47,7 @@ function QdiiMonitorPage() {
     return [
       { cls: 'all', num: data.funds.length, label: '监控基金' },
       { cls: 'open', num: count('开放申购'), label: '开放申购' },
-      { cls: 'limited', num: count('限大额'), label: '限大额' },
+      { cls: 'limited', num: count('限大额'), label: statusLabel('限大额') },
       { cls: 'suspended', num: count('暂停申购'), label: '暂停申购' },
     ]
   }, [data])
@@ -64,7 +75,7 @@ function QdiiMonitorPage() {
     ]
     return [
       { key: 'all', label: '全部', count: data.funds.length },
-      ...keys.map((s) => ({ key: s, label: s, count: counts[s] })),
+      ...keys.map((s) => ({ key: s, label: statusLabel(s), count: counts[s] })),
     ]
   }, [data])
 
@@ -97,26 +108,38 @@ function QdiiMonitorPage() {
         <>
           <RecentChanges changes={data.recent_changes.slice(0, 30)} />
 
-          <section className={styles.section}>
+          <section className={`${styles.section} fi d8`}>
             <div className={styles.titleRow}>
               <h2 className="section-title">全部基金</h2>
-              <input
-                className={styles.search}
-                type="search"
-                placeholder="搜索代码 / 名称…"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-              />
             </div>
             <FilterBar
               indexOptions={indexOptions}
               statusOptions={statusOptions}
               indexKey={indexKey}
               status={status}
-              onIndexChange={setIndexKey}
-              onStatusChange={setStatus}
+              onIndexChange={(k) => {
+                setIndexKey(k)
+                setFilterVersion((v) => v + 1)
+              }}
+              onStatusChange={(s) => {
+                setStatus(s)
+                setFilterVersion((v) => v + 1)
+              }}
+              trailing={
+                <input
+                  className={styles.search}
+                  type="search"
+                  placeholder="搜索代码 / 名称…"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              }
             />
-            <FundTable funds={filteredFunds} rules={data.rules} />
+            <FundTable
+              funds={filteredFunds}
+              rules={data.rules}
+              filterVersion={filterVersion}
+            />
           </section>
         </>
       )}

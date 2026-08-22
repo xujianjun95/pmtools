@@ -27,4 +27,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.SERVER_IP }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: "/var/www/pmtools/main"
-          EXCLUDE: "/.github/, /.git/"
+          EXCLUDE: "/.github/, /.git/, qdii/data.json"

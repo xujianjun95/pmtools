@@ -6,8 +6,8 @@ const BADGE_COPY = 'Crafting & Building'
 const TITLE_LINE_1 = 'Why suffer poor design'
 const TITLE_LINE_2 = 'when you can build the standard?'
 const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦。'
-/** 黄金分割图中心圆点落定：7.06s delay + 0.24s duration，与文字末字（~7.29s）同步收尾。 */
-const HERO_ANIMATION_END_MS = 7400
+/** 黄金分割图中心圆点落定：4.71s delay + 0.24s duration，与文字末字（~4.9s）同步收尾。 */
+const HERO_ANIMATION_END_MS = 5000
 const SUBTITLE_STEP_DURATION_MS = 560
 const SPIRAL_SAMPLE_COUNT = 180
 const DOT_SPRING_STIFFNESS = 0.016
@@ -100,7 +100,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
   const n1 = TITLE_LINE_1.trim().split(/\s+/).length
   const n2 = TITLE_LINE_2.trim().split(/\s+/).length
 
-  const titleWordDelay = 260
+  const titleWordDelay = 180
   /** 与大标题首个词同拍：SplitText 起始 delay（注入 to.delay）与此一致 */
   const gapAfterBadge = 120
   const gapBeforeSubtitle = 220
@@ -334,7 +334,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
           <g className={styles.heroArtworkAnnotations}>
             <g
               className={styles.heroArtworkAnnotation}
-              style={{ '--annotation-delay': '0.85s' }}
+              style={{ '--annotation-delay': '0.55s' }}
             >
               <text x="48" y="43" className={styles.heroArtworkScript}>
                 De divina proportione
@@ -346,7 +346,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
             <g
               className={styles.heroArtworkAnnotation}
-              style={{ '--annotation-delay': '1.1s' }}
+              style={{ '--annotation-delay': '0.75s' }}
             >
               <text x="30" y="119" className={styles.heroArtworkLabel}>
                 RATIO AUREA
@@ -361,7 +361,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
                 className={`${styles.heroArtworkStroke} ${styles.heroArtworkAnnotationLine}`}
                 d="M30 174H94 M30 169V179 M68 169V179 M94 169V179"
                 pathLength="1"
-                style={{ animationDelay: '1.15s', animationDuration: '0.4s' }}
+                style={{ animationDelay: '0.78s', animationDuration: '0.3s' }}
               />
               <text x="45" y="188" className={styles.heroArtworkScriptSmall}>
                 a + b
@@ -370,7 +370,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
             <g
               className={styles.heroArtworkAnnotation}
-              style={{ '--annotation-delay': '1.55s' }}
+              style={{ '--annotation-delay': '1s' }}
             >
               <text x="412" y="45" className={styles.heroArtworkScriptSmall}>
                 La proporzione divina
@@ -385,25 +385,25 @@ function HomeIntro({ shouldAnimate, onComplete }) {
                 width="41"
                 height="41"
                 pathLength="1"
-                style={{ animationDelay: '1.6s', animationDuration: '0.35s' }}
+                style={{ animationDelay: '1.05s', animationDuration: '0.25s' }}
               />
               <path
                 className={`${styles.heroArtworkStroke} ${styles.heroArtworkAnnotationLine}`}
                 d="M444 109A41 41 0 0 1 485 68A25 25 0 0 1 485 93A16 16 0 0 1 469 109A10 10 0 0 1 459 99A6 6 0 0 1 465 93"
                 pathLength="1"
-                style={{ animationDelay: '1.9s', animationDuration: '0.5s' }}
+                style={{ animationDelay: '1.3s', animationDuration: '0.35s' }}
               />
             </g>
 
             <g
               className={styles.heroArtworkAnnotation}
-              style={{ '--annotation-delay': '4.2s' }}
+              style={{ '--annotation-delay': '3.4s' }}
             >
               <path
                 className={`${styles.heroArtworkStroke} ${styles.heroArtworkDimension}`}
                 d="M26 54V67 M492 54V67 M26 59H492 M502 66H490 M502 354H490 M498 66V354 M26 365V378 M314 365V378 M382 365V378 M492 365V378 M26 372H314 M314 372H382 M382 372H492"
                 pathLength="1"
-                style={{ animationDelay: '4.5s', animationDuration: '0.6s' }}
+                style={{ animationDelay: '3.6s', animationDuration: '0.4s' }}
               />
               <text x="164" y="369" className={styles.heroArtworkDimensionText}>
                 a + b
@@ -418,7 +418,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
             <g
               className={styles.heroArtworkAnnotation}
-              style={{ '--annotation-delay': '2.6s' }}
+              style={{ '--annotation-delay': '1.75s' }}
             >
               <text x="81" y="391" className={styles.heroArtworkScriptSmall}>
                 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89…
@@ -436,7 +436,7 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
             <g
               className={styles.heroArtworkAnnotation}
-              style={{ '--annotation-delay': '1.9s' }}
+              style={{ '--annotation-delay': '1.3s' }}
               transform="translate(454 180) scale(0.36)"
             >
               <path
@@ -461,15 +461,15 @@ function HomeIntro({ shouldAnimate, onComplete }) {
             />
 
             {[
-              // 接龙式分割：下一笔在上一笔收笔前起笔，整体放慢铺满中段，方块越小画得越快
-              { x: 255, y: 92, width: 649, height: 649, delay: '2.2s', duration: '0.9s' },
-              { x: 904, y: 92, width: 401, height: 401, delay: '3.02s', duration: '0.62s' },
-              { x: 1057, y: 493, width: 248, height: 248, delay: '3.56s', duration: '0.48s' },
-              { x: 904, y: 493, width: 153, height: 153, delay: '3.96s', duration: '0.38s' },
-              { x: 904, y: 646, width: 95, height: 95, delay: '4.28s', duration: '0.31s' },
-              { x: 999, y: 646, width: 58, height: 58, delay: '4.53s', duration: '0.26s' },
-              { x: 1021, y: 704, width: 36, height: 37, delay: '4.73s', duration: '0.23s' },
-              { x: 999, y: 704, width: 22, height: 22, delay: '4.89s', duration: '0.21s' },
+              // 接龙式分割：下一笔在上一笔收笔前起笔，方块越小画得越快
+              { x: 255, y: 92, width: 649, height: 649, delay: '1.3s', duration: '0.6s' },
+              { x: 904, y: 92, width: 401, height: 401, delay: '1.82s', duration: '0.45s' },
+              { x: 1057, y: 493, width: 248, height: 248, delay: '2.2s', duration: '0.34s' },
+              { x: 904, y: 493, width: 153, height: 153, delay: '2.47s', duration: '0.27s' },
+              { x: 904, y: 646, width: 95, height: 95, delay: '2.67s', duration: '0.22s' },
+              { x: 999, y: 646, width: 58, height: 58, delay: '2.83s', duration: '0.18s' },
+              { x: 1021, y: 704, width: 36, height: 37, delay: '2.95s', duration: '0.16s' },
+              { x: 999, y: 704, width: 22, height: 22, delay: '3.04s', duration: '0.15s' },
             ].map((rect) => (
               <rect
                 key={`${rect.x}-${rect.y}`}
