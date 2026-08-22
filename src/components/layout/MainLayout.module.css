@@ -10,6 +10,8 @@
 .main {
   flex: 1;
   width: 100%;
+  /* 允许 flex item 收缩到容器宽，防止内部 min-content 把页面撑出横向滚动 */
+  min-width: 0;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 var(--margin-page);

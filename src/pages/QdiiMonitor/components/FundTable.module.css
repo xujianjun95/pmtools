@@ -170,7 +170,7 @@ td {
 }
 
 /* 除代码/名称外各列内容居中 */
-tbody td:nth-of-type(3),
+td.tindex,
 td.tstatus,
 td.tlimit,
 td.tte,
@@ -342,12 +342,16 @@ thead th:last-child {
 
   .fundRow {
     border-bottom: 1px solid var(--border-subtle);
-    padding: 8px 4px;
+    padding: 10px 0;
   }
 
-  .fundRow td {
+  /* 防止 nowrap 长名称把页面撑出横向滚动 */
+  .fundRow td,
+  .historyRow > td {
     border: none;
-    padding: 3px 16px;
+    padding: 4px 16px;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .fcode {
@@ -365,6 +369,7 @@ thead th:last-child {
   }
 
   .tname,
+  .tindex,
   .tstatus,
   .tlimit,
   .tte,
@@ -373,9 +378,11 @@ thead th:last-child {
     justify-content: space-between;
     align-items: center;
     gap: 12px;
+    min-width: 0;
   }
 
   .tname::before,
+  .tindex::before,
   .tstatus::before,
   .tlimit::before,
   .tte::before,
@@ -394,5 +401,17 @@ thead th:last-child {
 
   .fname {
     max-width: none;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .idxTag {
+    height: auto;
+    padding: 2px 9px;
+  }
+
+  /* 展开的历史时间线：收窄内边距 */
+  .timeline {
+    padding: 14px 16px 16px;
   }
 }

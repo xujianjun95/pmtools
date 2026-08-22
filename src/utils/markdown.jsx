@@ -137,7 +137,6 @@ function Markdown({ content, className }) {
       blocks.push(
         <figure key={`f${i}`} className="md-figure">
           <img src={img[2]} alt={img[1] || ''} loading="lazy" />
-          {img[1] ? <figcaption>{img[1]}</figcaption> : null}
         </figure>
       )
       i += 1

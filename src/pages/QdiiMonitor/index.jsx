@@ -38,7 +38,7 @@ function QdiiMonitorPage() {
   const metaLine = useMemo(() => {
     if (error) return '数据加载失败'
     if (!data) return '数据加载中…'
-    return `数据日期 ${data.updated_at} · 每日 03:00 自动扫描`
+    return `数据日期 ${data.updated_at} · 每日扫描`
   }, [data, error])
 
   const stats = useMemo(() => {

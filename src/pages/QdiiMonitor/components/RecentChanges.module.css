@@ -58,3 +58,27 @@
   font-weight: 500;
   color: var(--accent);
 }
+
+@media (max-width: 768px) {
+  .changeItem {
+    /* 第一行：日期 + 名称；第二行：代码与变更内容，避免元素散乱换行 */
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+  }
+
+  .cname {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .old,
+  .new {
+    font-size: 0.8rem;
+  }
+}

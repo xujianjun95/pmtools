@@ -4,11 +4,10 @@ import styles from '../Home.module.css'
 
 const BADGE_COPY = 'Crafting & Building'
 const TITLE_LINE_1 = 'Why suffer poor design'
-const TITLE_LINE_2 = 'when you can build the standard?'
-const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦。'
-/** 黄金分割图中心圆点落定：4.71s delay + 0.24s duration，与文字末字（~4.9s）同步收尾。 */
-const HERO_ANIMATION_END_MS = 5000
-const SUBTITLE_STEP_DURATION_MS = 560
+const TITLE_LINE_2 = 'when you can build the standard'
+const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦'
+/** 黄金分割图：外框/方块浮现（0.2~1.3s）→ 螺旋一笔到底（1~2.84s）→ 圆点落定（2.84s），与文案末字同步。 */
+const HERO_ANIMATION_END_MS = 2900
 const SPIRAL_SAMPLE_COUNT = 180
 const DOT_SPRING_STIFFNESS = 0.016
 const DOT_SPRING_DAMPING = 0.82
@@ -107,18 +106,10 @@ function HomeIntro({ shouldAnimate, onComplete }) {
   const title1Offset = gapAfterBadge
   const title2Offset = title1Offset + n1 * titleWordDelay
   const subtitleOffset = title2Offset + n2 * titleWordDelay + gapBeforeSubtitle
-  const subtitleStaggerCount = Math.max(SUBTITLE_COPY.length - 1, 1)
-  const letterDelay = Math.max(
-    0,
-    (HERO_ANIMATION_END_MS - subtitleOffset - SUBTITLE_STEP_DURATION_MS) /
-      subtitleStaggerCount
-  )
-  /** 与原 BlurText 一致的「自上方模糊落入」关键帧 */
-  const titleFrom = { opacity: 0, y: -28, filter: 'blur(10px)' }
+  /** 建筑杂志风遮罩揭幕：文字从基线下方升起、被遮罩裁剪，克制优雅 */
+  const titleFrom = { yPercent: 120 }
   const titleTo = (startOffsetMs) => ({
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
+    yPercent: 0,
     // SplitText 无行间错峰参数，用 gsap tween 的 delay 实现
     delay: startOffsetMs / 1000,
   })
@@ -273,12 +264,14 @@ function HomeIntro({ shouldAnimate, onComplete }) {
               text={TITLE_LINE_1}
               splitType="words"
               delay={titleWordDelay}
-              duration={0.4}
+              duration={0.55}
+              ease="power4.out"
               from={titleFrom}
               to={titleTo(title1Offset)}
               threshold={0}
               rootMargin="0px"
               textAlign="left"
+              mask="words"
             />
           ) : (
             <span className={styles.heroTitleLine}>{TITLE_LINE_1}</span>
@@ -290,12 +283,14 @@ function HomeIntro({ shouldAnimate, onComplete }) {
               text={TITLE_LINE_2}
               splitType="words"
               delay={titleWordDelay}
-              duration={0.4}
+              duration={0.55}
+              ease="power4.out"
               from={titleFrom}
               to={titleTo(title2Offset)}
               threshold={0}
               rootMargin="0px"
               textAlign="left"
+              mask="words"
             />
           ) : (
             <span className={styles.heroTitleLine}>{TITLE_LINE_2}</span>
@@ -305,18 +300,20 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
       <p className={styles.heroSubtitle}>
         {playAnimation ? (
-          <SplitText
-            tag="span"
-            text={SUBTITLE_COPY}
-            splitType="chars"
-            delay={letterDelay}
-            duration={0.45}
-            from={titleFrom}
-            to={titleTo(subtitleOffset)}
-            threshold={0}
-            rootMargin="0px"
-            textAlign="left"
-          />
+            <SplitText
+              tag="span"
+              text={SUBTITLE_COPY}
+              splitType="lines"
+              delay={0}
+              duration={0.7}
+              ease="power4.out"
+              from={titleFrom}
+              to={titleTo(subtitleOffset)}
+              threshold={0}
+              rootMargin="0px"
+              textAlign="left"
+              mask="lines"
+            />
         ) : (
           <span className={styles.heroSubtitleBlur}>{SUBTITLE_COPY}</span>
         )}
@@ -452,37 +449,33 @@ function HomeIntro({ shouldAnimate, onComplete }) {
 
           <g transform="translate(-87.2 25.2) scale(0.4438)">
             <rect
-              className={`${styles.heroArtworkStroke} ${styles.heroArtworkFrame}`}
+              className={`${styles.heroArtworkFrame} ${styles.heroArtworkReveal}`}
               x="255"
               y="92"
               width="1050"
               height="649"
-              pathLength="1"
+              style={{ animationDelay: '0.2s' }}
             />
 
             {[
-              // 接龙式分割：下一笔在上一笔收笔前起笔，方块越小画得越快
-              { x: 255, y: 92, width: 649, height: 649, delay: '1.3s', duration: '0.6s' },
-              { x: 904, y: 92, width: 401, height: 401, delay: '1.82s', duration: '0.45s' },
-              { x: 1057, y: 493, width: 248, height: 248, delay: '2.2s', duration: '0.34s' },
-              { x: 904, y: 493, width: 153, height: 153, delay: '2.47s', duration: '0.27s' },
-              { x: 904, y: 646, width: 95, height: 95, delay: '2.67s', duration: '0.22s' },
-              { x: 999, y: 646, width: 58, height: 58, delay: '2.83s', duration: '0.18s' },
-              { x: 1021, y: 704, width: 36, height: 37, delay: '2.95s', duration: '0.16s' },
-              { x: 999, y: 704, width: 22, height: 22, delay: '3.04s', duration: '0.15s' },
+              // 背景网格浮现：方块不逐笔描边，由外到内依次淡入，让螺旋成为唯一主笔
+              { x: 255, y: 92, width: 649, height: 649, delay: '0.35s' },
+              { x: 904, y: 92, width: 401, height: 401, delay: '0.43s' },
+              { x: 1057, y: 493, width: 248, height: 248, delay: '0.51s' },
+              { x: 904, y: 493, width: 153, height: 153, delay: '0.59s' },
+              { x: 904, y: 646, width: 95, height: 95, delay: '0.67s' },
+              { x: 999, y: 646, width: 58, height: 58, delay: '0.75s' },
+              { x: 1021, y: 704, width: 36, height: 37, delay: '0.83s' },
+              { x: 999, y: 704, width: 22, height: 22, delay: '0.91s' },
             ].map((rect) => (
               <rect
                 key={`${rect.x}-${rect.y}`}
-                className={`${styles.heroArtworkStroke} ${styles.heroArtworkConstruction}`}
+                className={`${styles.heroArtworkConstruction} ${styles.heroArtworkReveal}`}
                 x={rect.x}
                 y={rect.y}
                 width={rect.width}
                 height={rect.height}
-                pathLength="1"
-                style={{
-                  animationDelay: rect.delay,
-                  animationDuration: rect.duration,
-                }}
+                style={{ animationDelay: rect.delay }}
               />
             ))}
 

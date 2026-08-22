@@ -20,8 +20,11 @@
   --status-limited-bg: rgba(196, 160, 112, 0.1);
   --status-limited-border: rgba(196, 160, 112, 0.32);
   --status-suspended: #d08168;
-  --status-susp-bg: rgba(208, 129, 104, 0.1);
+  --status-susp-bg: rgba(208, 129, 104, 0.09);
   --status-susp-border: rgba(208, 129, 104, 0.32);
+  width: 100%;
+  /* 防止长文案/nowrap 元素把移动端页面撑出横向滚动 */
+  overflow-x: clip;
 }
 
 .section {
@@ -68,4 +71,21 @@
   background: var(--status-susp-bg);
   border-radius: var(--radius);
   color: var(--text-body);
+}
+
+@media (max-width: 768px) {
+  .section {
+    margin-top: 32px;
+  }
+
+  .titleRow {
+    margin-bottom: 14px;
+  }
+
+  /* 搜索框独占一行全宽，不再右对齐挤压筛选 */
+  .search {
+    margin-left: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }

@@ -73,14 +73,28 @@ export default function FundTable({ funds, rules, filterVersion }) {
     return () => window.removeEventListener('resize', check)
   }, [funds])
 
+  // 公司名 = 名称开头连续中文去掉「纳斯达克/纳指/标普」后缀，如「广发纳斯达克…」→「广发」
+  const companyOf = (name) =>
+    (name.match(/^([\u4e00-\u9fa5]+)/)?.[1] || '').replace(
+      /(纳斯达克|纳指|标普)/g,
+      ''
+    )
+
   const sorted = [...funds].sort((a, b) => {
     // 暂停申购无有效限额，沉底
     const suspended = (s) => String(s).includes('暂停')
     if (suspended(a.status) !== suspended(b.status)) return suspended(a.status) ? 1 : -1
     const la = a.limit_amount || 0
     const lb = b.limit_amount || 0
-    // 限额由高往低
-    return lb - la
+    // 1. 限额由高往低
+    if (lb !== la) return lb - la
+    // 2. 限额相同：先纳斯达克再标普
+    if (a.index_key !== b.index_key) return a.index_key === 'nasdaq100' ? -1 : 1
+    // 3. 同一基金公司的放一块（公司名字母序）
+    const ca = companyOf(a.name)
+    const cb = companyOf(b.name)
+    if (ca !== cb) return ca.localeCompare(cb, 'zh-CN')
+    return a.name.localeCompare(b.name, 'zh-CN')
   })
 
   const limitCell = (f) => {
@@ -131,7 +145,7 @@ export default function FundTable({ funds, rules, filterVersion }) {
                       <span className={styles.txt}>{f.name}</span>
                     </span>
                   </td>
-                  <td>
+                  <td className={styles.tindex} data-label="跟踪指数">
                     <span className={styles.idxTag}>
                       {f.index_key === 'nasdaq100' ? 'NASDAQ 100' : 'S&P 500'}
                     </span>

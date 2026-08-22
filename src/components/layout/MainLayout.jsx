@@ -12,10 +12,12 @@ function MainLayout() {
     // 复刻旧版 `show()` 中“重置 animation 以重新播放”的效果
     // 避免只在首次挂载时淡入的问题（例如 /project/:id 参数切换）。
 
-    // pathname 切换时回到顶部；首页且将滚到构建区时不设顶（hash 仅兼容旧书签；新逻辑用 location.state.scrollToBuilds）
+    // pathname 切换时回到顶部；首页且将滚到构建区/资讯区时不设顶（hash 仅兼容旧书签；新逻辑用 location.state.scrollToBuilds）
     const skipTop =
       location.pathname === '/' &&
-      (Boolean(location.state?.scrollToBuilds) || location.hash === BUILDS_SECTION_HASH)
+      (Boolean(location.state?.scrollToBuilds) ||
+        Boolean(location.state?.scrollToNews) ||
+        location.hash === BUILDS_SECTION_HASH)
     if (typeof window !== 'undefined' && !skipTop) {
       window.scrollTo(0, 0)
     }

@@ -51,3 +51,19 @@
   opacity: 0.75;
   margin-left: 3px;
 }
+
+@media (max-width: 768px) {
+  .filters {
+    gap: 10px 12px;
+    margin-bottom: 16px;
+  }
+
+  .filterGroup {
+    gap: 6px;
+  }
+
+  .pill {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+  }
+}

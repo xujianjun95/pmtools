@@ -7,19 +7,24 @@
   font-size: clamp(1.7rem, 4vw, 2.4rem);
   font-weight: 400;
   color: var(--text-primary);
-  line-height: 1.3;
-  margin-bottom: 10px;
+  line-height: 1.35;
+  margin-bottom: 20px;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* 标题中的指数名：主题色 + 加粗 */
+.titleAccent {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .hero p {
   max-width: 640px;
+  font-size: 0.95rem;
+  line-height: 1.7;
   color: var(--text-secondary);
-}
-
-/* 描述中的指数名高亮 */
-.hl {
-  color: var(--accent);
-  font-weight: 600;
+  overflow-wrap: break-word;
 }
 
 .meta {
@@ -42,7 +47,19 @@
     padding-top: 36px;
   }
 
+  .hero p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .meta {
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
   .stats {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 22px;
   }
 }

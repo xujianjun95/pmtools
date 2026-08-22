@@ -37,8 +37,11 @@ function HomePage() {
 
     if (hasScrollTarget || typeof window === 'undefined') return false
 
+    // 开发模式始终重播首屏动画，便于反复调试；生产构建才走「只播一次」
+    if (import.meta.env.DEV) return true
+
     try {
-      // ?hero 强制重播首屏动画，便于开发时反复验证
+      // ?hero 强制重播首屏动画（生产环境调试用）
       if (window.location.search.includes('hero')) return true
 
       const hasSeenHero =

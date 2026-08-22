@@ -76,6 +76,8 @@ body {
   font-weight: 400;
   color: var(--text-body);
   min-height: 100%;
+  /* 兜底：任何页面都不允许横向滚动，移动端防长文案撑宽 */
+  overflow-x: clip;
   /* 底色素 --bg（与站内变量一致）；极淡 Dot Grid */
   background-color: var(--bg);
   background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
@@ -153,6 +155,14 @@ a {
 }
 .d8 {
   animation-delay: 0.48s;
+}
+
+/* GSAP SplitText 遮罩：给衬线字体降部（g/y/p 等）留空间，避免被 overflow clip 裁剪 */
+.split-word-mask,
+.split-line-mask,
+.split-char-mask {
+  padding-bottom: 0.3em;
+  margin-bottom: -0.3em;
 }
 
 .section-label {

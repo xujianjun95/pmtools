@@ -80,26 +80,26 @@ function ArticleFeed() {
       ref={sectionRef}
       className={styles.section}
     >
-      <div className={styles.header}>
-        <h2 className={styles.title}>
-          文章
-          <span className={styles.count}> / ARTICLES</span>
-        </h2>
-        {detail ? (
-          <button
-            className={styles.headerBack}
-            onClick={handleBack}
-            aria-label="返回文章列表"
-          >
-            <span className={styles.backArrow} aria-hidden="true">←</span>
-            返回文章列表
-          </button>
-        ) : null}
-      </div>
+      {!detail ? (
+        <div className={styles.header}>
+          <h2 className={styles.title}>
+            文章
+            <span className={styles.count}> / ARTICLES</span>
+          </h2>
+        </div>
+      ) : null}
 
       {detail ? (
         <article key={detail.current.id} className={styles.detail}>
           <div className={styles.detailBody}>
+            <button
+              className={styles.backLink}
+              onClick={handleBack}
+              aria-label="返回文章列表"
+            >
+              <span className={styles.backArrow} aria-hidden="true">←</span>
+              返回文章列表
+            </button>
             <header className={styles.detailHead}>
               <h1 className={styles.detailTitle}>{detail.current.title}</h1>
               <div className={styles.detailMeta}>

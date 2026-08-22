@@ -58,20 +58,20 @@
 
 .heroTitle {
   margin: 0 0 24px;
-  font-family: var(--font-body);
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 4vw, 3rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
 .heroSubtitle {
   margin: 0;
   max-width: 36rem;
-  font-family: 'DM Serif Display', 'Noto Serif SC', Georgia, serif;
-  font-size: 1.25rem;
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
   /* 中文无斜体字形，italic 只会得到合成伪斜体（笔画变形）；用字距做层次感 */
   font-style: normal;
   letter-spacing: 0.02em;
@@ -119,18 +119,38 @@
 }
 
 .heroArtworkFrame {
+  fill: none;
   stroke: color-mix(in srgb, currentColor 62%, transparent);
   stroke-width: 1.2;
   stroke-linecap: square;
-  /* 外框放慢并接近匀速，读起来是「画」出来的而不是浮现 */
-  animation-duration: 1.4s;
-  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  vector-effect: non-scaling-stroke;
 }
 
 .heroArtworkConstruction {
+  fill: none;
   stroke: color-mix(in srgb, currentColor 68%, transparent);
   stroke-width: 1;
   stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+}
+
+/* 背景网格「浮现」：外框与分割方块不逐笔描边，只做淡入，让螺旋成为唯一主笔 */
+.heroArtworkReveal {
+  animation-name: none;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.heroSection[data-hero-animation='playing'] .heroArtworkReveal {
+  opacity: 0;
+  animation-name: heroArtworkReveal;
+}
+
+@keyframes heroArtworkReveal {
+  to {
+    opacity: 1;
+  }
 }
 
 .heroArtworkSpiral {
@@ -138,19 +158,19 @@
   stroke-width: 2.25;
   stroke-linecap: round;
   stroke-linejoin: round;
-  /* 压轴一笔：起笔稍缓、收笔不拖沓，终点与文字末字对齐 */
-  animation-duration: 1.65s;
-  animation-delay: 3.3s;
-  animation-timing-function: cubic-bezier(0.42, 0, 0.35, 1);
+  /* 唯一主笔：从外圈一笔画到中心，终点与文案末字同步 */
+  animation-duration: 1.84s;
+  animation-delay: 1s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
 }
 
 .heroArtworkSpiralDetail {
   stroke: color-mix(in srgb, var(--text-primary) 52%, transparent);
   stroke-width: 0.85;
   stroke-linecap: round;
-  animation-duration: 1.65s;
-  animation-delay: 3.3s;
-  animation-timing-function: cubic-bezier(0.42, 0, 0.35, 1);
+  animation-duration: 1.84s;
+  animation-delay: 1s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
 }
 
 .heroArtworkSpiralTexture {
@@ -255,8 +275,8 @@
   animation-name: none;
   animation-duration: 0.24s;
   animation-timing-function: ease-out;
-  /* 螺旋笔尖到达终点（3.3s + 1.65s ≈ 4.95s）时落定，与文字末字（~4.9s）同步收尾 */
-  animation-delay: 4.71s;
+  /* 螺旋笔尖到达终点（1s + 1.84s ≈ 2.84s）时落定，与文案末字（~2.84s）同步收尾 */
+  animation-delay: 2.6s;
   animation-fill-mode: forwards;
 }
 
@@ -375,6 +395,11 @@
   .heroArtworkStroke {
     animation: none;
     stroke-dashoffset: 0;
+  }
+
+  .heroArtworkReveal {
+    animation: none;
+    opacity: 1;
   }
 
   .heroArtworkCenter {

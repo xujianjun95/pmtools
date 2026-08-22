@@ -19,6 +19,7 @@ const SplitText = ({
   rootMargin = '-100px',
   textAlign = 'center',
   tag = 'p',
+  mask,
   onLetterAnimationComplete
 }) => {
   const ref = useRef(null);
@@ -92,6 +93,7 @@ const SplitText = ({
         wordsClass: 'split-word',
         charsClass: 'split-char',
         reduceWhiteSpace: false,
+        mask,
         onSplit: self => {
           assignTargets(self);
           const tween = gsap.fromTo(
@@ -144,6 +146,7 @@ const SplitText = ({
         duration,
         ease,
         splitType,
+        mask,
         JSON.stringify(from),
         JSON.stringify(to),
         threshold,
@@ -157,7 +160,6 @@ const SplitText = ({
   const renderTag = () => {
     const style = {
       textAlign,
-      overflow: 'hidden',
       display: 'inline-block',
       whiteSpace: 'normal',
       wordWrap: 'break-word',
