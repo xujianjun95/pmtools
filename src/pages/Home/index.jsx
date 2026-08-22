@@ -38,6 +38,9 @@ function HomePage() {
     if (hasScrollTarget || typeof window === 'undefined') return false
 
     try {
+      // ?hero 强制重播首屏动画，便于开发时反复验证
+      if (window.location.search.includes('hero')) return true
+
       const hasSeenHero =
         window.sessionStorage.getItem(HOME_HERO_SEEN_KEY) === 'true'
       const isInitialPageEntry = location.key === 'default'

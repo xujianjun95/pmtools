@@ -79,7 +79,7 @@
   color: var(--text-secondary);
 }
 
-/* 首屏右侧黄金分割构造图：先画分割线，再一笔完成螺旋。 */
+/* 首屏右侧黄金分割构造图：外框→分割方块接龙→螺旋，全程单笔接力。 */
 .heroArtwork {
   position: absolute;
   top: 50%;
@@ -122,7 +122,9 @@
   stroke: color-mix(in srgb, currentColor 62%, transparent);
   stroke-width: 1.2;
   stroke-linecap: square;
-  animation-duration: 0.82s;
+  /* 外框放慢并接近匀速，读起来是「画」出来的而不是浮现 */
+  animation-duration: 2.3s;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
 }
 
 .heroArtworkConstruction {
@@ -136,18 +138,19 @@
   stroke-width: 2.25;
   stroke-linecap: round;
   stroke-linejoin: round;
-  animation-duration: 2.85s;
-  animation-delay: 1.85s;
-  animation-timing-function: ease-out;
+  /* 压轴一笔：起笔稍缓、收笔不拖沓，终点与文字末字对齐 */
+  animation-duration: 2.08s;
+  animation-delay: 5.2s;
+  animation-timing-function: cubic-bezier(0.42, 0, 0.35, 1);
 }
 
 .heroArtworkSpiralDetail {
   stroke: color-mix(in srgb, var(--text-primary) 52%, transparent);
   stroke-width: 0.85;
   stroke-linecap: round;
-  animation-duration: 2.85s;
-  animation-delay: 1.85s;
-  animation-timing-function: ease-out;
+  animation-duration: 2.08s;
+  animation-delay: 5.2s;
+  animation-timing-function: cubic-bezier(0.42, 0, 0.35, 1);
 }
 
 .heroArtworkSpiralTexture {
@@ -252,7 +255,8 @@
   animation-name: none;
   animation-duration: 0.24s;
   animation-timing-function: ease-out;
-  animation-delay: 4.52s;
+  /* 螺旋笔尖到达终点（5.2s + 2.08s ≈ 7.28s）时落定，与文字末字（~7.29s）同步收尾 */
+  animation-delay: 7.06s;
   animation-fill-mode: forwards;
 }
 
