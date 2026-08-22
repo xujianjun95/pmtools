@@ -69,21 +69,3 @@
   border-radius: var(--radius);
   color: var(--text-body);
 }
-
-.footer {
-  margin-top: 56px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-subtle);
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  justify-content: space-between;
-}
-
-.mono {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-}

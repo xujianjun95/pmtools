@@ -118,11 +118,6 @@ function QdiiMonitorPage() {
             />
             <FundTable funds={filteredFunds} rules={data.rules} />
           </section>
-
-          <footer className={styles.footer}>
-            <span>资料仅供个人参考，不构成投资建议</span>
-            <span className={styles.mono}>DAILY SCAN 03:00 · POWERED BY AKSHARE</span>
-          </footer>
         </>
       )}
     </div>
