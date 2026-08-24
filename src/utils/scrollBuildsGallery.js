@@ -1,3 +1,5 @@
+import { scrollToSection } from './scrollToSection'
+
 /** 首页「构建」锚点区块 id，与 ProjectsGrid section 同步 */
 export const BUILDS_SECTION_ID = 'builds-section'
 
@@ -30,11 +32,10 @@ function prefersReducedMotion() {
 
 /** 纵向滚到构建区（尊重 scroll-margin-top，避让固定顶栏） */
 export function scrollToBuildsGallery({ behavior } = {}) {
-  const scrollBehavior = behavior || (prefersReducedMotion() ? 'auto' : 'smooth')
-  document.getElementById(BUILDS_SECTION_ID)?.scrollIntoView({
-    behavior: scrollBehavior,
-    block: 'start',
-  })
+  scrollToSection(
+    BUILDS_SECTION_ID,
+    behavior || (prefersReducedMotion() ? 'auto' : 'smooth')
+  )
 }
 
 /** 返回首页时优先定位来源产品；目标不存在时由调用方回退到构建区 */
@@ -43,10 +44,9 @@ export function scrollToProjectCard(projectId, { behavior } = {}) {
   const projectCard = anchorId ? document.getElementById(anchorId) : null
   if (!projectCard) return false
 
-  const scrollBehavior = behavior || (prefersReducedMotion() ? 'auto' : 'smooth')
-  projectCard.scrollIntoView({
-    behavior: scrollBehavior,
-    block: 'start',
-  })
+  scrollToSection(
+    anchorId,
+    behavior || (prefersReducedMotion() ? 'auto' : 'smooth')
+  )
   return true
 }

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { scrollToBuildsGallery, scrollToBuildsNavState } from '../../utils/scrollBuildsGallery'
+import { scrollToSection } from '../../utils/scrollToSection'
 import ThemeToggle from '../common/ThemeToggle'
 
 const NEWS_SECTION_ID = 'news-section'
@@ -8,10 +9,7 @@ const scrollToNewsNavState = Object.freeze({ scrollToNews: true })
 
 function scrollToNewsSection() {
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  document.getElementById(NEWS_SECTION_ID)?.scrollIntoView({
-    behavior: reduced ? 'auto' : 'smooth',
-    block: 'start',
-  })
+  scrollToSection(NEWS_SECTION_ID, reduced ? 'auto' : 'smooth')
 }
 
 import styles from './Header.module.css'

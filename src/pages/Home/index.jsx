@@ -5,6 +5,7 @@ import {
   scrollToBuildsGallery,
   scrollToProjectCard,
 } from '../../utils/scrollBuildsGallery'
+import { scrollToSection } from '../../utils/scrollToSection'
 
 const NEWS_SECTION_ID = 'news-section'
 const HOME_HERO_SEEN_KEY = 'pmtools:home-hero-seen'
@@ -13,10 +14,7 @@ function scrollToNewsSection({ behavior } = {}) {
   const reduced =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  document.getElementById(NEWS_SECTION_ID)?.scrollIntoView({
-    behavior: behavior || (reduced ? 'auto' : 'smooth'),
-    block: 'start',
-  })
+  scrollToSection(NEWS_SECTION_ID, behavior || (reduced ? 'auto' : 'smooth'))
 }
 import HomeIntro from './components/HomeIntro'
 import ProjectsGrid from './components/ProjectsGrid'
