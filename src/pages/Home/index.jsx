@@ -8,7 +8,6 @@ import {
 import { scrollToSection } from '../../utils/scrollToSection'
 
 const NEWS_SECTION_ID = 'news-section'
-const HOME_HERO_SEEN_KEY = 'pmtools:home-hero-seen'
 
 function scrollToNewsSection({ behavior } = {}) {
   const reduced =
@@ -38,19 +37,8 @@ function HomePage() {
     // 开发模式始终重播首屏动画，便于反复调试；生产构建才走「只播一次」
     if (import.meta.env.DEV) return true
 
-    try {
-      // ?hero 强制重播首屏动画（生产环境调试用）
-      if (window.location.search.includes('hero')) return true
-
-      const hasSeenHero =
-        window.sessionStorage.getItem(HOME_HERO_SEEN_KEY) === 'true'
-      const isInitialPageEntry = location.key === 'default'
-
-      window.sessionStorage.setItem(HOME_HERO_SEEN_KEY, 'true')
-      return isInitialPageEntry && !hasSeenHero
-    } catch {
-      return location.key === 'default'
-    }
+    // 整页加载（含刷新）时播放首屏动画；SPA 内导航回首页不重复播
+    return location.key === 'default'
   })
   const skipEntranceAnimation = !playEntranceAnimation
   const [isHeroComplete, setIsHeroComplete] = useState(skipEntranceAnimation)
@@ -72,14 +60,14 @@ function HomePage() {
       if (cancelled) return
 
       if (fromNews) {
-        scrollToNewsSection({ behavior: 'auto' })
+        scrollToNewsSection()
       } else if (
         fromProjectId &&
-        scrollToProjectCard(fromProjectId, { behavior: 'auto' })
+        scrollToProjectCard(fromProjectId)
       ) {
         // 已定位到来源产品卡片。
       } else {
-        scrollToBuildsGallery({ behavior: 'auto' })
+        scrollToBuildsGallery()
       }
       navigate(
         { pathname: '/', search: location.search },
