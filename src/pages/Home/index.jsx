@@ -9,6 +9,16 @@ import { scrollToSection } from '../../utils/scrollToSection'
 
 const NEWS_SECTION_ID = 'news-section'
 
+/**
+ * 整页加载（首次进入或刷新）时的 history key。
+ * 刷新后 React Router 会从 history.state 恢复 key，SPA 内导航则生成新 key，
+ * 因此用「挂载时的 key === 整页加载时的 key」判断是否应播放首屏动画。
+ */
+const INITIAL_LOCATION_KEY =
+  typeof window !== 'undefined' && window.history?.state?.key
+    ? window.history.state.key
+    : 'default'
+
 function scrollToNewsSection({ behavior } = {}) {
   const reduced =
     typeof window !== 'undefined' &&
@@ -38,7 +48,7 @@ function HomePage() {
     if (import.meta.env.DEV) return true
 
     // 整页加载（含刷新）时播放首屏动画；SPA 内导航回首页不重复播
-    return location.key === 'default'
+    return location.key === INITIAL_LOCATION_KEY
   })
   const skipEntranceAnimation = !playEntranceAnimation
   const [isHeroComplete, setIsHeroComplete] = useState(skipEntranceAnimation)
