@@ -2,10 +2,23 @@ import styles from './MockupDangAnalysis.module.css'
 
 const QUERY = '帮我评估下紫金矿业的财报'
 
-const METRICS = [
-  { label: '成长性', value: '盈利扩张', tone: 'positive' },
-  { label: '现金流', value: '质量改善', tone: 'positive' },
-  { label: '估值', value: '中性区间', tone: 'neutral' },
+const SUGGESTIONS = [
+  { icon: '↗', text: '贵州茅台当前估值合理吗' },
+  { icon: '⌁', text: 'AI 产业链目前最值得看哪一环' },
+  { icon: '▤', text: '如何搭建一套稳健的投资组合' },
+  { icon: '◇', text: '自由现金流为什么比利润更重要' },
+]
+
+const THINKING_STEPS = [
+  '正在思考…',
+  '获取估值与研报：紫金矿业',
+  '联网搜索：紫金矿业最新财报',
+  '用方法论分析中…',
+]
+
+const SOURCE_LABELS = [
+  '紫金矿业最新财报',
+  '公司公告与研报',
 ]
 
 function MockupDangAnalysis({ isActive = false }) {
@@ -14,7 +27,7 @@ function MockupDangAnalysis({ isActive = false }) {
       className={styles.demo}
       data-active={isActive ? 'true' : 'false'}
       role="img"
-      aria-label="Dang Analysis 从输入紫金矿业财报问题、调用资料分析，到给出结构化投资判断的动态演示"
+      aria-label="Dang Analysis 从首页输入投资问题、展示真实思考步骤、流式输出回答并在完成后显示参考来源的动态演示"
     >
       <div className={styles.camera} aria-hidden="true">
         <div className={styles.appShell}>
@@ -37,8 +50,8 @@ function MockupDangAnalysis({ isActive = false }) {
 
             <div className={styles.sideSection}>
               <span className={styles.sideLabel}>今天</span>
-              <span className={styles.sideLine} />
-              <span className={`${styles.sideLine} ${styles.sideLineShort}`} />
+              <span className={`${styles.sideLine} ${styles.sideLinePlaceholder}`} />
+              <span className={styles.sideConversation}>紫金矿业财报</span>
             </div>
 
             <div className={styles.userRow}>
@@ -53,8 +66,8 @@ function MockupDangAnalysis({ isActive = false }) {
 
           <main className={styles.mainPanel}>
             <div className={styles.topBar}>
-              <span className={styles.topStatus}>智能投资研究工作台</span>
-              <span className={styles.onlineDot} />
+              <span className={styles.topTitle}>紫金矿业财报</span>
+              <span className={styles.topCount}>2</span>
             </div>
 
             <section className={styles.landingScene}>
@@ -65,18 +78,21 @@ function MockupDangAnalysis({ isActive = false }) {
               </div>
 
               <div className={styles.composer}>
-                <span className={styles.placeholder}>输入投资问题…</span>
+                <span className={styles.placeholder}>输入公司、行业、文章标题，或直接描述你的问题…</span>
                 <span className={styles.typedQuery}>{QUERY}</span>
                 <span className={styles.sendButton}>
                   ↑
-                  <span className={`${styles.clickPulse} ${styles.sendClickPulse}`} aria-hidden="true" />
+                  <span className={`${styles.clickPulse} ${styles.sendClickPulse}`} />
                 </span>
               </div>
 
               <div className={styles.suggestions}>
-                <span>紫金矿业的周期位置怎么看</span>
-                <span>如何识别利润的真实质量</span>
-                <span>当前市场最大的风险是什么</span>
+                {SUGGESTIONS.map((suggestion) => (
+                  <span key={suggestion.text}>
+                    <i aria-hidden="true">{suggestion.icon}</i>
+                    <b>{suggestion.text}</b>
+                  </span>
+                ))}
               </div>
               <small className={styles.disclaimer}>回答仅供参考，不构成投资建议</small>
             </section>
@@ -85,127 +101,69 @@ function MockupDangAnalysis({ isActive = false }) {
               <div className={styles.conversationTrack}>
                 <div className={styles.questionBubble}>{QUERY}</div>
 
-                <div className={styles.agentHeader}>
-                  <span className={styles.agentMark}>D</span>
-                  <span>
-                    <b>Dang Analysis</b>
-                    <small>正在综合财报、行情与历史研究</small>
-                  </span>
-                </div>
-
-                <div className={styles.thinkingCard}>
-                  <div className={styles.thinkingTitle}>
+                <div className={styles.thinkingBlock}>
+                  <div className={styles.thinkingPill}>
                     <span className={styles.thinkingOrb} />
-                    <b>正在交叉核验</b>
-                    <span className={styles.thinkingDots}><i /><i /><i /></span>
+                    <b>思考中…</b>
+                    <span className={styles.thinkingElapsed}>2s</span>
+                    <span className={styles.thinkingChevron}>⌄</span>
                   </div>
+
                   <div className={styles.thinkingSteps}>
-                    <span>财报质量</span>
-                    <span>行业周期</span>
-                    <span>估值位置</span>
-                  </div>
-                </div>
-
-                <article className={styles.answerCard}>
-                  <div className={styles.answerTopline}>
-                    <span className={styles.verdict}>基本面稳健 · 周期弹性仍在</span>
-                    <span className={styles.demoLabel}>演示结论</span>
-                  </div>
-
-                  <h3>核心判断</h3>
-                  <p>
-                    盈利改善来自量价共振，但需要继续验证铜金价格持续性与海外项目兑现节奏。
-                  </p>
-
-                  <div className={styles.metrics}>
-                    {METRICS.map((metric) => (
-                      <div key={metric.label} className={styles.metric}>
-                        <span>{metric.label}</span>
-                        <b className={styles[metric.tone]}>{metric.value}</b>
+                    {THINKING_STEPS.map((step, index) => (
+                      <div
+                        key={step}
+                        className={`${styles.thinkingStep} ${index === THINKING_STEPS.length - 1 ? styles.thinkingStepActive : ''}`}
+                      >
+                        <span className={styles.stepMark} aria-hidden="true">
+                          {index === THINKING_STEPS.length - 1 ? '···' : '✓'}
+                        </span>
+                        <span>{step}</span>
                       </div>
                     ))}
                   </div>
+                </div>
 
-                  <div className={styles.riskLine}>
-                    <span>重点跟踪</span>
-                    金铜价格 · 海外项目进度 · 资本开支
-                  </div>
+                <div className={styles.completedThinking}>
+                  <span>已完成 3s</span>
+                  <span className={styles.completedChevron}>⌄</span>
+                </div>
 
-                  <div className={styles.sources}>
-                    <span>年报摘要</span>
-                    <span>机构一致预期</span>
-                    <span>实时行情</span>
+                <article className={styles.answerStream}>
+                  <h3>核心判断</h3>
+                  <p className={`${styles.streamLine} ${styles.streamLineOne}`}>
+                    我会先结合财报、估值与近期公开资料，拆开看盈利质量、行业周期和估值位置。
+                  </p>
+                  <p className={`${styles.streamLine} ${styles.streamLineTwo}`}>
+                    再把关键依据逐条列出，区分已经确认的事实与仍需验证的判断。
+                  </p>
+                  <div className={styles.streamList}>
+                    <span><b>盈利质量</b> 看利润与经营现金流是否同步。</span>
+                    <span><b>周期位置</b> 结合行业数据与公司经营变化判断。</span>
+                    <span><b>估值位置</b> 放回历史区间与风险边界中观察。</span>
                   </div>
+                  <span className={styles.streamingCursor} />
                 </article>
 
-                <div className={styles.reportReady}>
-                  <span className={styles.reportIcon}>▤</span>
-                  <span className={styles.reportReadyCopy}>
-                    <b>紫金矿业财报评估报告</b>
-                    <small>已完成 · 结构化研究报告</small>
-                  </span>
-                  <span className={styles.openReport}>
-                    打开报告&nbsp; ↗
-                    <span className={`${styles.clickPulse} ${styles.reportClickPulse}`} aria-hidden="true" />
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            <section className={styles.reportScene}>
-              <div className={styles.reportToolbar}>
-                <span>‹ 返回对话</span>
-                <b>紫金矿业财报评估报告</b>
-                <span className={styles.reportStatus}>报告已生成</span>
-              </div>
-
-              <div className={styles.reportPage}>
-                <div className={styles.reportHeading}>
-                  <span className={styles.skeletonEyebrow} />
-                  <span className={styles.skeletonTitle} />
-                  <span className={styles.skeletonMeta} />
-                </div>
-
-                <div className={styles.reportSummary}>
-                  <div className={styles.summaryCopy}>
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <span className={styles.summaryScore} />
-                </div>
-
-                <div className={styles.reportKpis}>
-                  {[0, 1, 2].map((item) => (
-                    <div key={item} className={styles.reportKpi}>
-                      <span />
-                      <b />
-                      <i />
-                    </div>
-                  ))}
-                </div>
-
-                <div className={styles.reportGrid}>
-                  <div className={styles.chartCard}>
-                    <div className={styles.chartHeader}><span /><i /></div>
-                    <div className={styles.barChart}>
-                      <i /><i /><i /><i /><i />
-                    </div>
-                  </div>
-                  <div className={styles.reportTable}>
-                    <div className={styles.tableHeader}><span /><span /><span /></div>
-                    {[0, 1, 2].map((item) => (
-                      <div key={item} className={styles.tableRow}>
-                        <span /><span /><span />
-                      </div>
+                <div className={styles.sourceBlock}>
+                  <div className={styles.sourceHeading}>参考来源 · 2</div>
+                  <div className={styles.sourceList}>
+                    {SOURCE_LABELS.map((label, index) => (
+                      <span key={label}>
+                        [{index + 1}] {label}
+                      </span>
                     ))}
                   </div>
+                </div>
+
+                <div className={styles.feedbackRow}>
+                  <span className={styles.feedbackButton}>♧</span>
+                  <span className={styles.feedbackButton}>⌁</span>
                 </div>
               </div>
             </section>
           </main>
         </div>
-
       </div>
     </div>
   )
