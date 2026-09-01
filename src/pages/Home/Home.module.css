@@ -90,7 +90,7 @@
   color: var(--text-secondary);
   opacity: 0.78;
   transform: translateY(-50%);
-  pointer-events: auto;
+  pointer-events: none;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 22%);
   mask-image: linear-gradient(to right, transparent 0%, black 22%);
 }

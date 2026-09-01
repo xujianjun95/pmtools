@@ -15,6 +15,9 @@ const SMOOTH_POSITION_TOLERANCE = 160
 /** 补滚最大次数 */
 const SMOOTH_MAX_RETRIES = 3
 
+/** 只允许最后一次导航滚动继续执行，避免旧补滚拉回上一个区块 */
+let activeScrollRequestId = 0
+
 function waitForStableLayout() {
   const fontsReady =
     typeof document !== 'undefined' ? document.fonts?.ready : null
@@ -32,21 +35,26 @@ function waitForStableLayout() {
  */
 function scheduleSmoothScroll(
   id,
+  requestId,
   retriesLeft = SMOOTH_MAX_RETRIES,
   delay = SMOOTH_START_DELAY_MS
 ) {
   window.setTimeout(() => {
+    if (requestId !== activeScrollRequestId) return
+
     document.getElementById(id)?.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     })
 
     window.setTimeout(() => {
+      if (requestId !== activeScrollRequestId) return
+
       const el = document.getElementById(id)
       if (!el) return
       const offset = Math.abs(el.getBoundingClientRect().top)
       if (offset > SMOOTH_POSITION_TOLERANCE && retriesLeft > 0) {
-        scheduleSmoothScroll(id, retriesLeft - 1, 500)
+        scheduleSmoothScroll(id, requestId, retriesLeft - 1, 500)
       }
     }, SMOOTH_SETTLE_CHECK_MS)
   }, delay)
@@ -66,6 +74,7 @@ export function scrollToSection(id, behavior = 'auto') {
   if (typeof document === 'undefined') return false
   const target = document.getElementById(id)
   if (!target) return false
+  const requestId = ++activeScrollRequestId
 
   if (behavior === 'auto') {
     const html = document.documentElement
@@ -77,7 +86,8 @@ export function scrollToSection(id, behavior = 'auto') {
   }
 
   waitForStableLayout().then(() => {
-    scheduleSmoothScroll(id)
+    if (requestId !== activeScrollRequestId) return
+    scheduleSmoothScroll(id, requestId)
   })
   return true
 }

@@ -1,0 +1,408 @@
+.root {
+  position: fixed;
+  right: clamp(22px, 2.4vw, 36px);
+  bottom: clamp(22px, 2.4vw, 34px);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+  --companion-ink: var(--accent);
+  --companion-paper: var(--bg);
+}
+
+.root[data-visible='false'] *,
+.root[data-visible='false'] *::before,
+.root[data-visible='false'] *::after {
+  animation-play-state: paused !important;
+}
+
+.botButton {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  isolation: isolate;
+  transition:
+    width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.botButton::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  box-shadow:
+    0 10px 30px color-mix(in srgb, var(--text-primary) 10%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--border) 72%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0.68;
+  transform: scale(0.92);
+  transition: opacity 240ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -1;
+}
+
+.botButton:hover::before,
+.botButton:focus-visible::before,
+.root[data-state='guide'] .botButton::before {
+  opacity: 0.95;
+  transform: scale(1);
+}
+
+.botSvg {
+  position: absolute;
+  inset: 7px;
+  width: 50px;
+  height: 50px;
+  overflow: visible;
+  filter: drop-shadow(0 5px 8px color-mix(in srgb, var(--text-primary) 16%, transparent));
+  transform-origin: 50% 72%;
+  animation: companionBreathe 4.8s ease-in-out infinite;
+}
+
+.body {
+  fill: var(--companion-ink);
+  transition: fill 400ms ease;
+}
+
+.head {
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.eyes {
+  transform-origin: center;
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.eye {
+  fill: var(--companion-paper);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 400ms ease, scale 110ms ease;
+}
+
+.blinking .eye,
+.root[data-state='confirm'] .eye {
+  scale: 1 0.12;
+}
+
+.root[data-state='attention'] .botSvg {
+  animation-duration: 2.6s;
+}
+
+.root[data-state='guide'] .botSvg {
+  opacity: 0;
+}
+
+.winkStage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 80ms ease;
+}
+
+.root[data-state='guide'] .winkStage {
+  opacity: 1;
+}
+
+.winkBot {
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+}
+
+.root[data-state='confirm'] .botSvg {
+  animation: companionConfirm 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.botShadow {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 28px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text-primary) 18%, transparent);
+  filter: blur(4px);
+  opacity: 0.48;
+  transform: translateX(-50%);
+  animation: companionShadow 4.8s ease-in-out infinite;
+}
+
+.focusRing {
+  position: absolute;
+  inset: 2px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.86);
+  transition: opacity 180ms ease, transform 240ms ease;
+}
+
+.botButton:focus-visible {
+  outline: none;
+}
+
+.botButton:focus-visible .focusRing {
+  opacity: 0.72;
+  transform: scale(1);
+}
+
+.entering {
+  animation: companionEnter 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.panel {
+  width: 224px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow:
+    0 18px 46px color-mix(in srgb, var(--text-primary) 11%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--surface) 45%, transparent) inset;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.97);
+  transform-origin: right bottom;
+  transition:
+    opacity 180ms ease,
+    visibility 180ms ease,
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.panelOpen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.panelHeading {
+  display: grid;
+  gap: 4px;
+  padding: 0 3px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.panelHeading span {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.13em;
+  color: var(--accent);
+}
+
+.panelHeading strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.navList {
+  display: grid;
+  margin-top: 6px;
+}
+
+.navItem {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 4px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 72%, transparent);
+  background: transparent;
+  color: var(--text-body);
+  text-align: left;
+  cursor: pointer;
+  transition: color 180ms ease, padding 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.navItem:last-child {
+  border-bottom: 0;
+}
+
+.navItem > span {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.navItem strong {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.navItem i {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-style: normal;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate(-5px, 4px);
+  transition: opacity 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.navItem:hover,
+.navItem:focus-visible {
+  padding-left: 8px;
+  color: var(--text-primary);
+}
+
+.navItem:hover i,
+.navItem:focus-visible i {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.navItem:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+  border-radius: 4px;
+}
+
+@keyframes companionEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.16);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes companionBreathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.025, 0.985);
+  }
+}
+
+@keyframes companionShadow {
+  0%,
+  100% {
+    opacity: 0.46;
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateX(-50%) scaleX(0.82);
+  }
+}
+
+@keyframes companionGuide {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+}
+
+@keyframes companionConfirm {
+  0% {
+    transform: scale(1, 1);
+  }
+  55% {
+    transform: scale(1.12, 0.78);
+  }
+  100% {
+    transform: scale(0.96, 1.05);
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    gap: 8px;
+  }
+
+  .botButton {
+    width: 48px;
+    height: 48px;
+  }
+
+  .botButton::before {
+    inset: 3px;
+  }
+
+  .botSvg {
+    inset: 4px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .root[data-state='guide'] .botSvg {
+    opacity: 0;
+  }
+
+  .winkBot {
+    width: 38px;
+    height: 38px;
+  }
+
+  .botShadow {
+    bottom: 1px;
+    width: 22px;
+  }
+
+  .panel {
+    width: min(260px, calc(100vw - 28px));
+    padding: 14px;
+  }
+
+  .navItem {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botSvg,
+  .botShadow,
+  .entering,
+  .root[data-state='guide'] .botSvg,
+  .root[data-state='confirm'] .botSvg {
+    animation: none !important;
+  }
+
+  .eyes,
+  .eye,
+  .panel,
+  .navItem,
+  .navItem i,
+  .botButton::before,
+  .focusRing,
+  .winkStage {
+    transition-duration: 0.01ms !important;
+  }
+}

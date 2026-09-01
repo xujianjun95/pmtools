@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SplitText from '../../../components/common/SplitText'
 import styles from '../Home.module.css'
 
@@ -8,93 +8,11 @@ const TITLE_LINE_2 = 'when you can build the standard'
 const SUBTITLE_COPY = '造点顺手的工具，解决一些小麻烦'
 /** 黄金分割图：外框/方块浮现（0.2~1.3s）→ 螺旋一笔到底（1~2.84s）→ 圆点落定（2.84s），与文案末字同步。 */
 const HERO_ANIMATION_END_MS = 2900
-const SPIRAL_SAMPLE_COUNT = 180
-const DOT_SPRING_STIFFNESS = 0.016
-const DOT_SPRING_DAMPING = 0.82
-const DOT_STOP_DISTANCE = 0.1
-
-function getScreenPoint(path, length, matrix) {
-  const point = path.getPointAtLength(length)
-
-  return {
-    x: point.x * matrix.a + point.y * matrix.c + matrix.e,
-    y: point.x * matrix.b + point.y * matrix.d + matrix.f,
-  }
-}
-
-function getDistanceSquared(point, clientX, clientY) {
-  const deltaX = point.x - clientX
-  const deltaY = point.y - clientY
-  return deltaX * deltaX + deltaY * deltaY
-}
-
-function createSpiralMetrics(path) {
-  const matrix = path.getScreenCTM()
-  if (!matrix) return null
-
-  const totalLength = path.getTotalLength()
-  const samples = Array.from({ length: SPIRAL_SAMPLE_COUNT + 1 }, (_, index) => {
-    const length = (totalLength * index) / SPIRAL_SAMPLE_COUNT
-    return { length, ...getScreenPoint(path, length, matrix) }
-  })
-
-  return { matrix, path, samples, totalLength }
-}
-
-function findNearestSpiralLength(metrics, clientX, clientY) {
-  let nearestIndex = 0
-  let nearestDistance = Number.POSITIVE_INFINITY
-
-  metrics.samples.forEach((point, index) => {
-    const distance = getDistanceSquared(point, clientX, clientY)
-    if (distance < nearestDistance) {
-      nearestDistance = distance
-      nearestIndex = index
-    }
-  })
-
-  let lowerLength = metrics.samples[Math.max(0, nearestIndex - 1)].length
-  let upperLength = metrics.samples[
-    Math.min(metrics.samples.length - 1, nearestIndex + 1)
-  ].length
-
-  // 在最接近的采样段内继续收敛，避免圆点移动时出现离散跳格。
-  for (let index = 0; index < 7; index += 1) {
-    const firstLength = lowerLength + (upperLength - lowerLength) / 3
-    const secondLength = upperLength - (upperLength - lowerLength) / 3
-    const firstDistance = getDistanceSquared(
-      getScreenPoint(metrics.path, firstLength, metrics.matrix),
-      clientX,
-      clientY
-    )
-    const secondDistance = getDistanceSquared(
-      getScreenPoint(metrics.path, secondLength, metrics.matrix),
-      clientX,
-      clientY
-    )
-
-    if (firstDistance <= secondDistance) {
-      upperLength = secondLength
-    } else {
-      lowerLength = firstLength
-    }
-  }
-
-  return (lowerLength + upperLength) / 2
-}
 
 function HomeIntro({ shouldAnimate, onComplete }) {
   const [prefersReducedMotion] = useState(() =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
-  const spiralPathRef = useRef(null)
-  const centerDotRef = useRef(null)
-  const spiralMetricsRef = useRef(null)
-  const dotLengthRef = useRef(null)
-  const dotTargetLengthRef = useRef(null)
-  const dotVelocityRef = useRef(0)
-  const dotFrameRef = useRef(null)
-  const interactionReadyRef = useRef(false)
   const playAnimation = shouldAnimate && !prefersReducedMotion
   const n1 = TITLE_LINE_1.trim().split(/\s+/).length
   const n2 = TITLE_LINE_2.trim().split(/\s+/).length
@@ -115,132 +33,19 @@ function HomeIntro({ shouldAnimate, onComplete }) {
   })
 
   useEffect(() => {
-    interactionReadyRef.current = !playAnimation && !prefersReducedMotion
-
     if (!playAnimation) {
       onComplete()
       return undefined
     }
 
     const timer = window.setTimeout(() => {
-      interactionReadyRef.current = true
       onComplete()
     }, HERO_ANIMATION_END_MS)
 
     return () => {
-      interactionReadyRef.current = false
       window.clearTimeout(timer)
     }
   }, [onComplete, playAnimation, prefersReducedMotion])
-
-  useEffect(
-    () => () => {
-      if (dotFrameRef.current !== null) {
-        window.cancelAnimationFrame(dotFrameRef.current)
-      }
-    },
-    []
-  )
-
-  const setDotPosition = (length) => {
-    const path = spiralPathRef.current
-    const dot = centerDotRef.current
-    if (!path || !dot) return
-
-    const point = path.getPointAtLength(length)
-    dot.setAttribute('cx', point.x)
-    dot.setAttribute('cy', point.y)
-  }
-
-  const animateDot = () => {
-    dotFrameRef.current = null
-
-    const metrics = spiralMetricsRef.current
-    const targetLength = dotTargetLengthRef.current
-    if (!metrics || targetLength === null) return
-
-    const currentLength = dotLengthRef.current ?? metrics.totalLength
-    const distance = targetLength - currentLength
-    const velocity =
-      (dotVelocityRef.current + distance * DOT_SPRING_STIFFNESS) *
-      DOT_SPRING_DAMPING
-    const nextLength = Math.min(
-      metrics.totalLength,
-      Math.max(0, currentLength + velocity)
-    )
-
-    dotLengthRef.current = nextLength
-    dotVelocityRef.current = velocity
-    setDotPosition(nextLength)
-
-    const hasSettled =
-      Math.abs(targetLength - nextLength) < DOT_STOP_DISTANCE &&
-      Math.abs(velocity) < DOT_STOP_DISTANCE
-
-    if (hasSettled) {
-      dotLengthRef.current = targetLength
-      dotVelocityRef.current = 0
-      setDotPosition(targetLength)
-      return
-    }
-
-    dotFrameRef.current = window.requestAnimationFrame(animateDot)
-  }
-
-  const requestDotAnimation = () => {
-    if (dotFrameRef.current === null) {
-      dotFrameRef.current = window.requestAnimationFrame(animateDot)
-    }
-  }
-
-  const updateDotTarget = (event) => {
-    if (
-      !interactionReadyRef.current ||
-      prefersReducedMotion ||
-      event.pointerType !== 'mouse'
-    ) {
-      return
-    }
-
-    if (!spiralMetricsRef.current) {
-      spiralMetricsRef.current = createSpiralMetrics(spiralPathRef.current)
-    }
-
-    const metrics = spiralMetricsRef.current
-    if (!metrics) return
-
-    if (dotLengthRef.current === null) {
-      dotLengthRef.current = metrics.totalLength
-    }
-
-    dotTargetLengthRef.current = findNearestSpiralLength(
-      metrics,
-      event.clientX,
-      event.clientY
-    )
-    requestDotAnimation()
-  }
-
-  const handleArtworkPointerEnter = (event) => {
-    if (
-      !interactionReadyRef.current ||
-      prefersReducedMotion ||
-      event.pointerType !== 'mouse'
-    ) {
-      return
-    }
-
-    spiralMetricsRef.current = createSpiralMetrics(spiralPathRef.current)
-    updateDotTarget(event)
-  }
-
-  const handleArtworkPointerLeave = () => {
-    const metrics = spiralMetricsRef.current
-    if (!interactionReadyRef.current || !metrics) return
-
-    dotTargetLengthRef.current = metrics.totalLength
-    requestDotAnimation()
-  }
 
   return (
     <section
@@ -322,10 +127,6 @@ function HomeIntro({ shouldAnimate, onComplete }) {
       <div
         className={styles.heroArtwork}
         aria-hidden="true"
-        onPointerEnter={handleArtworkPointerEnter}
-        onPointerMove={updateDotTarget}
-        onPointerLeave={handleArtworkPointerLeave}
-        onPointerCancel={handleArtworkPointerLeave}
       >
         <svg viewBox="0 0 520 420" role="presentation">
           <g className={styles.heroArtworkAnnotations}>
@@ -480,7 +281,6 @@ function HomeIntro({ shouldAnimate, onComplete }) {
             ))}
 
             <path
-              ref={spiralPathRef}
               className={`${styles.heroArtworkStroke} ${styles.heroArtworkSpiral}`}
               d="M255 741 C255 382.5 545.5 92 904 92 C1125.5 92 1305 271.5 1305 493 C1305 630 1194 741 1057 741 C972.5 741 904 672.5 904 588 C904 535.5 946.5 493 999 493 C1031 493 1057 519 1057 551 C1057 570.3 1041.3 586 1022 586 C1009.3 586 999 575.7 999 563 C999 555.3 1005.3 549 1013 549 C1018 549 1022 553 1022 558"
               pathLength="1"
@@ -497,7 +297,6 @@ function HomeIntro({ shouldAnimate, onComplete }) {
             />
 
             <circle
-              ref={centerDotRef}
               className={styles.heroArtworkCenter}
               cx="1022"
               cy="558"

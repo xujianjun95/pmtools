@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { BUILDS_SECTION_HASH } from '../../utils/scrollBuildsGallery'
+import PmtoolsCompanion from '../common/PmtoolsCompanion'
 import Header from './Header'
 import Footer from './Footer'
 import styles from './MainLayout.module.css'
@@ -39,6 +40,7 @@ function MainLayout() {
       <main className={styles.main}>
         <Outlet />
       </main>
+      <PmtoolsCompanion />
       <Footer />
     </div>
   )
