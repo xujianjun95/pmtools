@@ -5,7 +5,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import NewsItem from './NewsItem'
 import styles from './NewsFeed.module.css'
 
-const NEWS_API_URL = import.meta.env.VITE_NEWS_API_URL || 'https://api.pmtools.com.cn/api/news'
+// 生产环境强制走正式接口，防止本地 .env（VITE_NEWS_API_URL=localhost:3002）污染线上包；
+// 本地开发仍可使用 VITE_NEWS_API_URL 指向本地 news-service
+const NEWS_API_URL = import.meta.env.PROD
+  ? 'https://api.pmtools.com.cn/api/news'
+  : import.meta.env.VITE_NEWS_API_URL || 'https://api.pmtools.com.cn/api/news'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 

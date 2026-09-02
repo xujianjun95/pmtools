@@ -2,7 +2,10 @@ import { useState, useCallback } from 'react'
 import Modal from '../../../components/common/Modal'
 import styles from './NewsItem.module.css'
 
-const API_BASE = import.meta.env.VITE_NEWS_API_URL?.replace(/\/api\/news$/, '') || 'https://api.pmtools.com.cn'
+// 生产环境强制使用正式 API 基址（本地 .env 的 localhost 仅限开发，严禁混入线上包）
+const API_BASE = import.meta.env.PROD
+  ? 'https://api.pmtools.com.cn'
+  : import.meta.env.VITE_NEWS_API_URL?.replace(/\/api\/news$/, '') || 'https://api.pmtools.com.cn'
 
 function NewsItem({ item, index }) {
   const [expanded, setExpanded] = useState(false)
