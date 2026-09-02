@@ -10,6 +10,10 @@ function Modal({ open, onClose, title, children }) {
   const modalRef = useRef(null)
   /** 打开前的焦点元素，关闭后归还焦点 */
   const previousFocusRef = useRef(null)
+  /** 用 ref 保存最新 onClose：避免父组件每次渲染生成新回调引用，
+   *  导致 useEffect 反复重跑、把焦点抢回第一个可聚焦元素（关闭按钮） */
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   useEffect(() => {
     if (!open) return undefined
@@ -23,7 +27,7 @@ function Modal({ open, onClose, title, children }) {
 
     const handleKey = (e) => {
       if (e.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
         return
       }
       // 简易 focus trap：Tab 在对话框内循环
@@ -56,7 +60,7 @@ function Modal({ open, onClose, title, children }) {
         previousFocusRef.current.focus()
       }
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 

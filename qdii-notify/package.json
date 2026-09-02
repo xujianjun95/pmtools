@@ -1,0 +1,23 @@
+{
+  "name": "qdii-notify",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "QDII 基金申购额度变动邮件通知服务：订阅 API + 定时检测 data.json + 163 SMTP 群发",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "notify": "node notify.js --once",
+    "check": "node notify.js --check"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@alicloud/dm20151123": "^1.11.0",
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.14"
+  }
+}

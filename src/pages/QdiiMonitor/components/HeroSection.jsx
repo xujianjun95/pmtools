@@ -1,4 +1,5 @@
 import StatCard from './StatCard'
+import SubscribeButton from './SubscribeButton'
 import styles from './HeroSection.module.css'
 
 export default function HeroSection({ metaLine, stats }) {
@@ -14,6 +15,10 @@ export default function HeroSection({ metaLine, stats }) {
         追踪场外基金市场跟踪纳斯达克100指数与标普500指数的全部 QDII 型基金申购状态与单日累计购买上限，每日扫描更新。
       </p>
       <div className={`${styles.meta} fi d3`}>数据来源：天天基金 · {metaLine}</div>
+      <div className={`${styles.action} fi d4`}>
+        <SubscribeButton />
+        <span className={styles.actionHint}>申购状态或额度变动时邮件通知</span>
+      </div>
       <div className={`${styles.stats} fi d4`}>
         {stats.map((s) => (
           <StatCard key={s.label} num={s.num} label={s.label} dotClass={s.cls} />

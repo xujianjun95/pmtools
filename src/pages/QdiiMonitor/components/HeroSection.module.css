@@ -35,6 +35,19 @@
   color: var(--text-muted);
 }
 
+/* 订阅操作区：按钮 + 说明，与 meta 行间隔 */
+.action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.actionHint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

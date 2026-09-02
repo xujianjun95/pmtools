@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.db
+snapshot.json
+subscribers.db
+npm-debug.log*
+mail-preview.*
