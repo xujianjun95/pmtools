@@ -59,6 +59,37 @@
   color: var(--accent);
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.titleRow :global(.section-title) {
+  margin-bottom: 0;
+}
+
+.toggleBtn {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.toggleBtn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
 @media (max-width: 768px) {
   .changeItem {
     /* 第一行：日期 + 名称；第二行：代码与变更内容，避免元素散乱换行 */
