@@ -53,6 +53,11 @@ export const config = {
     pass: env.SMTP_PASS || '',
   },
   mailFromName: env.MAIL_FROM_NAME || 'QDII额度监控',
+  code: {
+    ttlMinutes: Number(env.CODE_TTL_MINUTES || 10),
+    maxSendPerDay: Number(env.CODE_MAX_SEND_PER_DAY || 10),
+    maxAttempts: Number(env.CODE_MAX_ATTEMPTS || 5),
+  },
   publicBaseUrl: (env.PUBLIC_BASE_URL || 'http://localhost:3100').replace(/\/+$/, ''),
   notifyCron: env.NOTIFY_CRON || '10 1,12 * * *',
   batchSize: Number(env.BATCH_SIZE || 50),

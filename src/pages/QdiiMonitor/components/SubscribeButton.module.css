@@ -47,58 +47,124 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
 .desc {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   line-height: 1.7;
   color: var(--text-secondary);
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .desc strong {
   color: var(--text-primary);
+  font-weight: 600;
 }
 
-.label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.fieldLabel {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
 }
 
 .inputRow {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .input {
   flex: 1;
   min-width: 0;
-  padding: 10px 14px;
+  height: 44px;
+  padding: 0 14px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--surface);
   color: var(--text-body);
   font-family: inherit;
   font-size: 0.92rem;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input:hover:not(:disabled) {
+  border-color: var(--text-muted);
 }
 
 .input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
 .input::placeholder {
   color: var(--text-muted);
 }
 
+.input:disabled {
+  opacity: 0.7;
+}
+
+/* 次级按钮：幽灵描边，与主按钮重量感分层 */
+.sendCodeBtn {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 15px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.12s ease;
+}
+
+.sendCodeBtn:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.sendCodeBtn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.sendCodeBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* 主按钮：accent 实底 */
 .submitBtn {
-  padding: 10px 22px;
+  flex-shrink: 0;
+  height: 44px;
+  min-width: 96px;
+  padding: 0 22px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--accent);
   color: #fff;
   font-family: inherit;
@@ -106,22 +172,79 @@
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.12s ease;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.submitBtn:hover:not(:disabled) {
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .submitBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: default;
+  box-shadow: none;
+}
+
+/* 6 格验证码输入：单字符格子、自动跳格、聚焦高亮 */
+.codeItems {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 6px;
+}
+
+.codeCell {
+  flex: 0 0 44px;
+  min-width: 0;
+  height: 44px;
+  padding: 0 2px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.codeCell:hover:not(:disabled) {
+  border-color: var(--text-muted);
+}
+
+.codeCell:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.codeCell:disabled {
+  opacity: 0.7;
 }
 
 .feedback {
   margin: 0;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   line-height: 1.6;
 }
 
 .errorBox {
   color: var(--status-susp-border, #9a513d);
+}
+
+.infoBox {
+  color: var(--text-secondary);
 }
 
 .successBox {
@@ -164,10 +287,13 @@
 
 @media (max-width: 768px) {
   .inputRow {
-    flex-direction: column;
+    gap: 8px;
   }
 
-  .submitBtn {
-    width: 100%;
+  .submitBtn,
+  .sendCodeBtn {
+    flex: none;
+    min-width: 96px;
+    padding: 0 14px;
   }
 }

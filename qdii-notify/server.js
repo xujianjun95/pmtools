@@ -6,6 +6,7 @@
 import express from 'express'
 import { config, assertMailConfigured } from './config.js'
 import * as db from './db.js'
+import { sendVerificationCode } from './mailer.js'
 import { initCron } from './notify.js'
 
 const app = express()
@@ -48,12 +49,58 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, ts: new Date().toISOString(), subscribers: db.countAll() })
 })
 
-/** 订阅：POST /api/subscribe  body: { email } */
-app.post('/api/subscribe', rateLimit, (req, res) => {
+/** 发送验证码：POST /api/send-code  body: { email } */
+app.post('/api/send-code', rateLimit, async (req, res) => {
   const email = String(req.body?.email || '').trim().toLowerCase()
   if (!EMAIL_RE.test(email)) {
     return res.status(400).json({ ok: false, message: '请输入有效的邮箱地址' })
   }
+  const todayCount = db.getTodayEmailSendCount(email)
+  if (todayCount >= config.code.maxSendPerDay) {
+    return res.status(429).json({ ok: false, message: '今日验证码发送次数已用完，请明天再试' })
+  }
+  const code = String(Math.floor(100000 + Math.random() * 900000))
+  db.upsertEmailVerification(email, code, config.code.ttlMinutes)
+  try {
+    const sent = await sendVerificationCode(email, code, config.code.ttlMinutes)
+    if (!sent) {
+      return res.status(502).json({ ok: false, message: '验证码发送失败，请检查邮箱地址或稍后再试' })
+    }
+  } catch (err) {
+    console.error('[send-code]', err)
+    return res.status(502).json({ ok: false, message: '邮件通道未配置，无法发送验证码' })
+  }
+  db.incrementEmailSendCount(email)
+  return res.json({ ok: true, message: '验证码已发送，请查收邮件' })
+})
+
+/** 订阅：POST /api/subscribe  body: { email, code }（验证码校验通过才会写入） */
+app.post('/api/subscribe', rateLimit, (req, res) => {
+  const email = String(req.body?.email || '').trim().toLowerCase()
+  const code = String(req.body?.code || '').trim()
+  if (!EMAIL_RE.test(email)) {
+    return res.status(400).json({ ok: false, message: '请输入有效的邮箱地址' })
+  }
+  if (!/^\d{6}$/.test(code)) {
+    return res.status(400).json({ ok: false, message: '请输入 6 位数字验证码' })
+  }
+  const verification = db.getEmailVerification(email)
+  if (!verification) {
+    return res.status(400).json({ ok: false, message: '请先获取验证码' })
+  }
+  if (new Date(verification.expires_at) < new Date()) {
+    db.deleteEmailVerification(email)
+    return res.status(400).json({ ok: false, message: '验证码已过期，请重新获取' })
+  }
+  if (verification.attempts >= config.code.maxAttempts) {
+    db.deleteEmailVerification(email)
+    return res.status(400).json({ ok: false, message: '验证码尝试次数过多，请重新获取' })
+  }
+  if (verification.code !== code) {
+    db.incrementVerificationAttempts(email)
+    return res.status(400).json({ ok: false, message: '验证码错误，请检查后重试' })
+  }
+  db.deleteEmailVerification(email)
   try {
     const { existed } = db.subscribe(email)
     return res.json({

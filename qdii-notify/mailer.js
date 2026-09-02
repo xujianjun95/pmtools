@@ -165,6 +165,52 @@ function personalizeHtml(html, token) {
 }
 
 /**
+ * 发送订阅邮箱验证码（阿里云 DM SingleSendMail）。
+ * 每封独立调用，无个性化退订链接，TagName=qdii-verify 与通知邮件区分。
+ * 返回是否成功（写入邮件发送成功与否由调用方决定是否计数）。
+ */
+export async function sendVerificationCode(toEmail, code, ttlMinutes) {
+  assertMailConfigured()
+  const html = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f2f4f7" style="background:#f2f4f7;">
+  <tr><td align="center" style="padding:48px 12px;">
+    <table role="presentation" width="420" align="center" cellpadding="0" cellspacing="0" style="width:420px;max-width:420px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(17,24,39,0.08);margin:0 auto;">
+      <tr>
+        <td bgcolor="#16202e" style="background:#16202e;padding:24px 28px 18px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#7f95b0;text-transform:uppercase;">QDII Fund Limit Alert</div>
+          <div style="font-size:18px;font-weight:700;color:#ffffff;margin-top:6px;">QDII 额度变动订阅验证</div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:28px 28px 10px;">
+          <div style="font-size:13px;color:#1f2328;line-height:1.8;">您正在进行 QDII 额度变动邮件订阅，验证码为：</div>
+          <div style="font-family:ui-monospace,Consolas,Menlo,monospace;font-size:34px;font-weight:700;letter-spacing:10px;color:#4f7cff;margin:18px 0;text-align:center;">${escapeHtml(code)}</div>
+          <div style="font-size:12px;color:#8c959f;line-height:1.8;">${ttlMinutes} 分钟内有效，请勿泄露给他人。<br/>如非本人操作，请忽略此邮件。</div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>`
+  try {
+    await getDmClient().singleSendMail(
+      new SingleSendMailRequest({
+        accountName: config.aliyun.fromAddress,
+        addressType: 1,
+        replyToAddress: false,
+        fromAlias: config.mailFromName,
+        tagName: 'qdii-verify',
+        toAddress: toEmail,
+        subject: `【QDII额度监控】邮箱验证码：${code}`,
+        htmlBody: html,
+      })
+    )
+    return true
+  } catch (err) {
+    console.error(`[mail] 验证码发送失败 ${toEmail}:`, err.message)
+    return false
+  }
+}
+
+/**
  * 给一组订阅者发送同一封邮件（正文里嵌入各自的退订链接）。
  * aliyun：每封单独一次 SingleSendMail（个性化退订链接不能合发）；
  * smtp：nodemailer 群发。

@@ -21,6 +21,19 @@ export function initDb() {
       created_at    TEXT NOT NULL,
       unsubscribed_at TEXT
     );
+    CREATE TABLE IF NOT EXISTS email_verifications (
+      email       TEXT PRIMARY KEY,
+      code        TEXT NOT NULL,
+      expires_at  TEXT NOT NULL,
+      attempts    INTEGER NOT NULL DEFAULT 0,
+      created_at  TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS email_send_log (
+      email TEXT NOT NULL,
+      date  TEXT NOT NULL,
+      count INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (email, date)
+    );
   `)
   return db
 }
@@ -86,4 +99,52 @@ export function listActiveEmails() {
 export function countAll() {
   const d = initDb()
   return d.prepare('SELECT COUNT(*) AS n FROM subscribers').get().n
+}
+
+// ---- 邮箱验证码 ----
+
+/** 保存/覆盖验证码。attempts 不重置（跨次累计，防慢速暴力）；新码覆盖旧码 */
+export function upsertEmailVerification(email, code, ttlMinutes) {
+  const d = initDb()
+  const now = new Date()
+  const expiresAt = new Date(now.getTime() + ttlMinutes * 60 * 1000).toISOString()
+  d.prepare(
+    `INSERT INTO email_verifications (email, code, expires_at, created_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(email) DO UPDATE SET code = excluded.code, expires_at = excluded.expires_at, created_at = excluded.created_at`
+  ).run(email, code, expiresAt, now.toISOString())
+}
+
+export function getEmailVerification(email) {
+  const d = initDb()
+  return d.prepare('SELECT * FROM email_verifications WHERE email = ?').get(email)
+}
+
+export function incrementVerificationAttempts(email) {
+  const d = initDb()
+  d.prepare('UPDATE email_verifications SET attempts = attempts + 1 WHERE email = ?').run(email)
+}
+
+export function deleteEmailVerification(email) {
+  const d = initDb()
+  d.prepare('DELETE FROM email_verifications WHERE email = ?').run(email)
+}
+
+/** 当天已发验证码次数 */
+export function getTodayEmailSendCount(email) {
+  const d = initDb()
+  const today = new Date().toISOString().slice(0, 10)
+  const row = d
+    .prepare('SELECT count FROM email_send_log WHERE email = ? AND date = ?')
+    .get(email, today)
+  return row ? row.count : 0
+}
+
+export function incrementEmailSendCount(email) {
+  const d = initDb()
+  const today = new Date().toISOString().slice(0, 10)
+  d.prepare(
+    `INSERT INTO email_send_log (email, date, count) VALUES (?, ?, 1)
+     ON CONFLICT(email, date) DO UPDATE SET count = count + 1`
+  ).run(email, today)
 }
