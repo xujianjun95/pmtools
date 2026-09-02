@@ -206,7 +206,7 @@ export default function SubscribeButton() {
                 <label className={styles.fieldLabel} id="sub-code-label">
                   邮箱验证码
                 </label>
-                <div className={styles.inputRow}>
+                <div className={`${styles.inputRow} ${styles.codeRow}`}>
                   <div
                     className={styles.codeItems}
                     role="group"

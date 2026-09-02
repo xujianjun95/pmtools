@@ -290,10 +290,32 @@
     gap: 8px;
   }
 
+  /* 验证码行：格子保持固定宽，订阅按钮换行铺满，避免横向溢出 */
+  .codeRow {
+    flex-wrap: wrap;
+    gap: 10px 6px;
+  }
+
+  .codeRow .submitBtn {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
   .submitBtn,
   .sendCodeBtn {
     flex: none;
     min-width: 96px;
     padding: 0 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .codeCell {
+    flex-basis: 40px;
+  }
+
+  .codeItems {
+    gap: 5px;
   }
 }
