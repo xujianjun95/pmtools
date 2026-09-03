@@ -137,7 +137,6 @@ function QdiiMonitorPage() {
             />
             <FundTable
               funds={filteredFunds}
-              rules={data.rules}
               filterVersion={filterVersion}
             />
           </section>
