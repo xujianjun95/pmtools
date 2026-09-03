@@ -67,7 +67,7 @@ export function diffStates(prevState, currState) {
         type: 'added',
         field: '监控范围',
         from: '不在监控范围',
-        to: `${b.status} · 限额 ${b.limit_amount}`,
+        to: `${b.status} · 限额 ${fmtField('limit_amount', b.limit_amount)}`,
       })
       continue
     }
@@ -77,7 +77,7 @@ export function diffStates(prevState, currState) {
         name: a.name,
         type: 'removed',
         field: '监控范围',
-        from: `${a.status} · 限额 ${a.limit_amount}`,
+        from: `${a.status} · 限额 ${fmtField('limit_amount', a.limit_amount)}`,
         to: '移出监控范围',
       })
       continue
@@ -90,7 +90,7 @@ export function diffStates(prevState, currState) {
           code,
           name: b.name,
           type: 'changed',
-          field: field === 'limit_amount' ? '单日累计购买上限' : field === 'status' ? '申购状态' : '赎回状态',
+          field: field === 'limit_amount' ? '日累计限额' : field === 'status' ? '申购状态' : '赎回状态',
           from: fmtField(field, pv),
           to: fmtField(field, cv),
         })
@@ -103,7 +103,8 @@ export function diffStates(prevState, currState) {
 function fmtField(field, value) {
   // 避免 undefined/null/空值被渲染成字面量
   if (value === undefined || value === null || value === '') return '—'
-  if (field === 'limit_amount') return `${value} 万元`
+  // 限额单位为"元/日"（与前端 FundTable limitText 口径一致），非万元
+  if (field === 'limit_amount') return `${Number(value).toLocaleString('zh-CN')} 元/日`
   return value
 }
 

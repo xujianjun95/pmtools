@@ -98,9 +98,23 @@ export async function runOnce({ dryRun = false } = {}) {
 let cronStarted = false
 export function initCron() {
   if (cronStarted) return { cronStarted: false }
-  cron.schedule(config.notifyCron, () => {
-    runOnce().catch((err) => console.error('[notify] 定时任务异常：', err))
-  })
+  const schedules = config.notifyCron
+    .split(';')
+    .map((expression) => expression.trim())
+    .filter(Boolean)
+
+  if (schedules.length === 0) {
+    throw new Error('NOTIFY_CRON 未配置有效的 cron 表达式')
+  }
+
+  for (const expression of schedules) {
+    if (!cron.validate(expression)) {
+      throw new Error(`NOTIFY_CRON 包含无效的 cron 表达式：${expression}`)
+    }
+    cron.schedule(expression, () => {
+      runOnce().catch((err) => console.error('[notify] 定时任务异常：', err))
+    })
+  }
   cronStarted = true
   return { cronStarted: true }
 }

@@ -89,9 +89,9 @@ export function buildMailBody(changes, meta) {
 
   return {
     subject: `【QDII额度监控】${summary}`,
-    html: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f2f4f7" style="background:#f2f4f7;">
-  <tr><td align="center" style="padding:32px 12px;">
-    <table role="presentation" width="680" align="center" cellpadding="0" cellspacing="0" style="width:680px;max-width:680px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(17,24,39,0.08);margin:0 auto;">
+    html: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f2f4f7" style="background:#f2f4f7;padding:32px 12px;">
+  <tr><td align="center">
+    <table role="presentation" width="680" cellpadding="0" cellspacing="0" style="width:680px;max-width:680px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(17,24,39,0.08);">
       <tr>
         <td bgcolor="#16202e" style="background:#16202e;padding:0;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -139,7 +139,7 @@ function summarize(changes) {
   let limitChanges = 0
   for (const c of changes) {
     if (c.field === '申购状态') statuses.add(c.to)
-    if (c.field === '单日累计购买上限') limitChanges += 1
+    if (c.field === '日累计限额') limitChanges += 1
   }
   const parts = []
   if (statuses.size) parts.push(`状态变化(${[...statuses].join('/')})`)
