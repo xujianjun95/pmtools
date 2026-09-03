@@ -256,11 +256,11 @@ def save_snapshot(conn: sqlite3.Connection, records: list[dict], today: str) -> 
     for r in records:
         prev = conn.execute(
             "SELECT status, redeem, limit_amount FROM snapshots "
-            "WHERE code = ? AND date < ? ORDER BY date DESC LIMIT 1",
-            (r["code"], today),
+            "WHERE code = ? ORDER BY date DESC LIMIT 1",
+            (r["code"],),
         ).fetchone()
 
-        # 先删当日旧快照再插入，保证同日重跑幂等；变更对比只针对历史日期
+        # 当日快照只保留最新状态；变更对比使用最近一次扫描状态，保留日内变化。
         conn.execute(
             "DELETE FROM snapshots WHERE code = ? AND date = ?", (r["code"], today)
         )
@@ -272,25 +272,29 @@ def save_snapshot(conn: sqlite3.Connection, records: list[dict], today: str) -> 
 
         if prev:
             old_status, old_redeem, old_limit = prev
-            # 同日重跑时先清掉当日已生成的变更，避免重复
-            conn.execute(
-                "DELETE FROM changes WHERE code = ? AND date = ?", (r["code"], today)
-            )
             for field, old, new in (
                 ("status", old_status, r["status"]),
                 ("redeem", old_redeem, r["redeem"]),
                 ("limit_amount", old_limit, r["limit_amount"]),
             ):
                 if old != new:
-                    conn.execute(
-                        "INSERT INTO changes (code, date, field, old_val, new_val) "
-                        "VALUES (?, ?, ?, ?, ?)",
-                        (r["code"], today, field, str(old), str(new)),
-                    )
-                    changes.append(
-                        {"code": r["code"], "date": today, "field": field,
-                         "old_val": str(old), "new_val": str(new)}
-                    )
+                    old_text = str(old)
+                    new_text = str(new)
+                    exists = conn.execute(
+                        "SELECT 1 FROM changes WHERE code = ? AND date = ? "
+                        "AND field = ? AND old_val = ? AND new_val = ? LIMIT 1",
+                        (r["code"], today, field, old_text, new_text),
+                    ).fetchone()
+                    if not exists:
+                        conn.execute(
+                            "INSERT INTO changes (code, date, field, old_val, new_val) "
+                            "VALUES (?, ?, ?, ?, ?)",
+                            (r["code"], today, field, old_text, new_text),
+                        )
+                        changes.append(
+                            {"code": r["code"], "date": today, "field": field,
+                             "old_val": old_text, "new_val": new_text}
+                        )
 
         conn.execute(
             "INSERT INTO funds (code, name, index_key, status, redeem, limit_amount, "
