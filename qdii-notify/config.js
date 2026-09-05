@@ -45,6 +45,8 @@ export const config = {
     accessKeyId: env.ALIYUN_DM_ACCESS_KEY_ID || '',
     accessKeySecret: env.ALIYUN_DM_ACCESS_KEY_SECRET || '',
     fromAddress: env.ALIYUN_DM_FROM_ADDRESS || '',
+    readTimeout: Number(env.ALIYUN_DM_READ_TIMEOUT || 15000),
+    connectTimeout: Number(env.ALIYUN_DM_CONNECT_TIMEOUT || 5000),
   },
   smtp: {
     host: env.SMTP_HOST || 'smtp.163.com',
@@ -61,7 +63,7 @@ export const config = {
   publicBaseUrl: (env.PUBLIC_BASE_URL || 'http://localhost:3100').replace(/\/+$/, ''),
   // 多个时间段用分号分隔，避免 cron 的“分钟 × 小时”组合产生额外触发。
   notifyCron: env.NOTIFY_CRON || '0 8 * * *;10 12,18 * * *',
-  batchSize: Number(env.BATCH_SIZE || 50),
+  batchSize: Number(env.BATCH_SIZE || 10),
 }
 
 /** 校验当前 provider 的发信凭据是否已配置；未配置时给出明确提示（防止静默失败） */
