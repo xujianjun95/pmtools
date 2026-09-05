@@ -103,6 +103,26 @@ export default function JourneySummary({ config, curve }) {
     }
   })()
 
+  // 历年明细：每年取最后一个月做快照；
+  // 当年收益率用 Modified Dietz 近似（月度投入按年中折半计权），避免定投流入虚增收益。
+  const yearRows = (() => {
+    if (!curve.length) return []
+    const byYear = new Map()
+    curve.forEach((p) => {
+      byYear.set(p.ym.slice(0, 4), p)
+    })
+    const yearsList = [...byYear.keys()]
+    return yearsList.map((year, i) => {
+      const end = byYear.get(year)
+      const prev = i > 0 ? byYear.get(yearsList[i - 1]) : null
+      const bmv = prev ? prev.value : 0
+      const flow = end.invested - (prev ? prev.invested : 0)
+      const denom = bmv + flow / 2
+      const rate = denom > 0 ? (end.value - bmv - flow) / denom : 0
+      return { year, invested: end.invested, value: end.value, rate }
+    })
+  })()
+
   return (
     <section className={styles.summary} aria-labelledby="journey-summary-title">
       <span className="section-label">旅程总结</span>
@@ -119,6 +139,10 @@ export default function JourneySummary({ config, curve }) {
           <dd>{fmtMoney(summary.invested)}</dd>
         </div>
         <div>
+          <dt>累计盈亏</dt>
+          <dd className={rateClass(totalProfit)}>{fmtSigned(totalProfit)}</dd>
+        </div>
+        <div>
           <dt>最终账户资产</dt>
           <dd>
             {fmtMoney(summary.finalValue)}
@@ -126,10 +150,6 @@ export default function JourneySummary({ config, curve }) {
               （{fmtPart(summary.invested, summary.finalValue)}+{fmtPart(summary.finalValue - summary.invested, summary.finalValue)}）
             </span>
           </dd>
-        </div>
-        <div>
-          <dt>累计盈亏</dt>
-          <dd className={rateClass(totalProfit)}>{fmtSigned(totalProfit)}</dd>
         </div>
         <div>
           <dt>收益率</dt>
@@ -142,12 +162,11 @@ export default function JourneySummary({ config, curve }) {
           </dd>
         </div>
         <div>
-          <dt>最差浮盈亏</dt>
+          <dt>最大浮亏</dt>
           <dd className={styles.neg}>{fmtSigned(summary.worstProfit)}</dd>
-          <dd className={styles.summarySub}>最低时比例 {fmtPct(summary.worstProfitRate)}</dd>
         </div>
         <div>
-          <dt>最长连续低于本金</dt>
+          <dt>最长回本等待</dt>
           <dd>{summary.longestBelowPrincipalMonths} 个月</dd>
         </div>
       </dl>
@@ -155,6 +174,34 @@ export default function JourneySummary({ config, curve }) {
       <div className={styles.compoundNote}>
         <span className={styles.compoundKicker}>{compoundCopy.kicker}</span>
         <p className={styles.compoundText}>{compoundCopy.content}</p>
+      </div>
+
+      <div className={styles.yearBlock}>
+        <span className={styles.compoundKicker}>历年收益</span>
+        <div className={styles.yearTableScroll}>
+          <table className={styles.yearTable}>
+            <thead>
+              <tr>
+                <th>年份</th>
+                <th>累计投入</th>
+                <th>年末资产</th>
+                <th>当年收益率</th>
+              </tr>
+            </thead>
+            <tbody>
+              {yearRows.map((row) => (
+                <tr key={row.year}>
+                  <td>{row.year} 年</td>
+                  <td>{fmtMoney(row.invested)}</td>
+                  <td>{fmtMoney(row.value)}</td>
+                  <td>
+                    <span className={row.rate >= 0 ? styles.pos : styles.neg}>{fmtSignedPct(row.rate)}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className={styles.summaryActions}>

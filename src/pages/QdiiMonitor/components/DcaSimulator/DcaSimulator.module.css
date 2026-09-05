@@ -183,6 +183,25 @@
   outline-offset: 2px;
 }
 
+/* 带后缀单位的输入框（如「元」） */
+.inputWrap {
+  position: relative;
+}
+
+.inputWithUnit {
+  padding-right: 38px;
+}
+
+.inputUnit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
 .fieldError {
   margin: 0;
   font-size: 0.78rem;
@@ -347,7 +366,7 @@
 .player {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 .statBar {
@@ -359,6 +378,8 @@
 .statBar > div {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 2px;
   padding: 10px 12px;
   border: 1px solid var(--border-subtle);
@@ -421,7 +442,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   background: var(--bg);
-  padding: 8px 8px 0;
+  padding: 2px 8px 0;
 }
 
 .chart {
@@ -454,9 +475,13 @@
 }
 
 .lineInvested {
-  stroke: var(--text-muted);
+  stroke: #64748b;
   stroke-width: 1.4;
   stroke-dasharray: 5 4;
+}
+
+:global([data-theme='dark']) .lineInvested {
+  stroke: #94a3b8;
 }
 
 .dotValue {
@@ -485,6 +510,7 @@
 .legend {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 6px 16px;
   padding: 4px 8px 8px;
   font-size: 0.78rem;
@@ -509,11 +535,16 @@
 }
 
 .swInvested {
-  background: var(--text-muted);
+  background: #64748b;
   height: 2px;
-  background-image: linear-gradient(to right, var(--text-muted) 60%, transparent 40%);
+  background-image: linear-gradient(to right, #64748b 60%, transparent 40%);
   background-size: 7px 2px;
   background-repeat: repeat-x;
+}
+
+:global([data-theme='dark']) .swInvested {
+  background: #94a3b8;
+  background-image: linear-gradient(to right, #94a3b8 60%, transparent 40%);
 }
 
 /* ------ 轻提示 ------ */
@@ -834,11 +865,9 @@
 /* ------ 总结 ------ */
 
 .summary {
-  margin-top: 18px;
-  padding: 22px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  background: var(--bg);
+  margin-top: 16px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -937,6 +966,65 @@
   color: var(--accent);
   font-family: var(--font-display);
   font-size: 1.08em;
+  font-weight: 600;
+}
+
+/* 历年收益明细表 */
+.yearBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.yearTableScroll {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.yearTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.yearTable th {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg);
+}
+
+.yearTable td {
+  padding: 9px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.yearTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.yearTable th:first-child,
+.yearTable td:first-child {
+  text-align: left;
+}
+
+.yearTable tbody tr:hover {
+  background: var(--bg);
+}
+
+.yearTable .pos,
+.yearTable .neg {
   font-weight: 600;
 }
 

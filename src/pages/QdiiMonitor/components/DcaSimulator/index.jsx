@@ -228,6 +228,11 @@ export default function DcaSimulator() {
       : null
   ), [state.phase, state.activeEventId, selectedEvents])
 
+  // 总结页在 completed 相位保持挂载（含 eventReview 打开期间），
+  // 否则点开标点回顾时年度收益表会被卸载、关闭后又重挂导致滚动跳顶。
+  const showSummary = state.phase === 'completed'
+    || (state.phase === 'eventReview' && state.returnPhase === 'completed')
+
   const openReviewEvent = useCallback((eventId) => {
     setYearTip(null)
     setRestoreTip(null)
@@ -365,7 +370,7 @@ export default function DcaSimulator() {
           document.body,
         )}
 
-      {state.phase === 'completed' && (
+      {showSummary && (
         <JourneySummary config={config} curve={curve} />
       )}
 

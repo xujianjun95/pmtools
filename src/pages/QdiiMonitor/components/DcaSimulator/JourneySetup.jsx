@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { MAX_MONTHLY_AMOUNT } from '../../utils/dca'
 import styles from './DcaSimulator.module.css'
 
 const ASSET_OPTIONS = [
@@ -144,8 +145,16 @@ export default function JourneySetup({ years, onStart }) {
   const [assetKey, setAssetKey] = useState('ndx')
   const [amountText, setAmountText] = useState('1000')
 
-  const amount = Number(amountText)
-  const amountValid = amountText.trim() !== '' && Number.isFinite(amount) && amount > 0
+  // 只放行数字并钳制在上限内：输入即合法，无需报错文案
+  const handleAmountChange = (raw) => {
+    const digits = raw.replace(/\D/g, '')
+    if (!digits) {
+      setAmountText('')
+      return
+    }
+    setAmountText(String(Math.min(Number(digits), MAX_MONTHLY_AMOUNT)))
+  }
+  const amountValid = amountText !== ''
   const yearValid = years.includes(Number(startYear))
   const assetValid = ASSET_OPTIONS.some((option) => option.key === assetKey)
   const valid = yearValid && assetValid && amountValid
@@ -153,7 +162,7 @@ export default function JourneySetup({ years, onStart }) {
   const handleSubmit = (event) => {
     event.preventDefault()
     if (!valid) return
-    onStart({ startYear: Number(startYear), assetKey, initialAmount: amount })
+    onStart({ startYear: Number(startYear), assetKey, initialAmount: Number(amountText) })
   }
 
   return (
@@ -197,23 +206,19 @@ export default function JourneySetup({ years, onStart }) {
           <label className={styles.ctlLabel} htmlFor="journey-amount">
             起始月投金额
           </label>
-          <input
-            id="journey-amount"
-            className={styles.input}
-            type="number"
-            min="1"
-            step="any"
-            inputMode="numeric"
-            value={amountText}
-            onChange={(event) => setAmountText(event.target.value)}
-            aria-invalid={!amountValid}
-            aria-describedby={amountValid ? undefined : 'journey-amount-error'}
-          />
-          {!amountValid && (
-            <p className={styles.fieldError} id="journey-amount-error">
-              月投金额必须为大于 0 的数字。
-            </p>
-          )}
+          <div className={styles.inputWrap}>
+            <input
+              id="journey-amount"
+              className={`${styles.input} ${styles.inputWithUnit}`}
+              type="text"
+              inputMode="numeric"
+              placeholder={`1 – ${MAX_MONTHLY_AMOUNT.toLocaleString('zh-CN')}`}
+              value={amountText}
+              onChange={(event) => handleAmountChange(event.target.value)}
+              aria-invalid={!amountValid}
+            />
+            <span className={styles.inputUnit} aria-hidden="true">元</span>
+          </div>
         </div>
       </div>
 

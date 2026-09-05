@@ -3,7 +3,7 @@ import styles from './DcaSimulator.module.css'
 
 const W = 1200
 const H = 280
-const PAD = { l: 58, r: 16, t: 14, b: 30 }
+const PAD = { l: 58, r: 16, t: 24, b: 30 }
 
 function fmtAxis(v) {
   if (v >= 10000) {
@@ -18,7 +18,7 @@ function fmtAxis(v) {
 function niceStepFor(max) {
   const raw = Math.max(1, max) / 4
   const pow = 10 ** Math.floor(Math.log10(raw))
-  for (const m of [1, 2, 5, 10]) {
+  for (const m of [1, 2, 2.5, 5, 10]) {
     const step = m * pow
     if (step * 4 >= max) return step
   }
@@ -76,7 +76,8 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
       points
         .map((p, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(get(p)).toFixed(1)}`)
         .join(' ')
-    // 横轴以自然年为刻度：落在每年 1 月的位置，自动抽稀防止拥挤
+    // 横轴年份标注：放在每一年区间的中点（不再贴着左边缘），超密时抽稀；
+    // 首尾标注向内收，避免悬挂到绘图区外。
     const yearMarks = []
     curve.forEach((p, i) => {
       if (p.ym.endsWith('-01')) yearMarks.push({ i, label: p.ym.slice(0, 4) })
@@ -84,10 +85,15 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
     if (yearMarks.length === 0 || curve[0].ym.slice(0, 4) !== yearMarks[0].label) {
       yearMarks.unshift({ i: 0, label: curve[0].ym.slice(0, 4) })
     }
-    const step = Math.max(1, Math.ceil(yearMarks.length / 8))
-    const xticks = yearMarks
-      .filter((_, k) => k % step === 0)
-      .map((t) => ({ ...t, x: x(t.i) }))
+    const step = Math.max(1, Math.ceil(yearMarks.length / 9))
+    const xticks = []
+    yearMarks.forEach((t, k) => {
+      if (k % step !== 0) return
+      const next = yearMarks[k + 1]
+      const endIdx = next ? next.i : curve.length - 1
+      const midX = Math.min(W - PAD.r - 24, Math.max(PAD.l + 24, x((t.i + endIdx) / 2)))
+      xticks.push({ label: t.label, x: midX })
+    })
     const yticks = [1, 2, 3, 4].map((k) => {
       const v = k * (viewMax / 4)
       return { v, label: fmtAxisTick(v), y: y(v) }

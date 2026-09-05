@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { MAX_MONTHLY_AMOUNT } from '../../utils/dca'
 import styles from './DcaSimulator.module.css'
 
 // 返回值自带单位（元/万/亿），调用处不要再拼「 元」。
@@ -47,13 +48,24 @@ export default function AmountAdjustDialog({ currentAmount, effectiveYm, leaving
     }
   }
 
-  const customAmount = Number(customText)
-  const customValid = customText.trim() !== '' && Number.isFinite(customAmount) && customAmount > 0
-  const raisedAmount = Math.round(currentAmount * 1.1)
+  // 只放行数字并钳制在上限内：输入即合法
+  const handleCustomChange = (raw) => {
+    const digits = raw.replace(/\D/g, '')
+    if (!digits) {
+      setCustomText('')
+      setMode('custom')
+      return
+    }
+    setCustomText(String(Math.min(Number(digits), MAX_MONTHLY_AMOUNT)))
+    setMode('custom')
+  }
+  const customValid = customText !== ''
+  // 「提高 10%」同样受定投额度上限约束，到顶就贴着上限
+  const raisedAmount = Math.min(MAX_MONTHLY_AMOUNT, Math.round(currentAmount * 1.1))
   const candidates = {
     keep: currentAmount,
     raise: raisedAmount,
-    custom: customValid ? customAmount : null,
+    custom: customValid ? Number(customText) : null,
   }
   const nextAmount = candidates[mode]
   const canConfirm = Number.isFinite(nextAmount) && nextAmount > 0
@@ -110,21 +122,13 @@ export default function AmountAdjustDialog({ currentAmount, effectiveYm, leaving
           <input
             id="adjust-custom-amount"
             className={`${styles.input} ${styles.adjustInput}`}
-            type="number"
-            min="1"
-            step="any"
+            type="text"
             inputMode="numeric"
+            placeholder={`1 – ${MAX_MONTHLY_AMOUNT.toLocaleString('zh-CN')}`}
             value={customText}
             onFocus={() => setMode('custom')}
-            onChange={(event) => {
-              setCustomText(event.target.value)
-              setMode('custom')
-            }}
-            aria-invalid={mode === 'custom' && !customValid}
+            onChange={(event) => handleCustomChange(event.target.value)}
           />
-          {mode === 'custom' && !customValid && (
-            <p className={styles.fieldError}>自定义金额必须为大于 0 的数字，确认前保留原金额。</p>
-          )}
         </div>
 
         <div className={styles.dialogActions}>

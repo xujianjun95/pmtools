@@ -11,6 +11,9 @@ const MIN_START_YEAR = 2001
 
 // 开始年份：2001 起至最近一个已经开始且拥有行情数据的完整历史年份。
 // 最新数据月份不是 12 月时，上限为最新数据年份的上一年；覆盖 12 月时允许该年份。
+// 定投额度上限：设置页与金额调整弹窗共用
+export const MAX_MONTHLY_AMOUNT = 100000
+
 export function getAvailableStartYears(monthly) {
   if (!Array.isArray(monthly) || monthly.length === 0) return []
   const lastYm = monthly.at(-1)?.ym
