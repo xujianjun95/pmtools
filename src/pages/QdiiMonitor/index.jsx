@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import HeroSection from './components/HeroSection'
 import RecentChanges from './components/RecentChanges'
 import FilterBar from './components/FilterBar'
@@ -8,10 +9,18 @@ import styles from './QdiiMonitor.module.css'
 
 const STATUS_ORDER = ['开放申购', '限大额', '暂停申购']
 
+// 「鉴往」旅程总结会通过 /qdii?index=nasdaq100|sp500 跳转回来；
+// 非法值一律回落为 all，不修改监控数据接口与基金字段。
+const VALID_INDEX_KEYS = new Set(['nasdaq100', 'sp500'])
+
 function QdiiMonitorPage() {
+  const [searchParams] = useSearchParams()
+  const requestedIndex = searchParams.get('index')
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
-  const [indexKey, setIndexKey] = useState('all')
+  const [indexKey, setIndexKey] = useState(
+    VALID_INDEX_KEYS.has(requestedIndex) ? requestedIndex : 'all',
+  )
   const [status, setStatus] = useState('all')
   const [keyword, setKeyword] = useState('')
   const [filterVersion, setFilterVersion] = useState(0)

@@ -123,7 +123,9 @@ a {
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    /* 必须回到 none：translateY(0) + forwards 会让元素永久持有 transform，
+       从而成为 fixed 后代（如弹窗全屏遮罩）的包含块，把遮罩钳在卡片内。 */
+    transform: none;
   }
 }
 

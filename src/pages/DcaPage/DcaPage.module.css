@@ -1,0 +1,23 @@
+.page {
+  width: 100%;
+  padding-top: 16px;
+  padding-bottom: 24px;
+}
+
+.back {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  transition: color 0.2s ease;
+}
+
+.back:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 12px;
+  }
+}

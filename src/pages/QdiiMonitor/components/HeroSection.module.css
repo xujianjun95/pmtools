@@ -48,6 +48,50 @@
   color: var(--text-muted);
 }
 
+/* 以史为鉴入口：浅色底 + 主题色描边 + 股票走势线底纹 */
+.simBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  line-height: normal; /* 与 <button> 默认一致，保证和订阅按钮等高 */
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background-color: var(--accent-subtle);
+  /* 底部山峦式走势剪影：曲线 + 向下渐隐的面积填充，铺满按钮不变形失真 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%237a6040' stop-opacity='0.16'/%3E%3Cstop offset='1' stop-color='%237a6040' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,27 C12,25 18,19 30,21 C42,23 46,13 58,14 C70,15 76,8 88,9 C98,10 108,5 120,3 L120,32 L0,32 Z' fill='url(%23g)'/%3E%3Cpath d='M0,27 C12,25 18,19 30,21 C42,23 46,13 58,14 C70,15 76,8 88,9 C98,10 108,5 120,3' fill='none' stroke='%237a6040' stroke-opacity='0.32' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+:global([data-theme='dark']) .simBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 32' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23c4a070' stop-opacity='0.18'/%3E%3Cstop offset='1' stop-color='%23c4a070' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,27 C12,25 18,19 30,21 C42,23 46,13 58,14 C70,15 76,8 88,9 C98,10 108,5 120,3 L120,32 L0,32 Z' fill='url(%23g)'/%3E%3Cpath d='M0,27 C12,25 18,19 30,21 C42,23 46,13 58,14 C70,15 76,8 88,9 C98,10 108,5 120,3' fill='none' stroke='%23c4a070' stroke-opacity='0.35' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+.simBtn:hover {
+  background-color: var(--bg);
+  border-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.simBtn:active {
+  transform: translateY(0);
+}
+
+.simBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import StatCard from './StatCard'
 import SubscribeButton from './SubscribeButton'
 import styles from './HeroSection.module.css'
@@ -16,6 +17,9 @@ export default function HeroSection({ metaLine, stats }) {
       </p>
       <div className={`${styles.meta} fi d3`}>数据来源：天天基金 · {metaLine}</div>
       <div className={`${styles.action} fi d4`}>
+        <Link to="/qdii/dca" className={styles.simBtn}>
+          定投推演
+        </Link>
         <SubscribeButton />
         <span className={styles.actionHint}>申购状态或额度变动时邮件通知</span>
       </div>

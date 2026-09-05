@@ -11,6 +11,7 @@
     "articles:publish": "node scripts/publish-articles.mjs",
     "articles:publish:dry": "node scripts/publish-articles.mjs --dry-run",
     "lint": "eslint .",
+    "test:dca": "node --test scripts/dca-engine.test.mjs scripts/dca-state.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
