@@ -13,6 +13,7 @@
     "node": ">=20"
   },
   "dependencies": {
+    "ali-oss": "^6.21.0",
     "better-sqlite3": "^13.0.3",
     "express": "^4.19.2"
   }

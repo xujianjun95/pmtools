@@ -59,6 +59,12 @@ export const config = {
     // 图片目录前缀；本地联调用 OSS_IMAGES_PREFIX 隔离测试目录
     imagesPrefix: env.OSS_IMAGES_PREFIX || 'articles/images',
   },
+  // 看板只读挂载的 qdii-notify 数据库（spec §4.2）；生产通过 .env 指向 /opt/qdii-notify
+  qdii: {
+    subscribersDbPath: env.QDII_DB_PATH || path.join(__dirname, '..', 'qdii-notify', 'subscribers.db'),
+    analyticsDbPath:
+      env.QDII_ANALYTICS_DB_PATH || path.join(__dirname, '..', 'qdii-notify', 'subscribers.db.analytics.db'),
+  },
 }
 
 /** 鉴权凭据是否齐备；缺任一项时 admin 端点整体停用（fail closed），公开端点不受影响 */
