@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import Database from 'better-sqlite3'
-import { parseTrackPayload, initAnalyticsDb, recordTrackEvent, getAnalyticsDbPath } from './analytics.js'
+import { parseTrackPayload, initAnalyticsDb, recordTrackEvent, recordTrackEvents, getAnalyticsDbPath } from './analytics.js'
 
 const VALID_ID = '0123abcd-4567-4ef0-ab89-cdef01234567'
 
@@ -20,10 +20,36 @@ test('合法载荷解析：事件、访客、时长与 meta 白名单', () => {
 })
 
 test('未知事件被丢弃', () => {
-  assert.equal(parseTrackPayload({ event: 'page_view', visitor_id: VALID_ID }), null)
+  assert.equal(parseTrackPayload({ event: 'bogus_page', visitor_id: VALID_ID }), null)
   assert.equal(parseTrackPayload({ event: '', visitor_id: VALID_ID }), null)
   assert.equal(parseTrackPayload({ visitor_id: VALID_ID }), null)
   assert.equal(parseTrackPayload(null), null)
+})
+
+test('站点事件解析：ip 由服务端补记，path 进 meta', () => {
+  const row = parseTrackPayload(
+    { event: 'page_view', visitor_id: VALID_ID, visit_id: VALID_ID, meta: { path: '/project/demo' } },
+    '203.0.113.9'
+  )
+  assert.equal(row.event, 'page_view')
+  assert.equal(row.ip, '203.0.113.9')
+  assert.deepEqual(JSON.parse(row.meta), { path: '/project/demo' })
+})
+
+test('鉴往事件不落 IP（保持既有形态），round_id 进 meta', () => {
+  const row = parseTrackPayload(
+    { event: 'dca_start', visitor_id: VALID_ID, meta: { year: 2015, round_id: 'abc' } },
+    '203.0.113.9'
+  )
+  assert.equal(row.ip, '')
+  assert.equal(JSON.parse(row.meta).round_id, 'abc')
+})
+
+test('ip 超长截断、缺失为空串', () => {
+  const long = parseTrackPayload({ event: 'outbound_click', visitor_id: VALID_ID, meta: { url: 'https://a.com' } }, 'x'.repeat(100))
+  assert.equal(long.ip.length, 64)
+  const none = parseTrackPayload({ event: 'news_quickview', visitor_id: VALID_ID, meta: { news_id: 'n1' } })
+  assert.equal(none.ip, '')
 })
 
 test('访客 ID 必须是 UUID 形态，杜绝注入与乱值', () => {
@@ -74,6 +100,33 @@ test('写入与聚合：同一访问取最大停留、访客去重', () => {
     'SELECT MAX(duration_ms) AS ms FROM dca_events GROUP BY visitor_id, visit_id ORDER BY ms DESC LIMIT 1',
   ).get()
   assert.equal(maxStay.ms, 12000)
+  db.close()
+})
+
+test('批量事务写入：dca 与站点事件分流到两张表，site_events 带 ip', () => {
+  const db = new Database(':memory:')
+  initAnalyticsDb(db)
+  recordTrackEvents([
+    parseTrackPayload({ event: 'dca_view', visitor_id: VALID_ID, duration_ms: 0 }),
+    parseTrackPayload(
+      { event: 'page_view', visitor_id: VALID_ID, visit_id: VALID_ID, meta: { path: '/' } },
+      '198.51.100.7'
+    ),
+    parseTrackPayload(
+      { event: 'outbound_click', visitor_id: VALID_ID, meta: { url: 'https://example.com/a' } },
+      '198.51.100.7'
+    ),
+  ])
+
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM dca_events').get().n, 1)
+  const site = db.prepare('SELECT event, ip, created_at FROM site_events ORDER BY id').all()
+  assert.deepEqual(site.map((r) => r.event), ['page_view', 'outbound_click'])
+  assert.equal(site[0].ip, '198.51.100.7')
+  assert.equal(site[1].ip, '198.51.100.7')
+
+  // 空批次是 no-op
+  recordTrackEvents([])
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM site_events').get().n, 2)
   db.close()
 })
 

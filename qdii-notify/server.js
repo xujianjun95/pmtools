@@ -144,24 +144,25 @@ app.get('/api/status', (req, res) => {
 
 /**
  * 埋点上报：POST /api/track  body: { events: [...] } 或单条 { event, visitor_id, ... }
- * 仅接收「鉴往」页面统计事件（见 analytics.js）；非法事件静默丢弃，处理后返回 204，限流返回 429，
+ * 接收「鉴往」与全站统计事件（见 analytics.js）；非法事件静默丢弃，处理后返回 204，限流返回 429，
  * 让前端无感知——统计失败不能影响页面体验。
  */
 app.post('/api/track', trackRateLimit, (req, res) => {
   if (!analytics) return res.status(204).end()
   const items = Array.isArray(req.body?.events) ? req.body.events.slice(0, 20) : [req.body]
+  const rows = []
   for (const item of items) {
-    try {
-      const row = analytics.parseTrackPayload(item)
-      if (row) analytics.recordTrackEvent(row)
-    } catch (err) {
-      // 埋点写入故障后停止重试，避免反复阻塞和日志刷屏；重启后再尝试启用。
-      const unavailable = analytics
-      analytics = null
-      try { unavailable.closeAnalyticsDb() } catch { /* 订阅连接独立，不受影响 */ }
-      console.error('[track] 统计已停用，订阅及邮件服务继续运行：', err.code || err.name)
-      break
-    }
+    const row = analytics.parseTrackPayload(item, req.ip)
+    if (row) rows.push(row)
+  }
+  try {
+    if (rows.length) analytics.recordTrackEvents(rows)
+  } catch (err) {
+    // 埋点写入故障后停止重试，避免反复阻塞和日志刷屏；重启后再尝试启用。
+    const unavailable = analytics
+    analytics = null
+    try { unavailable.closeAnalyticsDb() } catch { /* 订阅连接独立，不受影响 */ }
+    console.error('[track] 统计已停用，订阅及邮件服务继续运行：', err.code || err.name)
   }
   res.status(204).end()
 })
