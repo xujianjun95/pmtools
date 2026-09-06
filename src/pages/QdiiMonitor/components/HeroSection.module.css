@@ -101,7 +101,7 @@
 
 @media (max-width: 768px) {
   .hero {
-    padding-top: 36px;
+    padding-top: 24px;
   }
 
   .hero p {
@@ -112,6 +112,22 @@
   .meta {
     margin-top: 12px;
     line-height: 1.6;
+  }
+
+  .action {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .action > a,
+  .action > button {
+    flex-shrink: 0;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+
+  .actionHint {
+    flex-basis: 100%;
   }
 
   .stats {

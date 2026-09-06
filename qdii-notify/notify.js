@@ -29,7 +29,7 @@ export async function runOnce({ dryRun = false } = {}) {
   // ---- dryRun：只读预览，不推进快照 ----
   if (dryRun) {
     if (isFirstRun) {
-      console.log(`[notify] 首次运行预览：将建立快照（${changes.length} 只基金入池），不会发送`)
+      console.log(`[notify] 首次运行预览：将建立快照（${Object.keys(data.state).length} 只基金入池），不会发送`)
       return { changes: 0, sent: 0, firstRun: true, dryRun: true }
     }
     if (changes.length === 0) {
@@ -47,7 +47,7 @@ export async function runOnce({ dryRun = false } = {}) {
   if (isFirstRun) {
     consume(result)
     console.log(
-      `[notify] 首次运行：已建立状态快照（${changes.length} 只基金入池），不发送通知，后续仅在有变动时提醒`
+      `[notify] 首次运行：已建立状态快照（${Object.keys(data.state).length} 只基金入池），不发送通知，后续仅在有变动时提醒`
     )
     return { changes: 0, sent: 0, firstRun: true }
   }

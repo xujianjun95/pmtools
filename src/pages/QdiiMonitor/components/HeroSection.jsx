@@ -18,10 +18,10 @@ export default function HeroSection({ metaLine, stats }) {
       <div className={`${styles.meta} fi d3`}>数据来源：天天基金 · {metaLine}</div>
       <div className={`${styles.action} fi d4`}>
         <Link to="/qdii/dca" className={styles.simBtn}>
-          定投推演
+          鉴往 · 定投推演
         </Link>
         <SubscribeButton />
-        <span className={styles.actionHint}>申购状态或额度变动时邮件通知</span>
+        <span className={styles.actionHint}>日累计限额变动时邮件通知</span>
       </div>
       <div className={`${styles.stats} fi d4`}>
         {stats.map((s) => (

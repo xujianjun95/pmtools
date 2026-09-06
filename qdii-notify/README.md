@@ -21,7 +21,7 @@ scanner.py（cron 1:00 / 12:00 / 18:00）──> /var/www/pmtools/main/qdii/data
 |---|---|
 | `server.js` | Express API（订阅/退订/状态/健康检查）+ 启动定时任务 |
 | `notify.js` | 变动检测 + 发信，支持 `--once` / `--check` 手动跑 |
-| `detect.js` | 读 data.json，与 snapshot.json 快照对比，找出 status/limit_amount/redeem 变动 |
+| `detect.js` | 读 data.json，与 snapshot.json 快照对比，仅通知有效 limit_amount 变动；状态变化和新增/移出监控不发信 |
 | `mailer.js` | 邮件发送（阿里云 DM API 默认；SMTP 备用通道，分批、个性化退订链接） |
 | `db.js` | SQLite 订阅者表（better-sqlite3） |
 | `config.js` | 配置读取（.env） |

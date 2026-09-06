@@ -30,7 +30,7 @@ if (pick('000834')) {
     code: '000834',
     name: pick('000834').name,
     type: 'changed',
-    field: '日累计限额',
+    field: '日累计限额（代销）',
     from: '10 元/日',
     to: '100 元/日',
   })
@@ -50,7 +50,7 @@ if (pick('006479')) {
     code: '006479',
     name: pick('006479').name,
     type: 'changed',
-    field: '日累计限额',
+    field: '日累计限额（代销）',
     from: '5 元/日',
     to: '2 元/日',
   })
@@ -62,7 +62,7 @@ if (changes.length === 0) {
       code,
       name: s.name,
       type: 'changed',
-      field: '日累计限额',
+      field: '日累计限额（代销）',
       from: `${Number(s.limit_amount).toLocaleString('zh-CN')} 元/日`,
       to: `${Math.max(1, Math.round(s.limit_amount / 2)).toLocaleString('zh-CN')} 元/日`,
     })

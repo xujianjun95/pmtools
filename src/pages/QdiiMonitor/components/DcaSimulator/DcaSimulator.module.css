@@ -981,13 +981,33 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   background: var(--surface);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .yearTable {
+  display: table;
   width: 100%;
+  min-width: 480px;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.86rem;
+}
+
+.yearTable thead {
+  display: table-header-group;
+}
+
+.yearTable tbody {
+  display: table-row-group;
+}
+
+.yearTable tr {
+  display: table-row;
+}
+
+.yearTable th,
+.yearTable td {
+  display: table-cell;
 }
 
 .yearTable th {
@@ -1016,7 +1036,15 @@
 
 .yearTable th:first-child,
 .yearTable td:first-child {
+  width: auto;
   text-align: left;
+  white-space: nowrap;
+}
+
+.yearTable th:not(:first-child),
+.yearTable td:not(:first-child) {
+  width: 130px;
+  white-space: nowrap;
 }
 
 .yearTable tbody tr:hover {

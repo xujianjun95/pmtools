@@ -203,7 +203,7 @@ export default function SubscribeButton() {
           ) : (
             <>
               <p className={styles.desc}>
-                当监控基金出现<strong>申购状态 / 日累计限额</strong>变动时，
+                当监控基金出现<strong>日累计限额（代销）</strong>变动时，
                 我们会第一时间通过邮件通知您。无变动不打扰。
               </p>
 

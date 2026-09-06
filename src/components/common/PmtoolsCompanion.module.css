@@ -342,8 +342,11 @@
 
 @media (max-width: 768px) {
   .root {
-    right: max(14px, env(safe-area-inset-right));
-    bottom: max(14px, env(safe-area-inset-bottom));
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: flex-end;
+    margin: 16px max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom));
     gap: 8px;
   }
 
@@ -377,6 +380,9 @@
   }
 
   .panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 8px);
     width: min(260px, calc(100vw - 28px));
     padding: 14px;
   }

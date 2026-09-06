@@ -1,6 +1,6 @@
 /**
  * 额度变动检测：读取 scanner.py 生成的 data.json，与上次"已通知状态"快照对比，
- * 找出 status / limit_amount / redeem 发生变化（含新进入、移出监控）的基金。
+ * 仅找出前后均存在、有效日累计限额发生变化的基金。
  *
  * 幂等保证：快照保存的是"已通知"的最新状态；当前数据与之相同则无变动、不通知。
  * scanner 同日重跑幂等，因此本检测天然不会重复通知。
@@ -9,16 +9,14 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { config } from './config.js'
 
 /** 与前端一致的过滤规则：只看人民币可买的份额，避免美元份额产生噪音 */
-function extractState(funds) {
+export function extractState(funds) {
   const state = {}
   for (const f of funds) {
     if (/美元|美汇|美钞|现汇|现钞/.test(f.name)) continue
-    const hasLimit = String(f.status).includes('暂停') || Number(f.limit_amount) > 0
-    if (!hasLimit) continue
     state[f.code] = {
       name: f.name,
       status: f.status,
-      limit_amount: Number(f.limit_amount),
+      limit_amount: normalizeLimit(f.limit_amount),
       redeem: f.redeem,
     }
   }
@@ -56,48 +54,30 @@ function writeSnapshot(payload) {
  */
 export function diffStates(prevState, currState) {
   const changes = []
-  const codes = new Set([...Object.keys(prevState), ...Object.keys(currState)])
-  for (const code of codes) {
+  for (const [code, b] of Object.entries(currState)) {
     const a = prevState[code]
-    const b = currState[code]
-    if (!a) {
-      changes.push({
-        code,
-        name: b.name,
-        type: 'added',
-        field: '监控范围',
-        from: '不在监控范围',
-        to: `${b.status} · 限额 ${fmtField('limit_amount', b.limit_amount)}`,
-      })
-      continue
-    }
-    if (!b) {
-      changes.push({
-        code,
-        name: a.name,
-        type: 'removed',
-        field: '监控范围',
-        from: `${a.status} · 限额 ${fmtField('limit_amount', a.limit_amount)}`,
-        to: '移出监控范围',
-      })
-      continue
-    }
-    for (const field of ['status', 'limit_amount', 'redeem']) {
-      const pv = a[field]
-      const cv = b[field]
-      if (pv !== cv) {
-        changes.push({
-          code,
-          name: b.name,
-          type: 'changed',
-          field: field === 'limit_amount' ? '日累计限额' : field === 'status' ? '申购状态' : '赎回状态',
-          from: fmtField(field, pv),
-          to: fmtField(field, cv),
-        })
-      }
-    }
+    // 新增/移出基金不发信；缺失或非法额度不能当作 0 比较。
+    if (!a) continue
+    const previousLimit = normalizeLimit(a.limit_amount)
+    const currentLimit = normalizeLimit(b.limit_amount)
+    if (previousLimit === null || currentLimit === null || previousLimit === currentLimit) continue
+    changes.push({
+      code,
+      name: b.name,
+      type: 'changed',
+      field: '日累计限额（代销）',
+      from: fmtField('limit_amount', previousLimit),
+      to: fmtField('limit_amount', currentLimit),
+    })
   }
   return changes
+}
+
+function normalizeLimit(value) {
+  if (typeof value !== 'number' && typeof value !== 'string') return null
+  if (typeof value === 'string' && !value.trim()) return null
+  const amount = Number(value)
+  return Number.isFinite(amount) && amount >= 0 ? amount : null
 }
 
 function fmtField(field, value) {

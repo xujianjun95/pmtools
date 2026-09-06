@@ -23,6 +23,9 @@ function formatHeaderTime() {
 }
 
 function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const mobileMenuRef = useRef(null)
+  const mobileToggleRef = useRef(null)
   const [localTime, setLocalTime] = useState(() => formatHeaderTime())
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false })
   /** 首页点「造物」或「资讯」后把指示线挪到对应链接下；点 Logo 会清掉 */
@@ -84,11 +87,39 @@ function Header() {
     return () => window.removeEventListener('resize', updateIndicator)
   }, [location.pathname, activeNav])
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const handlePointerDown = (event) => {
+      if (!mobileMenuRef.current?.contains(event.target) && !mobileToggleRef.current?.contains(event.target)) {
+        setMobileMenuOpen(false)
+      }
+    }
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false)
+        mobileToggleRef.current?.focus()
+      }
+    }
+    const breakpoint = window.matchMedia('(max-width: 768px)')
+    const handleBreakpoint = () => {
+      if (!breakpoint.matches) setMobileMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    breakpoint.addEventListener('change', handleBreakpoint)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+      breakpoint.removeEventListener('change', handleBreakpoint)
+    }
+  }, [mobileMenuOpen])
+
   const prefersReducedMotion = () =>
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const handleLogoClick = (e) => {
+    setMobileMenuOpen(false)
     setActiveNav(null)
     if (location.pathname !== '/') return
     e.preventDefault()
@@ -180,6 +211,21 @@ function Header() {
               </Link>
             </nav>
           </div>
+          <button
+            ref={mobileToggleRef}
+            type="button"
+            className={styles.mobileToggle}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-site-nav"
+            aria-label={mobileMenuOpen ? '关闭网站导航' : '打开网站导航'}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            <span className={styles.menuIcon} aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
           <div className={styles.right}>
             <div className={styles.statusBar}>
               <span className={styles.statusItem}>
@@ -192,6 +238,24 @@ function Header() {
             <ThemeToggle />
           </div>
         </div>
+      </div>
+      <div
+        ref={mobileMenuRef}
+        id="mobile-site-nav"
+        className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}
+        aria-hidden={!mobileMenuOpen}
+        inert={!mobileMenuOpen}
+      >
+        <nav aria-label="手机网站导航" onClick={(event) => {
+          if (event.target.closest('a')) setMobileMenuOpen(false)
+        }}>
+          <Link to="/" onClick={handleBuildsClick}>造物</Link>
+          <Link to="/" onClick={handleNewsClick}>资讯</Link>
+          <Link to="/qdii" aria-current={location.pathname.startsWith('/qdii') ? 'page' : undefined}>QDII 监控</Link>
+          <Link to="/articles" aria-current={location.pathname === '/articles' ? 'page' : undefined}>文章</Link>
+          <Link to="/about" aria-current={location.pathname === '/about' ? 'page' : undefined}>关于我</Link>
+        </nav>
+        <div className={styles.mobileTheme}><span>外观</span><ThemeToggle /></div>
       </div>
     </header>
   )

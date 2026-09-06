@@ -32,7 +32,7 @@ const BLOB_SHAPES = Object.freeze({
 const NAV_ITEMS = Object.freeze([
   { id: 'builds', index: '01', label: '看项目' },
   { id: 'news', index: '02', label: '看资讯' },
-  { id: 'about', index: '03', label: '关于我' },
+  { id: 'qdii', index: '03', label: 'QDII 监控' },
 ])
 
 function clamp(value, min, max) {
@@ -376,7 +376,7 @@ function PmtoolsCompanion() {
         return
       }
 
-      navigate('/about')
+      if (destination === 'qdii') navigate('/qdii')
     },
     [location.pathname, navigate, reducedMotion]
   )

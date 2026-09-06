@@ -243,7 +243,7 @@ export default function FundTable({ funds, filterVersion }) {
             <th>基金简称</th>
             <th>跟踪指数</th>
             <th>申购状态</th>
-            {sortHeader('limit_amount', '日累计限额')}
+            {sortHeader('limit_amount', '日累计限额（代销）')}
             {sortHeader('tracking_error', '年化跟踪误差')}
             {sortHeader('fee', '手续费')}
             <th />
@@ -275,7 +275,7 @@ export default function FundTable({ funds, filterVersion }) {
                       {statusLabel(f.status)}
                     </span>
                   </td>
-                  <td className={styles.tlimit} data-label="日累计限额">
+                  <td className={styles.tlimit} data-label="日累计限额（代销）">
                     <span className={styles.limitCell}>{limitCell(f)}</span>
                   </td>
                   <td className={styles.tte} data-label="跟踪误差">

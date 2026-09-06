@@ -49,6 +49,6 @@ export function compactHistory(history) {
 
 export const FIELD_LABELS = {
   status: '申购状态',
-  limit_amount: '日累计限额',
+  limit_amount: '日累计限额（代销）',
   redeem: '赎回状态',
 }
