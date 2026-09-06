@@ -10,38 +10,44 @@ import { sendVerificationCode } from './mailer.js'
 import { initCron } from './notify.js'
 
 const app = express()
+let analytics = null
 app.use(express.json())
 // 部署在 nginx 反代之后：信任第一跳代理，让 req.ip 读到真实客户端 IP（X-Forwarded-For），
 // 否则所有请求都来自 127.0.0.1，速率限制会变成全站共享一个桶
 app.set('trust proxy', 1)
 
 // 简单内存速率限制：同一 IP 每 10 分钟最多 10 次订阅请求
-const rateMap = new Map()
 const RATE_WINDOW = 10 * 60 * 1000
-let rateChecks = 0
-function rateLimit(req, res, next) {
-  // 周期性清理过期条目，避免长跑后内存持续增长
-  rateChecks += 1
-  if (rateChecks % 100 === 0) {
-    const now = Date.now()
-    for (const [k, v] of rateMap) {
-      if (now - v.at > RATE_WINDOW) rateMap.delete(k)
+function makeRateLimit(maxPerWindow) {
+  const rateMap = new Map()
+  let rateChecks = 0
+  return function rateLimit(req, res, next) {
+    // 周期性清理过期条目，避免长跑后内存持续增长
+    rateChecks += 1
+    if (rateChecks % 100 === 0) {
+      const now = Date.now()
+      for (const [k, v] of rateMap) {
+        if (now - v.at > RATE_WINDOW) rateMap.delete(k)
+      }
     }
+    const key = req.ip || 'unknown'
+    const now = Date.now()
+    const rec = rateMap.get(key) || { count: 0, at: now }
+    if (now - rec.at > RATE_WINDOW) {
+      rec.count = 0
+      rec.at = now
+    }
+    rec.count += 1
+    rateMap.set(key, rec)
+    if (rec.count > maxPerWindow) {
+      return res.status(429).json({ ok: false, message: '操作过于频繁，请稍后再试' })
+    }
+    next()
   }
-  const key = req.ip || 'unknown'
-  const now = Date.now()
-  const rec = rateMap.get(key) || { count: 0, at: now }
-  if (now - rec.at > RATE_WINDOW) {
-    rec.count = 0
-    rec.at = now
-  }
-  rec.count += 1
-  rateMap.set(key, rec)
-  if (rec.count > 10) {
-    return res.status(429).json({ ok: false, message: '操作过于频繁，请稍后再试' })
-  }
-  next()
 }
+const rateLimit = makeRateLimit(10)
+// 埋点单独限制为 60 次请求/10 分钟/IP，不占用订阅额度。
+const trackRateLimit = makeRateLimit(60)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -136,6 +142,30 @@ app.get('/api/status', (req, res) => {
   res.json({ ok: true, subscribed: db.isSubscribed(email) })
 })
 
+/**
+ * 埋点上报：POST /api/track  body: { events: [...] } 或单条 { event, visitor_id, ... }
+ * 仅接收「鉴往」页面统计事件（见 analytics.js）；非法事件静默丢弃，处理后返回 204，限流返回 429，
+ * 让前端无感知——统计失败不能影响页面体验。
+ */
+app.post('/api/track', trackRateLimit, (req, res) => {
+  if (!analytics) return res.status(204).end()
+  const items = Array.isArray(req.body?.events) ? req.body.events.slice(0, 20) : [req.body]
+  for (const item of items) {
+    try {
+      const row = analytics.parseTrackPayload(item)
+      if (row) analytics.recordTrackEvent(row)
+    } catch (err) {
+      // 埋点写入故障后停止重试，避免反复阻塞和日志刷屏；重启后再尝试启用。
+      const unavailable = analytics
+      analytics = null
+      try { unavailable.closeAnalyticsDb() } catch { /* 订阅连接独立，不受影响 */ }
+      console.error('[track] 统计已停用，订阅及邮件服务继续运行：', err.code || err.name)
+      break
+    }
+  }
+  res.status(204).end()
+})
+
 // 启动前检查发信配置（缺失时打警告，不影响 API 可用）
 try {
   assertMailConfigured()
@@ -146,6 +176,15 @@ try {
 
 db.initDb()
 console.log(`[db] 订阅数据库就绪：${config.dbPath}`)
+
+// 统计属于可选功能：模块缺失、数据库不可写均不能阻断原有服务启动。
+try {
+  const module = await import('./analytics.js')
+  module.openAnalyticsDb(config.dbPath)
+  analytics = module
+} catch (err) {
+  console.error('[track] 统计初始化失败，订阅及邮件服务继续运行：', err.code || err.name)
+}
 
 // 启动定时检测（仅作为常驻服务时启用；--once 手动跑由 notify.js 自行处理）
 const { cronStarted } = initCron()

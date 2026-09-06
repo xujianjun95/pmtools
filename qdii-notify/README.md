@@ -11,6 +11,7 @@ nginx (80/443) ── / ──> pmtools 静态前端（/var/www/pmtools/main）
                               ├── POST /api/subscribe      订阅
                               ├── GET  /api/unsubscribe    退订（邮件内链接）
                               ├── GET  /api/status         订阅状态查询
+                              ├── POST /api/track          「鉴往」使用统计上报
                               └── 定时任务（8:00 / 12:10 / 18:10）检测 data.json 变动 → 邮件群发
 scanner.py（cron 1:00 / 12:00 / 18:00）──> /var/www/pmtools/main/qdii/data.json（本服务只读它）
 ```
@@ -19,13 +20,47 @@ scanner.py（cron 1:00 / 12:00 / 18:00）──> /var/www/pmtools/main/qdii/data
 
 | 文件 | 作用 |
 |---|---|
-| `server.js` | Express API（订阅/退订/状态/健康检查）+ 启动定时任务 |
+| `server.js` | Express API（订阅/退订/状态/健康检查/埋点）+ 启动定时任务 |
 | `notify.js` | 变动检测 + 发信，支持 `--once` / `--check` 手动跑 |
 | `detect.js` | 读 data.json，与 snapshot.json 快照对比，仅通知有效 limit_amount 变动；状态变化和新增/移出监控不发信 |
 | `mailer.js` | 邮件发送（阿里云 DM API 默认；SMTP 备用通道，分批、个性化退订链接） |
 | `db.js` | SQLite 订阅者表（better-sqlite3） |
+| `analytics.js` | 「鉴往」使用统计：/api/track 载荷校验 + 独立统计库 dca_events 表写入 |
+| `query-dca-analytics.mjs` | 使用统计查询脚本（用户数/停留时长/人均次数） |
 | `config.js` | 配置读取（.env） |
 | `nginx-pmtools.conf.example` | nginx 反代片段 |
+
+## 「鉴往」使用统计
+
+/qdii/dca 页面上报 4 类事件（`analytics.js` 白名单校验后写入独立 SQLite 统计库的 `dca_events` 表）：
+`dca_view` 进入页面、`dca_start` 开始旅程（附年份/标的/金额）、`dca_complete` 通关到总结页、
+`dca_leave` 切后台或离开时的时长快照（`duration_ms` 为本次访问页面可见累计停留毫秒数；同一次访问取最大值，不累加快照）。
+
+- **访客识别**：`visitor_id` 存 localStorage（按浏览器去重），`visit_id` 每次进入页面重新生成（刷新、离开后重新进入均算新访问）
+- **隐私**：不采集任何个人信息与邮箱，只存随机 UUID 与聚合参数
+- **统计口径**：使用用户数 = 有 `dca_start` 的去重浏览器数；平均停留 = 所有页面访问的可见累计时长平均值（含未开始旅程的访问）；人均游玩 = `dca_start` 次数 / 使用用户数。开始一次即算一次游玩，无需通关。
+- **可靠性**：sendBeacon 优先、keepalive fetch 兜底；切后台立即补报，切回继续计时；本地开发（localhost）不上报。浏览器拦截、断网或强制结束进程仍可能漏报，统计为尽力上报。
+- **限流**：埋点与邮件订阅独立计数，埋点请求不占用订阅额度。
+- **订阅隔离**：统计库路径固定为 `DB_PATH + .analytics.db`（例如 `subscribers.db.analytics.db`），不读写订阅库，不改动订阅表和原邮件配置。统计模块缺失、初始化失败或写入失败均不阻止订阅 API 和定时邮件运行；写入失败后停用统计直到下次服务重启，日志只记录错误类型。统计库锁冲突立即失败，不等待 SQLite 默认的同步超时。
+- **兼容性**：沿用 `better-sqlite3` 11；前端和通知服务需一起发布。旧版错误时长无法从已有数据还原；不会读取或迁移旧版存于订阅库内的埋点表。
+
+隔离回归（临时数据库、模拟邮件和定时器，不读取 `.env`，不启动端口，不发送真实邮件）：
+
+```bash
+# 仓库根目录执行
+node --test qdii-notify/subscription-isolation.test.mjs
+```
+
+本次后端隔离验证环境：Node 22.23.2 + 锁文件中的 better-sqlite3 11.10.0；20 项后端测试通过。
+附带的 Node 24.19.0 运行时在多场景测试中曾触发原生模块异常，该组合尚未确认兼容。
+发布前核对服务器现有运行时，保留原 Node、邮件配置及依赖版本，不随埋点变更升级运行环境。
+
+上线后查看数据（在服务器 `/opt/qdii-notify` 执行）：
+
+```bash
+node query-dca-analytics.mjs            # 全部时间：使用用户数 / 平均停留时长 / 人均游玩次数
+node query-dca-analytics.mjs --days 7   # 只看最近 7 天
+```
 
 ## 部署步骤（在阿里云服务器执行）
 

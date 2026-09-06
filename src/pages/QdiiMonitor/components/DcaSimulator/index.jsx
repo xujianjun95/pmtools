@@ -7,6 +7,7 @@ import {
   selectJourneyEvents,
 } from '../../utils/dca'
 import { createJourneyState, journeyReducer } from '../../utils/journeyState'
+import { createDcaSession } from '../../../../utils/analytics.js'
 import AmountAdjustDialog from './AmountAdjustDialog'
 import EventDialog from './EventDialog'
 import JourneyPlayer from './JourneyPlayer'
@@ -34,10 +35,22 @@ export default function DcaSimulator() {
   const [dialogLeaving, setDialogLeaving] = useState(false)
   const dismissTimerRef = useRef(null)
   const [state, dispatch] = useReducer(journeyReducer, undefined, createJourneyState)
+  const sessionRef = useRef(null)
+  // 每次成功开始旅程重置，完成状态只上报一次。
+  const completedReportedRef = useRef(false)
 
   useEffect(() => () => {
     window.clearTimeout(dismissTimerRef.current)
     dismissTimerRef.current = null
+  }, [])
+
+  // 使用统计：挂载即开启页面会话，卸载时补报离开事件（含停留时长）
+  useEffect(() => {
+    completedReportedRef.current = false
+    const session = createDcaSession()
+    sessionRef.current = session
+    session.report('dca_view', {})
+    return () => session.dispose()
   }, [])
 
   // 弹窗关闭统一走这里：先退场动画，动画结束再提交状态切换。
@@ -118,6 +131,12 @@ export default function DcaSimulator() {
       setRestoreTip(null)
       setPendingRecovery(null)
       setConfig(nextConfig)
+      completedReportedRef.current = false
+      sessionRef.current?.report('dca_start', {
+        year: nextConfig.startYear,
+        asset: nextConfig.assetKey,
+        amount: nextConfig.initialAmount,
+      })
       dispatch({ type: 'START', endIndex: Math.max(0, nextCurve.length - 1) })
     } catch (error) {
       setStartError(`所选标的在所选起点缺少连续数据（${error.message}），请更换年份或稍后重试。`)
@@ -130,9 +149,21 @@ export default function DcaSimulator() {
       setYearTip(null)
       setRestoreTip(null)
       setPendingRecovery(null)
+      completedReportedRef.current = false
     }
     dispatch(action)
   }, [dispatch])
+
+  // COMPLETE 和终点的 ACK_EVENT_OUTCOME 均可能到达总结页。
+  useEffect(() => {
+    if (state.phase !== 'completed' || completedReportedRef.current || !config) return
+    completedReportedRef.current = true
+    sessionRef.current?.report('dca_complete', {
+      year: config.startYear,
+      asset: config.assetKey,
+      months: curve.length,
+    })
+  }, [state.phase, config, curve.length])
 
   const handleYearEntered = useCallback((point) => {
     setYearTip({ year: point.ym.slice(0, 4), amount: point.amount })
