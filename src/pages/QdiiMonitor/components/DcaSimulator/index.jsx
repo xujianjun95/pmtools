@@ -38,6 +38,7 @@ export default function DcaSimulator() {
   const sessionRef = useRef(null)
   // 每次成功开始旅程重置，完成状态只上报一次。
   const completedReportedRef = useRef(false)
+  const roundIdRef = useRef('')
 
   useEffect(() => () => {
     window.clearTimeout(dismissTimerRef.current)
@@ -132,10 +133,13 @@ export default function DcaSimulator() {
       setPendingRecovery(null)
       setConfig(nextConfig)
       completedReportedRef.current = false
+      // 每局唯一标识：start/complete 携带同一 round_id，服务端跨多局配对与重放去重（spec §6.5）
+      roundIdRef.current = window.crypto?.randomUUID ? window.crypto.randomUUID() : ''
       sessionRef.current?.report('dca_start', {
         year: nextConfig.startYear,
         asset: nextConfig.assetKey,
         amount: nextConfig.initialAmount,
+        round_id: roundIdRef.current || undefined,
       })
       dispatch({ type: 'START', endIndex: Math.max(0, nextCurve.length - 1) })
     } catch (error) {
@@ -162,6 +166,7 @@ export default function DcaSimulator() {
       year: config.startYear,
       asset: config.assetKey,
       months: curve.length,
+      round_id: roundIdRef.current || undefined,
     })
   }, [state.phase, config, curve.length])
 

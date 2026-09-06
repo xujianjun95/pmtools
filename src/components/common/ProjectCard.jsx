@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import ProjectMockup from '../mockups/ProjectMockup'
 import ProjectBadges from './ProjectBadges'
 import TechTag from './TechTag'
+import { trackEvent } from '../../utils/analytics'
 import styles from './ProjectCard.module.css'
 
 function ProjectCard({ project, reversed = false }) {
@@ -13,6 +14,10 @@ function ProjectCard({ project, reversed = false }) {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       setIsPreviewActive(false)
     }
+  }
+
+  const handleCardClick = () => {
+    trackEvent('project_click', { project_id: project.id })
   }
 
   return (
@@ -27,6 +32,7 @@ function ProjectCard({ project, reversed = false }) {
         to={`/project/${project.id}`}
         className={styles.cardLink}
         aria-label={`查看 ${project.title} 项目详情`}
+        onClick={handleCardClick}
       />
 
       <div className={styles.mockupWrap}>

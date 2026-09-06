@@ -153,3 +153,145 @@ export function createDcaSession() {
     },
   }
 }
+
+// ---------- 全站埋点（看板用，spec §6） ----------
+// 与鉴往会话同一套约定：静默失败、只计可见时长、leave 快照由服务端按 visit+path 取 MAX 去重。
+// 区别：一次 SPA 加载一个 visit_id；路由切换由 trackPath() 收口上一路径并开启新路径；
+// 心跳每 60 秒补报累计快照，把崩溃/强杀的丢失窗口压到 1 分钟量级（尽力而为，非保证）。
+const SITE_HEARTBEAT_MS = 60_000
+
+/**
+ * 上报开关：生产环境开启；本地开发默认关闭，localStorage 写入
+ * pmtools_analytics_debug=1 可显式开启（供本地联调验证埋点入库）。
+ */
+function shouldTrack() {
+  if (!isLocalDev()) return true
+  try {
+    return window.localStorage.getItem('pmtools_analytics_debug') === '1'
+  } catch {
+    return false
+  }
+}
+
+/** 点击类事件立即上报（不进批量队列）；调用方不 await、失败静默 */
+export function trackEvent(event, meta = {}) {
+  try {
+    if (!shouldTrack()) return
+    const visitorId = getVisitorId()
+    if (!visitorId) return
+    const payload = JSON.stringify({
+      events: [{ event, visitor_id: visitorId, visit_id: '', duration_ms: 0, meta }],
+    })
+    try {
+      if (navigator.sendBeacon?.('/api/track', new Blob([payload], { type: 'application/json' }))) return
+    } catch {
+      // Beacon 被浏览器拒绝时继续尝试 fetch
+    }
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true,
+    }).catch(() => {})
+  } catch {
+    // 统计失败不影响页面体验
+  }
+}
+
+/**
+ * 全站页面会话：page_view（进入路径）/ page_leave（离开、切换、心跳的累计快照）。
+ * 服务端按 visit+path 取 MAX 去重，因此心跳重复快照不会虚增停留时长。
+ */
+export function createSiteSession() {
+  const noopSession = { trackPath() {}, dispose() {} }
+  let visitorId
+  try {
+    if (!shouldTrack()) return noopSession
+    visitorId = getVisitorId()
+    if (!visitorId) return noopSession
+  } catch {
+    return noopSession
+  }
+  const visitId = uuid()
+
+  let currentPath = null
+  let visibleMs = 0
+  let visibleSince = document.visibilityState === 'visible' ? performance.now() : null
+  let disposed = false
+  let heartbeatTimer = null
+
+  const elapsedMs = () => visibleMs + (visibleSince === null ? 0 : performance.now() - visibleSince)
+  const pauseClock = () => {
+    if (visibleSince === null) return
+    visibleMs += performance.now() - visibleSince
+    visibleSince = null
+  }
+  const resumeClock = () => {
+    if (!disposed && document.visibilityState === 'visible' && visibleSince === null) {
+      visibleSince = performance.now()
+    }
+  }
+  const send = (event, meta, durationMs) => {
+    const payload = JSON.stringify({
+      events: [{ event, visitor_id: visitorId, visit_id: visitId, duration_ms: Math.round(durationMs), meta }],
+    })
+    try {
+      if (navigator.sendBeacon?.('/api/track', new Blob([payload], { type: 'application/json' }))) return
+    } catch {
+      // 落到 fetch
+    }
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {})
+    } catch {
+      // 统计失败不影响页面切换
+    }
+  }
+  const checkpoint = () => {
+    if (!currentPath) return
+    pauseClock()
+    send('page_leave', { path: currentPath }, visibleMs)
+    // 页面仍可见时立即恢复计时：心跳是快照不是离开，后续时长继续累加
+    resumeClock()
+  }
+  const startHeartbeat = () => {
+    window.clearInterval(heartbeatTimer)
+    heartbeatTimer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') checkpoint()
+    }, SITE_HEARTBEAT_MS)
+  }
+
+  const onVisibility = () => {
+    if (document.visibilityState === 'visible') resumeClock()
+    else checkpoint()
+  }
+  document.addEventListener('visibilitychange', onVisibility)
+  window.addEventListener('pagehide', checkpoint)
+  window.addEventListener('pageshow', resumeClock)
+
+  return {
+    /** 路由进入新路径：收口上一路径（leave），开启 page_view 与心跳 */
+    trackPath(path) {
+      if (disposed || !path || path === currentPath) return
+      checkpoint()
+      currentPath = path
+      visibleMs = 0
+      resumeClock()
+      send('page_view', { path }, 0)
+      startHeartbeat()
+    },
+    dispose() {
+      if (disposed) return
+      checkpoint()
+      disposed = true
+      window.clearInterval(heartbeatTimer)
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('pagehide', checkpoint)
+      window.removeEventListener('pageshow', resumeClock)
+    },
+  }
+}

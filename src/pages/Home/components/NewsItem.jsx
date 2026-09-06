@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import Modal from '../../../components/common/Modal'
+import { trackEvent } from '../../../utils/analytics'
 import styles from './NewsItem.module.css'
 
 // 生产环境强制使用正式 API 基址（本地 .env 的 localhost 仅限开发，严禁混入线上包）
@@ -17,6 +18,7 @@ function NewsItem({ item, index }) {
 
   const handleSummarize = useCallback(async (e) => {
     e.stopPropagation()
+    trackEvent('news_quickview', { news_id: item.id || item.url })
     if (summary) {
       setModalOpen(true)
       return
