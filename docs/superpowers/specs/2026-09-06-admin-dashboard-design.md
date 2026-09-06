@@ -97,7 +97,7 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 
 - 校验沿用 `parseTrackPayload` 姿势：事件名白名单、visitor_id 强制 UUID、时长 6 小时封顶、meta 键白名单、非法静默丢弃。
 - 写入按批次事务执行（沿用既有"写失败即停用统计、订阅服务不受影响"的故障模式）。
-- 数据保留：原始事件保留 180 天，清理用运维 SQL 手动执行（不新增定时任务代码）。
+- 数据保留：**全量保留，暂不清理**。事件量级极小（预估 <10 万行/年），"累计"统计因此真实有效；未来量级显著增长时再评估按年归档（阈值记入运维手册）。
 - **只读挂载前提（如实记录）**：SQLite WAL 模式下只读连接仍需 `-shm`/`-wal` 文件可访问（本机各服务同为 root，满足）；better-sqlite3 查询为 autocommit 短事务，不长期持有读事务，不阻碍 checkpoint。
 
 ## 5. API 设计（pmtools-admin）
@@ -142,7 +142,7 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 - **PV**：`page_view` 计数。SPA 路由每次变化计 1，首次加载计 1，刷新计新 PV；bfcache 恢复（pageshow）不重复计。
 - **UV**：区间内 `visitor_id` 去重数。为浏览器级标识（localStorage），不等于真实人数；**区间 UV 用 distinct 计算，禁止用每日 UV 相加**。
 - **独立 IP**：区间内 `ip` 去重数（`page_view` 服务端补记）。仅用于计数，看板不展示 IP 明细。
-- **停留时长**：`page_leave` 按 visit+path 取 MAX 去重后求和；人均停留 = 总时长 ÷ visit 数。**首页停留单独展示**。
+- **停留时长**：`page_leave` 按 visit+path 取 MAX 去重后求和；**次均停留** = 总时长 ÷ visit 数（每次访问的平均，如实命名，不称"人均"）。**首页停留单独展示**。
 
 ### 6.2 造物
 
@@ -158,18 +158,21 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 
 ### 6.4 QDII 订阅（快照口径）
 
-一期仅展示**当前活跃订阅数**与**当前退订中人数**（subscribers.db 实时状态）。不做订阅/退订趋势：现有库在重新订阅时会清空 `unsubscribed_at`、重复退订会覆盖时间戳，历史次数无法准确还原；准确趋势需新增订阅事件日志（触碰订阅逻辑），一期明确不做。
+一期仅展示**当前活跃订阅数**与**当前退订中人数**（subscribers.db 实时状态）。不做订阅/退订趋势：现有库在重新订阅时会清空 `unsubscribed_at`、重复退订会覆盖时间戳，历史次数无法准确还原；准确趋势需新增订阅事件日志（触碰订阅逻辑），一期明确不做。该分区为**实时快照，不受时间范围筛选影响**（卡片注明）。
 
 ### 6.5 鉴往
 
 - **游玩人数**：区间内触发过 `dca_start` 的去重 `visitor_id` 数。
-- **游戏总次数**：`dca_start` 计数；`dca_start` meta 新增 `round_id`（每局 UUID，前端生成），服务端按 round_id 去重防批量重放虚增。
+- **游戏总次数**：`dca_start` 计数；`dca_start` 与 `dca_complete` 的 meta **均携带同一 `round_id`**（每局 UUID，前端生成），服务端按 round_id 去重防批量重放虚增。
 - **人均游戏次数** = 游戏总次数 ÷ 游玩人数。
-- **人均游戏时长** = Σ(同 visit 内 `dca_complete.duration_ms` − 对应 `dca_start.duration_ms`) ÷ 完成局数。口径含义：只计"开始 → 完成"的可见时长，天然排除开始前浏览与总结页；页面隐藏时间本就不计时；**未完成的局计次数、不计时长**。
+- **人均游戏时长** = Σ(完成局时长) ÷ **游玩人数**；**每局平均耗时** = Σ(完成局时长) ÷ 完成局数。两指标分开命名、分别计算——人均含中途退出者（其时长记 0），每局只看完成局。
+- **完成局时长** = 同一 `round_id` 的 `dca_complete.duration_ms` − `dca_start.duration_ms`（可见时长口径，天然排除开始前浏览与总结页；页面隐藏时间本就不计时）。
+- **中途退出（有 start 无 complete）**：计次数、不计时长（无终止意图信号，无法归因）。
+- **旧数据兼容**：round_id 上线前的历史事件无此标识，按 visit_id 内"start 与其后首个 complete 顺序配对"计算；看板标注口径生效起始日。
 
 ### 6.6 埋点可靠性
 
-- 沿用离开时上报（visibilitychange/pagehide）之外，**新增可见状态低频快照**：每 60 秒 flush 一次累计值，浏览器崩溃/强杀的丢失窗口 ≤ 60 秒。
+- 沿用离开时上报（visibilitychange/pagehide）之外，**新增可见状态低频快照**：每 60 秒 flush 一次累计值，尽力把浏览器崩溃/强杀的丢失窗口压缩到 1 分钟量级（网络失败或浏览器挂起仍可能扩大，不作为保证）。
 
 ## 7. 前端设计
 
@@ -189,9 +192,10 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 ### 7.3 文章编辑器
 
 - **Vditor** 所见即所得模式，存储为标准 Markdown；工具栏按需裁剪。
-- 图片：粘贴/选择 → 上传钩子 → `/admin/upload/image` → 插入 OSS URL。
+- 图片：粘贴/选择 → 上传钩子 → `/admin/upload/image` → 插入 OSS URL。**新建文章先创建草稿取得固定 slug，再开放图片上传**（无文章 ID 不允许传图）；并发上传与失败重试不占数量额度。
+- 图片数量口径：上限 30 张按**正文实际引用的去重图片数**计（已上传未引用的孤儿对象不占额度）。
 - 表单字段：标题、slug（创建后固定）、标签、摘要、封面、正文。
-- **发布门禁**：正文中存在尚未上传完成的图片占位时**禁止上架**（草稿不受限）；"正文保存不依赖图片上传"仅对保存草稿成立。
+- **发布门禁**：status 变为 published（含草稿首次上架）**以及已上架文章的正文修改**，都校验正文引用图片全部就位，否则拒绝——防止绕过门禁发布未完成图片；保存草稿不校验。
 
 ### 7.4 .md 导入（一期仅 .md；兼容范围=本清单）
 
@@ -241,7 +245,10 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 1. **迁移脚本**（一次性，本地运行）：读 OSS `articles.json` manifest → 逐篇拉取正文 → 写入 SQLite，**保留原 id、发布日期、标签、摘要、封面**；正文内相对图片路径统一转为 OSS 绝对 URL（图片文件不动）。
 2. **逐篇核对**：迁移前后渲染对比（标题/正文/图片数/目录锚点），人工抽查全文。
 3. **切换**：admin 服务部署并加载迁移数据 → 前台切 API 数据源 → 线上验证文章区。
-4. **回滚**：前端保留数据源开关（env 一行切回 OSS manifest），nginx 可随时摘除 `/background-api/` location；SQLite 与 OSS 双数据源并存直至观察期结束。
+4. **回滚（拆成两级，不可混用）**：
+   - **程序回滚**：重新发布上一版前端构建产物（每版产物按日期归档保留），必要时同时摘除 nginx `/background-api/` location。注意 Vite 环境变量是**构建期**注入——改服务器 .env 不会改变已发布的前端产物，不存在"改 env 即切换"。
+   - **数据源回滚（兜底）**：用迁移脚本的**反向导出**从 SQLite 重新生成 OSS manifest（含上线后在后台新增/修改/下架的全部最新状态）并上传，再发布指向 OSS 的前端版本。**禁止直接切回旧 manifest**——会丢失后台改动、复活下架文章。
+   - SQLite 与 OSS 双数据源并存直至观察期结束。
 5. **退役**：发布脚本在迁移验证通过 + 一个观察周期后删除；OSS 上旧 manifest 与正文**默认保留公开**（回滚保险），是否清理另行决定。
 
 ## 11. 部署
@@ -254,7 +261,7 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 
 ## 12. 红线与风险
 
-- **红线**：不影响线上用户。qdii-notify 改动限于 §3.1 列出的三处（analytics.js、track 入口、测试），**不触碰订阅/退订/邮件函数**；埋点与订阅共用进程与机器资源，通过批量事务写入、既有 trackRateLimit、site_events 独立表与索引、180 天保留策略控制影响，**上线前验证"埋点高负载下订阅接口正常"**。
+- **红线**：不影响线上用户。qdii-notify 改动限于 §3.1 列出的三处（analytics.js、track 入口、测试），**不触碰订阅/退订/邮件函数**；埋点与订阅共用进程与机器资源，通过批量事务写入、既有 trackRateLimit、site_events 独立表与索引控制影响，**上线前验证"埋点高负载下订阅接口正常"**（用 mock 邮件通道，不发真实邮件）。
 - 升级顺序与回滚方案保证任何一步出问题可独立退回（§10、§11）。
 - 新代码过 Mimosa 推送门禁（SQL 用完整固定串 + 参数绑定、HTTP 收口独立模块）。
 - 只读挂载 qdii 库属于跨服务文件级耦合：目录结构变更需同步两处，已在此文档标注。
@@ -280,5 +287,6 @@ CREATE INDEX IF NOT EXISTS idx_site_events_event_time ON site_events (event, cre
 
 ## 14. 修订记录
 
+- v2.1（2026-09-06）：按实现计划复审意见修订——游戏时长拆分"人均/每局"双指标且 start/complete 均带 round_id、补中途退出与旧数据配对规则（§6.5）；事件改为全量保留以支撑真实累计（§4.2/§12）；"人均停留"更名"次均停留"（§6.1）；QDII 快照标注不受筛选影响（§6.4）；心跳措辞去保证化（§6.6）；图片上传改为"先存草稿得 slug 再传图"、数量按正文引用计、门禁覆盖已上架正文修改（§7.3）；回滚拆分程序/数据源两级并明确 Vite env 构建期语义（§10.4）。
 - v2（2026-09-06）：按用户逐条复核意见修订——下架与兜底冲突（§4.1/§7.6）、新增迁移方案（§10）、QDII 指标改快照口径（§6.4）、鉴往游戏时长口径重定义（§6.5）、新增指标口径表（§6）、qdii-notify 改动范围如实列全并补安全措施（§3.1/§12）、安全补齐（§8）、导入范围与语法清单（§7.4）、slug 固定、nginx 术语与透传说明（§3.2）、部署升级顺序与回滚（§11）、"数据为零/读取失败"区分（§5/§9）。
 - v1（2026-09-06）：初版，经四节逐节确认。
