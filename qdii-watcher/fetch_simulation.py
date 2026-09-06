@@ -23,13 +23,13 @@
 import argparse
 import json
 import logging
+import re
 import time
 from datetime import date
 from pathlib import Path
 
 import akshare as ak
 import pandas as pd
-import requests
 
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_OUT = BASE_DIR.parent / "public" / "qdii" / "simulation-data.json"
@@ -68,16 +68,26 @@ def with_retry(fn, what, tries=5, wait=25):
     raise RuntimeError(f"{what}失败，已重试{tries}次: {last}")
 
 
+# ---- SSRF 加固：出站请求统一走 http_client.https_get（https 白名单 + IP 边界校验 + 禁重定向） ----
+from http_client import https_get
+
+
 def eastmoney_monthly(secid, what):
     """东财月K直连，返回以 Period(M) 为索引的月末收盘序列。"""
+    # URL 为模块内硬编码常量（东财官方行情域名）；secid 仅作为查询参数值传入
+    EASTMONEY_KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
+    SECID_PATTERN = re.compile(r"\d{1,3}\.[0-9A-Za-z]{1,10}")
+
     def _fetch():
-        url = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
+        # secid 仅接受"市场代码.证券代码"形态，防止畸形值进入请求参数
+        if not SECID_PATTERN.fullmatch(secid):
+            raise ValueError(f"非法 secid: {secid!r}")
         params = {
             "secid": secid, "klt": "103", "fqt": "1", "lmt": "500",
             "end": "20500000",
             "fields1": "f1,f2,f3,f4,f5", "fields2": "f51,f52,f53,f54,f55,f56,f57",
         }
-        r = requests.get(url, params=params, headers=UA, timeout=30)
+        r = https_get(EASTMONEY_KLINE_URL, params=params, headers=UA, timeout=30)
         r.raise_for_status()
         data = r.json()["data"]
         if not data or not data.get("klines"):

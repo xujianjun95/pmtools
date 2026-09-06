@@ -231,22 +231,25 @@ def init_db(conn: sqlite3.Connection) -> None:
         );
         """
     )
-    # 存量库迁移：老表缺列时补上
+    # 存量库迁移：老表缺列时补上。
+    # 以下均为完整固定 SQL 字符串（SQLite 列定义无法参数绑定），
+    # 不存在任何外部输入参与构造。
     cols = {row[1] for row in conn.execute("PRAGMA table_info(funds)")}
-    detail_columns = {
-        "tracking_error": "REAL",
-        "fee": "REAL",
-        "return_1m": "REAL",
-        "return_6m": "REAL",
-        "return_1y": "REAL",
-        "return_since": "REAL",
-        "inception_date": "TEXT",
-        "fund_size": "REAL",
-        "fund_size_date": "TEXT",
-    }
-    for col, column_type in detail_columns.items():
+    MIGRATION_SQL = (
+        "ALTER TABLE funds ADD COLUMN tracking_error REAL",
+        "ALTER TABLE funds ADD COLUMN fee REAL",
+        "ALTER TABLE funds ADD COLUMN return_1m REAL",
+        "ALTER TABLE funds ADD COLUMN return_6m REAL",
+        "ALTER TABLE funds ADD COLUMN return_1y REAL",
+        "ALTER TABLE funds ADD COLUMN return_since REAL",
+        "ALTER TABLE funds ADD COLUMN inception_date TEXT",
+        "ALTER TABLE funds ADD COLUMN fund_size REAL",
+        "ALTER TABLE funds ADD COLUMN fund_size_date TEXT",
+    )
+    for sql in MIGRATION_SQL:
+        col = sql.split("ADD COLUMN ", 1)[1].split()[0]
         if col not in cols:
-            conn.execute(f"ALTER TABLE funds ADD COLUMN {col} {column_type}")
+            conn.execute(sql)
     conn.commit()
 
 
