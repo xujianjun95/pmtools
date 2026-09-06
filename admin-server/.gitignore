@@ -1,0 +1,5 @@
+# 运行时数据不入库
+*.db
+*.db-shm
+*.db-wal
+.mimosa/

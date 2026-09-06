@@ -1,0 +1,19 @@
+{
+  "name": "pmtools-admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "pmtools 后台服务：文章管理（SQLite）+ 图片转传 OSS + 数据看板聚合，挂载于 /background-api 前缀",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "express": "^4.19.2"
+  }
+}

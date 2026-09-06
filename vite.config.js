@@ -13,6 +13,11 @@ export default defineConfig({
         target: 'http://127.0.0.1:3100',
         changeOrigin: true,
       },
+      // 后台管理 API：本地开发转发到 admin-server 服务（生产由 nginx 反代）
+      '/background-api': {
+        target: 'http://127.0.0.1:3200',
+        changeOrigin: true,
+      },
     },
   },
   resolve: {

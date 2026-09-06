@@ -18,4 +18,11 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // admin-server 是纯 Node 服务，需要 Node 全局（process/Buffer 等）
+    files: ['admin-server/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])
