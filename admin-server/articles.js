@@ -4,6 +4,7 @@
  */
 import { config } from './config.js'
 import { getDb } from './db.js'
+import MarkdownIt from 'markdown-it'
 
 export const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,63}$/
 const MAX_TITLE = 200
@@ -12,8 +13,24 @@ const MAX_TAGS = 10
 const MAX_TAG_LEN = 30
 const MAX_CONTENT_CHARS = 300_000
 const MAX_REFERENCED_IMAGES = 30
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/
+const UTC_ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/
 
 const nowIso = () => new Date().toISOString()
+
+function isSafePublishedAt(value) {
+  const text = String(value || '').trim()
+  if (DATE_ONLY_RE.test(text)) {
+    const timestamp = Date.parse(`${text}T00:00:00.000Z`)
+    if (!Number.isFinite(timestamp)) return false
+    return new Date(timestamp).toISOString().slice(0, 10) === text
+  }
+  if (!UTC_ISO_RE.test(text)) return false
+  const timestamp = Date.parse(text)
+  if (!Number.isFinite(timestamp)) return false
+  const canonical = new Date(timestamp).toISOString()
+  return canonical === (text.endsWith('Z') && !text.includes('.') ? text.replace(/Z$/, '.000Z') : text)
+}
 
 /** 解析 tags：接受字符串数组，返回规范化 JSON 串；非法返回 null */
 export function normalizeTags(input) {
@@ -31,19 +48,38 @@ export function normalizeTags(input) {
 }
 
 /** 提取 Markdown 正文里的图片 URL（含封面），供门禁校验 */
-export function extractImageUrls(markdown) {
-  const re = /!\[[^\]]*\]\(([^)\s]+)/g
-  return [...String(markdown || '').matchAll(re)].map((m) => m[1])
+const markdownParser = new MarkdownIt({ html: false, linkify: true, breaks: false })
+markdownParser.validateLink = () => true
+
+function collectImageTokens(tokens, urls) {
+  for (const token of tokens || []) {
+    if (token.type === 'image') {
+      const src = token.attrGet('src')
+      if (src) urls.push(src)
+    }
+    if (token.children?.length) collectImageTokens(token.children, urls)
+  }
 }
 
-/** 图片 URL 是否指向本站 OSS 图片目录（spec §8 目录限定） */
+export function extractImageUrls(markdown) {
+  const urls = []
+  collectImageTokens(markdownParser.parse(String(markdown || ''), {}), urls)
+  return urls
+}
+
+/**
+ * 图片 URL 是否指向本站 OSS（spec §8 目录限定 + §10 迁移兼容）：
+ * - 上传图片一律在 articles/images/<article-id>/ 下（由 oss.js 强制）；
+ * - 迁移旧文的图片保留原路径 articles/<id>/images/，不移动文件，
+ *   故门禁放宽为"本 bucket 的 /articles/ 前缀即视为就位"。
+ */
 export function isOssImageUrl(url) {
   try {
     const u = new URL(url)
     if (u.protocol !== 'https:') return false
     const host = `${config.oss.bucket}.${config.oss.region}.aliyuncs.com`
     if (u.hostname !== host) return false
-    return u.pathname.startsWith(`/${config.oss.imagesPrefix}/`)
+    return u.pathname.startsWith('/articles/')
   } catch {
     return false
   }
@@ -107,6 +143,11 @@ export function validateArticleInput(input, { partial = false } = {}) {
     const status = String(input.status)
     if (status !== 'draft' && status !== 'published') errors.push('status 只允许 draft/published')
     else fields.status = status
+  }
+  if (input.published_at !== undefined) {
+    if (input.published_at === null || input.published_at === '') fields.published_at = null
+    else if (!isSafePublishedAt(input.published_at)) errors.push('发布日期必须是 YYYY-MM-DD 或 UTC ISO 日期')
+    else fields.published_at = String(input.published_at).trim()
   }
   return { ok: errors.length === 0, errors, fields }
 }
@@ -175,7 +216,7 @@ export function createArticle(input) {
     cover: fields.cover || '',
     content_md: fields.content_md || '',
     status,
-    published_at: status === 'published' ? now : null,
+    published_at: status === 'published' ? fields.published_at || now : fields.published_at || null,
     created_at: now,
     updated_at: now,
   })
@@ -203,19 +244,21 @@ export function updateArticle(id, input) {
     cover: fields.cover ?? existing.cover,
     content_md: fields.content_md ?? existing.content_md,
     status: fields.status ?? existing.status,
+    published_at: fields.published_at !== undefined ? fields.published_at : existing.published_at,
   }
 
   const contentChanged = fields.content_md !== undefined && fields.content_md !== existing.content_md
   const coverChanged = fields.cover !== undefined && fields.cover !== existing.cover
   const publishTransition = existing.status !== 'published' && merged.status === 'published'
-  const publishedContentEdit = existing.status === 'published' && (contentChanged || coverChanged)
+  const publishedContentEdit =
+    existing.status === 'published' && merged.status === 'published' && (contentChanged || coverChanged)
   if (publishTransition || publishedContentEdit) {
     const gate = checkImagesReady(merged.content_md, merged.cover)
     if (!gate.ok) return { ok: false, code: 400, errors: [gate.message] }
   }
 
   const now = nowIso()
-  const publishedAt = publishTransition && !existing.published_at ? now : existing.published_at
+  const publishedAt = publishTransition && !merged.published_at ? now : merged.published_at
   getDb()
     .prepare(
       `UPDATE articles SET title = @title, summary = @summary, tags = @tags, cover = @cover,

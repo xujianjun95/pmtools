@@ -215,12 +215,14 @@ export function createSiteSession() {
   const visitId = uuid()
 
   let currentPath = null
+  // 同一 SPA visit 中可能返回之前的路径。按路径保存累计可见时长，
+  // 这样服务端按 visit_id + path 取 MAX 时，重访不会丢掉前一段时长。
+  const pathDurations = new Map()
   let visibleMs = 0
   let visibleSince = document.visibilityState === 'visible' ? performance.now() : null
   let disposed = false
   let heartbeatTimer = null
 
-  const elapsedMs = () => visibleMs + (visibleSince === null ? 0 : performance.now() - visibleSince)
   const pauseClock = () => {
     if (visibleSince === null) return
     visibleMs += performance.now() - visibleSince
@@ -254,6 +256,7 @@ export function createSiteSession() {
   const checkpoint = () => {
     if (!currentPath) return
     pauseClock()
+    pathDurations.set(currentPath, visibleMs)
     send('page_leave', { path: currentPath }, visibleMs)
     // 页面仍可见时立即恢复计时：心跳是快照不是离开，后续时长继续累加
     resumeClock()
@@ -279,7 +282,7 @@ export function createSiteSession() {
       if (disposed || !path || path === currentPath) return
       checkpoint()
       currentPath = path
-      visibleMs = 0
+      visibleMs = pathDurations.get(path) || 0
       resumeClock()
       send('page_view', { path }, 0)
       startHeartbeat()

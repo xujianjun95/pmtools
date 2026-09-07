@@ -101,6 +101,21 @@ test('重复 trackPath 同一路径不重复上报', () => {
   s.dispose()
 })
 
+test('SPA 重访同一路径时，按同一 visit_id 累加该路径时长', () => {
+  const h = harness(); const s = h.create()
+  s.trackPath('/'); h.advance(30000)
+  s.trackPath('/project/demo'); h.advance(10000)
+  s.trackPath('/'); h.advance(20000)
+  s.dispose()
+  const leaves = h.events.filter((e) => e.event === 'page_leave')
+  assert.deepEqual(leaves.map((e) => [e.meta.path, e.duration_ms]), [
+    ['/', 30000],
+    ['/project/demo', 10000],
+    ['/', 50000],
+  ])
+  assert.equal(new Set(h.events.map((e) => e.visit_id)).size, 1)
+})
+
 test('dispose 清理监听与心跳定时器', () => {
   const h = harness(); const s = h.create()
   s.trackPath('/'); s.dispose(); s.dispose()

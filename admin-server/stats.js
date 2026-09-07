@@ -34,7 +34,7 @@ export function closeStatsDbs() {
   if (analyticsDb) { analyticsDb.close(); analyticsDb = null }
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000
+const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000
 const VALID_DAYS = [7, 30, 0]
 
 /** days 参数：7/30/累计(0)，其余值回落 7 */
@@ -43,8 +43,15 @@ export function parseDays(raw) {
   return VALID_DAYS.includes(n) ? n : 7
 }
 
-export function rangeSince(days) {
-  return days === 0 ? '1970-01-01T00:00:00.000Z' : new Date(Date.now() - days * DAY_MS).toISOString()
+export function rangeSince(days, now = Date.now()) {
+  if (days === 0) return '1970-01-01T00:00:00.000Z'
+
+  // 统计窗口按北京时间自然日，且包含今天：近 7 天即今天及前 6 个自然日。
+  // 先把当前时刻平移到北京时间，再取当天零点，最后转回 UTC。
+  const beijingToday = new Date(new Date(now).getTime() + BEIJING_OFFSET_MS)
+  beijingToday.setUTCHours(0, 0, 0, 0)
+  beijingToday.setUTCDate(beijingToday.getUTCDate() - (days - 1))
+  return new Date(beijingToday.getTime() - BEIJING_OFFSET_MS).toISOString()
 }
 
 /** UTC ISO → 北京时间日期（YYYY-MM-DD），与 SQL 侧 datetime(+8 hours) 口径一致 */
@@ -218,7 +225,7 @@ export function getDca(days) {
 
   const rows = db
     .prepare(
-      `SELECT event, visitor_id, visit_id, duration_ms, meta, created_at
+      `SELECT id, event, visitor_id, visit_id, duration_ms, meta, created_at
        FROM dca_events WHERE event IN ('dca_start', 'dca_complete') AND created_at >= @since
        ORDER BY created_at, id`
     )

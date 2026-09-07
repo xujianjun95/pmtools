@@ -35,3 +35,11 @@ public/qdii/data.json
 *.sln
 *.sw?
 .superpowers/
+
+# 审计/协作工具目录
+.mimosa/
+.workbuddy/
+
+# SQLite 运行时临时文件
+*.db-shm
+*.db-wal

@@ -26,7 +26,7 @@ process.env.QDII_ANALYTICS_DB_PATH = ANALYTICS_DB_PATH
 process.env.ADMIN_ALLOWED_ORIGINS = ORIGIN
 
 const { createApp, closeStatsDbs } = await import('./server.js')
-const { getSummary, parseDays, beijingDate, getDca } = await import('./stats.js')
+const { getSummary, parseDays, rangeSince, beijingDate, getDca } = await import('./stats.js')
 const { createArticle } = await import('./articles.js')
 const { config } = await import('./config.js')
 
@@ -115,6 +115,8 @@ function buildFixtures() {
   de.run('dca_complete', 'v2', 'v2', 45000, M_R3, iso(T_NOW)) // 局时长 45000
   de.run('dca_start', 'v3', 'v3', 5000, M_EMPTY, iso(T_NOW)) // 旧数据：无 round_id，顺序配对
   de.run('dca_complete', 'v3', 'v3', 25000, M_EMPTY, iso(T_NOW)) // 局时长 20000
+  de.run('dca_start', 'v5', 'v5', 0, M_EMPTY, iso(T_NOW)) // 第二局旧数据
+  de.run('dca_complete', 'v5', 'v5', 10000, M_EMPTY, iso(T_NOW)) // 局时长 10000
   de.run('dca_start', 'v4', 'v4', 0, M_EMPTY, iso(T_NOW)) // 旧数据中途退出
   de.run('dca_start', 'v0', 'v0', 0, M_R0, iso(T_20D)) // 窗口外
   de.run('dca_complete', 'v0', 'v0', 100000, M_R0, iso(T_20D))
@@ -209,6 +211,12 @@ test('days 参数非法时回落 7 天', async () => {
   assert.equal(parseDays('abc'), 7)
 })
 
+test('时间窗口按北京时间自然日计算且包含今天', () => {
+  const now = '2026-09-07T12:34:56.000+08:00'
+  assert.equal(rangeSince(7, now), '2026-08-31T16:00:00.000Z')
+  assert.equal(rangeSince(30, now), '2026-08-08T16:00:00.000Z')
+})
+
 test('projects：卡片点击与详情访问/停留分开统计', async () => {
   const body = await (await loginAndCall('/admin/stats/projects?days=7')).json()
   assert.deepEqual(body.clicks, [
@@ -232,20 +240,20 @@ test('qdii：实时快照，不随时间筛选变化', async () => {
 
 test('dca：round_id 配对 + 重放去重 + 中途退出计次不计时长 + 旧数据顺序配对', async () => {
   const body = await (await loginAndCall('/admin/stats/dca?days=7')).json()
-  // 局数：r1、r2、r3（新）+ 2 局旧数据 = 5；完成：r1(60000)+r3(45000)+旧(20000) = 3 局，共 125000ms
-  assert.equal(body.players, 4)
-  assert.equal(body.totalRounds, 5)
-  assert.equal(body.completedRounds, 3)
-  assert.equal(body.avgRoundsPerPlayer, 1.25)
-  assert.equal(body.avgDurationPerPlayerMs, Math.round(125000 / 4))
-  assert.equal(body.avgDurationPerRoundMs, Math.round(125000 / 3))
+  // 局数：r1、r2、r3（新）+ 3 局旧数据 = 6；旧完成局为 20s 与 10s，不能因缺 id 覆盖。
+  assert.equal(body.players, 5)
+  assert.equal(body.totalRounds, 6)
+  assert.equal(body.completedRounds, 4)
+  assert.equal(body.avgRoundsPerPlayer, 1.2)
+  assert.equal(body.avgDurationPerPlayerMs, Math.round(135000 / 5))
+  assert.equal(body.avgDurationPerRoundMs, Math.round(135000 / 4))
 })
 
 test('dca：累计口径纳入窗口外对局', async () => {
   const body = await (await loginAndCall('/admin/stats/dca?days=0')).json()
-  assert.equal(body.totalRounds, 6)
-  assert.equal(body.completedRounds, 4)
-  assert.equal(body.avgDurationPerPlayerMs, Math.round(225000 / 5))
+  assert.equal(body.totalRounds, 7)
+  assert.equal(body.completedRounds, 5)
+  assert.equal(body.avgDurationPerPlayerMs, Math.round(235000 / 6))
 })
 
 test('content：零值与 TOP 列表并存（数据为零 ≠ 读取失败）', async () => {

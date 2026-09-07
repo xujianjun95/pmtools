@@ -34,6 +34,15 @@ test('新建草稿：默认字段与时间戳齐备', () => {
   assert.ok(r.article.created_at && r.article.updated_at)
 })
 
+test('发布日期只接受安全的日期值并能保留 frontmatter 日期', () => {
+  const good = createArticle({ id: 'dated-draft', title: '带日期草稿', published_at: '2026-09-07' })
+  assert.equal(good.ok, true)
+  assert.equal(good.article.published_at, '2026-09-07')
+  assert.equal(createArticle({ id: 'bad-date', title: '坏日期', published_at: '2026-02-31' }).code, 400)
+  assert.equal(createArticle({ id: 'bad-date-2', title: '坏日期', published_at: 'javascript:alert(1)' }).code, 400)
+  assert.equal(createArticle({ id: 'bad-date-3', title: '坏日期', published_at: '2026-02-31T00:00:00Z' }).code, 400)
+})
+
 test('slug 冲突 409、非法 slug 400', () => {
   assert.equal(createArticle({ id: 'hello', title: '重复' }).code, 409)
   assert.equal(createArticle({ id: 'Bad Slug', title: '非法' }).code, 400)
@@ -128,7 +137,48 @@ test('checkImagesReady：数量上限与占位拦截', () => {
   assert.equal(good.referencedCount, 2) // 去重后
 })
 
+test('门禁兼容迁移旧文图片路径 articles/<id>/images/（spec §10）', () => {
+  const legacy = checkImagesReady(
+    '![旧图](https://pmtools27.oss-cn-beijing.aliyuncs.com/articles/codex-install-guide/images/a.png)',
+    ''
+  )
+  assert.equal(legacy.ok, true)
+  // 非 /articles/ 前缀的 OSS 路径仍视为未就位
+  const other = checkImagesReady(
+    '![杂图](https://pmtools27.oss-cn-beijing.aliyuncs.com/other/a.png)',
+    ''
+  )
+  assert.equal(other.ok, false)
+})
+
 test('extractImageUrls：忽略普通链接，只取图片', () => {
   const urls = extractImageUrls(`[链接](https://a.com) ![图](${OSS_PNG})`)
   assert.deepEqual(urls, [OSS_PNG])
+})
+
+test('extractImageUrls：解析 Markdown 引用式图片并参与发布门禁', () => {
+  const markdown = `![图][p]\n\n[p]: ${OSS_PNG}`
+  assert.deepEqual(extractImageUrls(markdown), [OSS_PNG])
+  assert.equal(checkImagesReady(markdown, '').ok, true)
+})
+
+test('extractImageUrls：支持 shortcut 引用且忽略代码块里的示例', () => {
+  const markdown = `\`\`\`md\n![假的](pending:code-block)\n\`\`\`\n\n![p]\n\n[p]: ${OSS_PNG}`
+  assert.deepEqual(extractImageUrls(markdown), [OSS_PNG])
+})
+
+test('已上架文章同请求下架并改为未就绪图片时放行', () => {
+  const created = createArticle({
+    id: 'published-to-draft',
+    title: '已上架转草稿',
+    status: 'published',
+    content_md: `![图](${OSS_PNG})`,
+  })
+  assert.equal(created.ok, true)
+  const result = updateArticle('published-to-draft', {
+    status: 'draft',
+    content_md: '![待传](pending:slow-upload)',
+  })
+  assert.equal(result.ok, true)
+  assert.equal(result.article.status, 'draft')
 })

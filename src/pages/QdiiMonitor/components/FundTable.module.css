@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-table {
+:where(.tableCard) table {
   width: 100%;
   /* 固定列宽：切换筛选时表头不因内容变化而抖动 */
   table-layout: fixed;
@@ -14,7 +14,7 @@ table {
   font-size: 0.9rem;
 }
 
-thead th {
+:where(.tableCard) thead th {
   padding: 12px 20px;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   border-bottom: 1px solid var(--border);
@@ -78,16 +78,16 @@ thead th {
 }
 
 /* 列宽分配：让「基金简称」列吃剩余宽度，其余列固定（右侧列加宽留间距） */
-thead th:nth-of-type(1) { width: 96px; }
-thead th:nth-of-type(2) { width: auto; }
-thead th:nth-of-type(3) { width: 136px; text-align: center; }
-thead th:nth-of-type(4) { width: 128px; text-align: center; }
-thead th:nth-of-type(5) { width: 156px; text-align: center; }
-thead th:nth-of-type(6) { width: 120px; text-align: center; }
-thead th:nth-of-type(7) { width: 92px; text-align: center; }
-thead th:nth-of-type(8) { width: 44px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(1) { width: 96px; }
+:where(.tableCard) thead th:nth-of-type(2) { width: auto; }
+:where(.tableCard) thead th:nth-of-type(3) { width: 136px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(4) { width: 128px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(5) { width: 156px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(6) { width: 120px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(7) { width: 92px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(8) { width: 44px; text-align: center; }
 
-td {
+:where(.tableCard) td {
   padding: 12px 20px;
   border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
@@ -235,8 +235,8 @@ td.tfee {
   padding-right: 12px;
 }
 
-th:nth-of-type(6),
-th:nth-of-type(7) {
+:where(.tableCard) th:nth-of-type(6),
+:where(.tableCard) th:nth-of-type(7) {
   padding-left: 12px;
   padding-right: 12px;
 }
@@ -246,7 +246,7 @@ td.tchev {
   padding-right: 14px;
 }
 
-thead th:last-child {
+:where(.tableCard) thead th:last-child {
   padding-left: 6px;
   padding-right: 14px;
 }
@@ -435,14 +435,14 @@ thead th:last-child {
 
 @media (max-width: 768px) {
   /* 表格改卡片流 */
-  thead {
+  :where(.tableCard) thead {
     display: none;
   }
 
-  table,
-  tbody,
-  tr,
-  td {
+  :where(.tableCard) table,
+  :where(.tableCard) tbody,
+  :where(.tableCard) tr,
+  :where(.tableCard) td {
     display: block;
     width: 100%;
   }
