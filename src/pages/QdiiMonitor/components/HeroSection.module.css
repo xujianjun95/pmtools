@@ -2,6 +2,15 @@
   padding: 56px 0 36px;
 }
 
+/* 首屏双栏：左文案 + 右世界小地图。两栏底部对齐——左侧按钮组与右侧图例/
+   「查看全部市场」落在同一条底线上（此前 center 会让矮的一栏悬空）。 */
+.heroTop {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 560px);
+  gap: 32px;
+  align-items: end;
+}
+
 .hero h2 {
   font-family: var(--font-display);
   font-size: clamp(1.7rem, 4vw, 2.4rem);
@@ -35,16 +44,18 @@
   color: var(--text-muted);
 }
 
-/* 订阅操作区：按钮 + 说明，与 meta 行间隔 */
+/* 订阅操作区：按钮 + 说明，与 meta 行间隔。底部对齐——说明文字
+   落在两个按钮的底线上，而不是竖直居中悬空。 */
 .action {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
   margin-top: 18px;
 }
 
 .actionHint {
   font-size: 0.8rem;
+  line-height: 22px; /* 与右侧图例行同高：三处文字盒子等高，底线才能真正齐平 */
   color: var(--text-muted);
 }
 
@@ -99,7 +110,137 @@
   margin-top: 28px;
 }
 
+/* Hero 右侧世界小地图：无边框、无遮罩。整卡不是链接——可点性与反馈都由
+   WorldMap 的圆点国家承担，避免"整卡可点但悬停只提示点击地图"的不一致。
+   注意：底部内边距必须为 0——左侧按钮行底与本卡盒底靠 heroTop 对齐，
+   图例行若再被内边距垫高 8px，三处文字底线就会差出 8px（实测值）。 */
+.worldMini {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  justify-self: end;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  padding: 12px 12px 0;
+}
+
+/* 地图下方固定一行：左侧国家信息 / 操作提示，右侧常驻「查看全部市场」入口。
+   高度固定，悬停切换文案不产生布局位移。底部对齐——图例文字与右侧链接
+   落在同一条底线上（此前 baseline 会因字号不同差 1~2px）；min-height 固定，
+   悬停换文案时只动顶部、不跳动。 */
+.mapFoot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 22px;
+  padding: 0 2px;
+}
+
+.mapInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 0.74rem;
+}
+
+.mapHintHover,
+.mapHintTouch {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 22px; /* 与 mapFoot min-height 配套，消除等宽小字号的基线漂移 */
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+/* 触摸端提示：默认不显示，见下方 @media (hover: none) */
+.mapHintTouch {
+  display: none;
+}
+
+.infoHover {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.infoZh {
+  flex: 0 0 auto;
+  color: var(--text-primary);
+}
+
+/* 英文名是这一行里唯一可压缩的项：长国名（United States of America）先截断，
+   保证基金数、状态、限额这些真正有用的信息不被挤掉。 */
+.infoEn {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.infoMeta {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.mapAllLink {
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  line-height: 22px; /* 与左侧说明、中间图例同高，三处底线归零 */
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.mapAllLink:hover {
+  color: var(--accent);
+}
+
+/* 触摸端没有 hover：不显示悬停信息，恒显示点击提示（点国家即直接跳转） */
+@media (hover: none) {
+  .mapHintHover,
+  .infoHover {
+    display: none;
+  }
+
+  .mapHintTouch {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapAllLink {
+    transition: none;
+  }
+}
+
 @media (max-width: 768px) {
+  .heroTop {
+    grid-template-columns: 1fr;
+  }
+
+  .worldMini {
+    justify-self: stretch;
+    max-width: none;
+  }
+
   .hero {
     padding-top: 24px;
   }

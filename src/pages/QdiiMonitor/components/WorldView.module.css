@@ -1,0 +1,182 @@
+/* 世界 Tab：地图 + 国家基金列表。配色跟随站内主题变量（见 global.css --map-*）。 */
+.world {
+  margin-top: 44px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.titleRow :global(.section-title) {
+  margin-bottom: 0;
+}
+
+.snapshot {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.backLink:hover {
+  color: var(--accent);
+}
+
+/* 卡片头部：位于 tableCard 内、列表上方 */
+.fundHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.en {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.fundCount {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* 列宽沿用外层表格（1/2/4/5/6/7 列），仅调整类型列与收益列 */
+.wtable thead th:nth-of-type(3) {
+  width: 112px;
+}
+
+.wtable thead th:nth-of-type(8) {
+  width: 104px;
+}
+
+.wtable thead th:last-child {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* 「全部国家」模式下的国家分组行 */
+.countryRow td {
+  padding: 18px 20px 10px;
+  background: color-mix(in srgb, var(--accent-subtle) 45%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.countryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.fnote {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* 近1年收益列：数值样式与外层限额列一致，红涨绿跌 */
+.ty1 {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.up {
+  color: #b3261e;
+}
+
+.down {
+  color: #188038;
+}
+
+:global([data-theme='dark']) .up {
+  color: #d08168;
+}
+
+:global([data-theme='dark']) .down {
+  color: #5cb87e;
+}
+
+.crossCard {
+  margin-top: 16px;
+}
+
+.empty {
+  padding: 20px;
+  color: var(--text-body);
+}
+
+.empty p {
+  margin: 8px 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.footnote {
+  margin: 0;
+  padding: 12px 20px 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .world {
+    margin-top: 32px;
+  }
+
+  .fundHead {
+    padding: 14px 16px;
+  }
+
+  .countryRow td {
+    padding: 14px 16px 8px;
+  }
+
+  /* 与 FundTable 移动端一致：每行一张卡片 */
+  .frow {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 10px 0;
+  }
+
+  .frow td {
+    border: none;
+    padding: 4px 16px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .ty1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .ty1::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .footnote {
+    padding: 10px 16px 14px;
+  }
+}

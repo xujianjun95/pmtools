@@ -38,6 +38,10 @@
   --toggle-bg: #e8e4dd;
   --toggle-dot: #ffffff;
   --toggle-icon: #8a8478;
+  /* 世界地图：闲置 / 有覆盖 / 悬停 */
+  --map-idle: #e3ddd2;
+  --map-covered: #b99a6b;
+  --map-hover: #8f744c;
 }
 
 [data-theme='dark'] {
@@ -60,6 +64,9 @@
   --toggle-bg: #2e2b26;
   --toggle-dot: #3a3630;
   --toggle-icon: #c4a070;
+  --map-idle: #292622;
+  --map-covered: #8a6f45;
+  --map-hover: #c4a070;
 }
 
 html {

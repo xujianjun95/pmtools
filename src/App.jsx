@@ -7,6 +7,7 @@ import ProjectDetailPage from './pages/ProjectDetail/index.jsx'
 import ResumePage from './pages/Resume/index.jsx'
 import ArticlesPage from './pages/Articles/index.jsx'
 import QdiiMonitorPage from './pages/QdiiMonitor/index.jsx'
+import QdiiWorldPage from './pages/QdiiWorldPage/index.jsx'
 import DcaPage from './pages/DcaPage/index.jsx'
 
 // 后台独立懒加载 chunk：Vditor/ECharts 不进入主站首屏依赖（spec §7.5）
@@ -22,6 +23,7 @@ function App() {
         <Route path="/resume" element={<ResumePage />} />
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/qdii" element={<QdiiMonitorPage />} />
+        <Route path="/qdii/world" element={<QdiiWorldPage />} />
         <Route path="/qdii/dca" element={<DcaPage />} />
       </Route>
       <Route
