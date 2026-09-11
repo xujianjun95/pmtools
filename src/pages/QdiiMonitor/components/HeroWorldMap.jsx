@@ -1,18 +1,28 @@
 import { useCallback, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import WorldMap from './WorldMap'
-import { OTHER_MARKET_COUNTRIES, countryById } from '../worldFunds'
+import { WORLD_COUNTRIES } from '../worldFunds'
 import { fmtLimit } from '../utils'
 import styles from './HeroSection.module.css'
 
+// 首屏主角：本页监控纳指 100 / 标普 500 → 美国默认高亮；其他市场圆点跳世界页。
+const FOCUS_ID = '840'
+
+const worldCountryById = (id) =>
+  WORLD_COUNTRIES.find((c) => c.id === String(id).padStart(3, '0')) || null
+
 // 以下三个常量必须是模块级：WorldMap 用 memo 包裹，靠引用稳定来避免
 // 悬停时重渲染 170 余个国家 path（见 WorldMap.jsx 注释）。
-const COVERED_IDS = new Set(OTHER_MARKET_COUNTRIES.map((c) => c.id))
-const MARKERS = OTHER_MARKET_COUNTRIES.map((c) => ({ id: c.id, coordinates: c.marker }))
+const COVERED_IDS = new Set(WORLD_COUNTRIES.map((c) => c.id))
+const MARKERS = WORLD_COUNTRIES.map((c) => ({ id: c.id, coordinates: c.marker }))
 const LABELS = Object.fromEntries(
-  OTHER_MARKET_COUNTRIES.map((c) => [c.id, `${c.zh}，${c.funds.length} 只基金，进入该国市场`])
+  WORLD_COUNTRIES.map((c) => [
+    c.id,
+    c.id === FOCUS_ID
+      ? `${c.zh}，${c.funds.length} 只基金，查看本页监控`
+      : `${c.zh}，${c.funds.length} 只基金，进入该国市场`,
+  ])
 )
-
 const STATUS_ORDER = ['开放申购', '限大额', '暂停申购']
 
 // 状态摘要：全部同一状态 → 均为「限大额」；混合 → 按 开放 → 限大额 → 暂停 排列
@@ -48,12 +58,19 @@ export default function HeroWorldMap() {
   const handleHover = useCallback((id) => setHoveredId(id), [])
   const handleSelect = useCallback(
     (id) => {
+      // 美国是本页主角：点圆点滚动到下方基金列表；其他国家进入世界页对应市场
+      if (id === FOCUS_ID) {
+        document
+          .getElementById('us-funds')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
       if (COVERED_IDS.has(id)) navigate(`/qdii/world?country=${id}`)
     },
     [navigate]
   )
 
-  const hovered = hoveredId ? countryById(hoveredId) : null
+  const hovered = hoveredId ? worldCountryById(hoveredId) : null
   const limits = hovered ? limitRange(hovered.funds) : null
 
   return (
@@ -62,6 +79,7 @@ export default function HeroWorldMap() {
         coveredIds={COVERED_IDS}
         markers={MARKERS}
         labels={LABELS}
+        selectedId={FOCUS_ID}
         onHover={handleHover}
         onSelect={handleSelect}
       />

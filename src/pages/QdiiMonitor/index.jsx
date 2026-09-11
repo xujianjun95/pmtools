@@ -117,7 +117,7 @@ function QdiiMonitorPage() {
         <>
           <RecentChanges changes={data.recent_changes.slice(0, 30)} />
 
-          <section className={`${styles.section} fi d8`}>
+          <section id="us-funds" className={`${styles.section} fi d8`}>
             <div className={styles.titleRow}>
               <h2 className="section-title">全部基金</h2>
             </div>
