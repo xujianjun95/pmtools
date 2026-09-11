@@ -82,10 +82,16 @@
 :where(.tableCard) thead th:nth-of-type(2) { width: auto; }
 :where(.tableCard) thead th:nth-of-type(3) { width: 136px; text-align: center; }
 :where(.tableCard) thead th:nth-of-type(4) { width: 128px; text-align: center; }
-:where(.tableCard) thead th:nth-of-type(5) { width: 156px; text-align: center; }
-:where(.tableCard) thead th:nth-of-type(6) { width: 120px; text-align: center; }
-:where(.tableCard) thead th:nth-of-type(7) { width: 92px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(5) { width: 156px; text-align: right; }
+:where(.tableCard) thead th:nth-of-type(6) { width: 120px; text-align: right; }
+:where(.tableCard) thead th:nth-of-type(7) { width: 92px; text-align: right; }
 :where(.tableCard) thead th:nth-of-type(8) { width: 44px; text-align: center; }
+
+:where(.tableCard) thead th:nth-of-type(5) .sortButton,
+:where(.tableCard) thead th:nth-of-type(6) .sortButton,
+:where(.tableCard) thead th:nth-of-type(7) .sortButton {
+  justify-content: flex-end;
+}
 
 :where(.tableCard) td {
   padding: 12px 20px;
@@ -128,12 +134,13 @@
   text-overflow: ellipsis;
 }
 
-/* 自定义 tooltip：仅在名称被截断时显示（trunc 类由 JS 检测溢出后添加） */
+/* 自定义 tooltip：仅在名称被截断时显示（trunc 类由 JS 检测溢出后添加）。
+   展示在名称上方：下方会被后续行 / 卡片 overflow 挡住 */
 .fname:global(.trunc):hover::after {
   content: attr(data-fullname);
   position: absolute;
   left: 0;
-  top: calc(100% + 4px);
+  bottom: calc(100% + 4px);
   z-index: 20;
   padding: 6px 12px;
   background: var(--surface);
@@ -165,6 +172,7 @@
 .statusBadge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   height: 25px;
   padding: 0 11px;
@@ -218,12 +226,25 @@
   font-size: 0.74rem;
 }
 
-/* 除代码/名称外各列内容居中 */
+/* 分类与状态居中，便于扫描标签 */
 td.tindex,
-td.tstatus,
+td.tstatus {
+  text-align: center;
+}
+
+/* 最长状态胶囊需要完整落在内容区内，避免视觉中心向右偏移 */
+td.tstatus {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+
+/* 数值列右对齐，便于纵向比较数值大小 */
 td.tlimit,
 td.tte,
-td.tfee,
+td.tfee {
+  text-align: right;
+}
+
 td.tchev {
   text-align: center;
 }

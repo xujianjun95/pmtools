@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { countryById } from '../QdiiMonitor/worldFunds'
+import qdiiStyles from '../QdiiMonitor/QdiiMonitor.module.css'
 
 // 世界地图 chunk 懒加载：只在进入本页时下载
 const WorldView = lazy(() => import('../QdiiMonitor/components/WorldView'))
@@ -9,11 +10,13 @@ const WorldView = lazy(() => import('../QdiiMonitor/components/WorldView'))
 export default function QdiiWorldPage() {
   const [params] = useSearchParams()
   const q = params.get('country')
-  const initial = q === 'all' || countryById(q) ? q : '840'
+  const initial = q === 'all' || countryById(q) ? q : 'all'
 
   return (
-    <Suspense fallback={null}>
-      <WorldView key={initial} initialSelectedId={initial} />
-    </Suspense>
+    <div className={qdiiStyles.page}>
+      <Suspense fallback={null}>
+        <WorldView key={initial} initialSelectedId={initial} />
+      </Suspense>
+    </div>
   )
 }

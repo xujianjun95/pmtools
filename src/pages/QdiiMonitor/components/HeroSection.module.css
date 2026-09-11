@@ -2,12 +2,13 @@
   padding: 56px 0 36px;
 }
 
-/* 首屏双栏：左文案 + 右世界小地图 */
+/* 首屏双栏：左文案 + 右世界小地图。两栏底部对齐——左侧按钮组与右侧图例/
+   「查看其他市场」落在同一条底线上（此前 center 会让矮的一栏悬空）。 */
 .heroTop {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 560px);
   gap: 32px;
-  align-items: center;
+  align-items: end;
 }
 
 .hero h2 {
@@ -43,16 +44,18 @@
   color: var(--text-muted);
 }
 
-/* 订阅操作区：按钮 + 说明，与 meta 行间隔 */
+/* 订阅操作区：按钮 + 说明，与 meta 行间隔。底部对齐——说明文字
+   落在两个按钮的底线上，而不是竖直居中悬空。 */
 .action {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
   margin-top: 18px;
 }
 
 .actionHint {
   font-size: 0.8rem;
+  line-height: 22px; /* 与右侧图例行同高：三处文字盒子等高，底线才能真正齐平 */
   color: var(--text-muted);
 }
 
@@ -107,7 +110,10 @@
   margin-top: 28px;
 }
 
-/* Hero 右侧世界小地图：无边框、无上浮，hover 只有美国变亮（见 WorldMap.module.css），气泡跟随鼠标 */
+/* Hero 右侧世界小地图：无边框、无遮罩。整卡不是链接——可点性与反馈都由
+   WorldMap 的圆点国家承担，避免"整卡可点但悬停只提示点击地图"的不一致。
+   注意：底部内边距必须为 0——左侧按钮行底与本卡盒底靠 heroTop 对齐，
+   图例行若再被内边距垫高 8px，三处文字底线就会差出 8px（实测值）。 */
 .worldMini {
   position: relative;
   width: 100%;
@@ -116,70 +122,112 @@
   border: none;
   border-radius: var(--radius);
   background: transparent;
-  padding: 12px 12px 8px;
-  cursor: pointer;
+  padding: 12px 12px 0;
 }
 
-.worldMini:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* 暗色遮罩 + 居中按钮：默认隐藏，hover / 聚焦整卡时浮现 */
-.mapVeil {
-  position: absolute;
-  inset: 0;
+/* 地图下方固定一行：左侧国家信息 / 操作提示，右侧常驻「查看其他市场」入口。
+   高度固定，悬停切换文案不产生布局位移。底部对齐——图例文字与右侧链接
+   落在同一条底线上（此前 baseline 会因字号不同差 1~2px）；min-height 固定，
+   悬停换文案时只动顶部、不跳动。 */
+.mapFoot {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--text-primary) 16%, transparent);
-  backdrop-filter: blur(1.5px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 22px;
+  padding: 0 2px;
 }
 
-.mapVeilOn {
-  opacity: 1;
-}
-
-.mapCta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 22px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
-  color: var(--text-primary);
-  font-size: 0.88rem;
-  letter-spacing: 0.02em;
+.mapInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  flex: 1 1 auto;
+  min-width: 0;
   white-space: nowrap;
-  transform: translateY(6px);
-  transition: transform 0.25s ease;
+  overflow: hidden;
+  font-size: 0.74rem;
 }
 
-.mapVeilOn .mapCta {
-  transform: translateY(0);
+.mapHintHover,
+.mapHintTouch {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 22px; /* 与 mapFoot min-height 配套，消除等宽小字号的基线漂移 */
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
 }
 
-.mapTagArrow {
+/* 触摸端提示：默认不显示，见下方 @media (hover: none) */
+.mapHintTouch {
+  display: none;
+}
+
+.infoHover {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.infoZh {
+  flex: 0 0 auto;
+  color: var(--text-primary);
+}
+
+/* 英文名是这一行里唯一可压缩的项：长国名优先截断，
+   保证基金数、状态、限额这些真正有用的信息不被挤掉。 */
+.infoEn {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.infoMeta {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.mapAllLink {
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  line-height: 22px; /* 与左侧说明、中间图例同高，三处底线归零 */
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.mapAllLink:hover {
   color: var(--accent);
-  font-weight: 600;
-  flex-shrink: 0;
 }
 
-@keyframes mapTagPulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
+/* 触摸端没有 hover：不显示悬停信息，恒显示点击提示（点国家即直接跳转） */
+@media (hover: none) {
+  .mapHintHover,
+  .infoHover {
+    display: none;
   }
-  50% {
-    opacity: 0.45;
-    transform: scale(0.8);
+
+  .mapHintTouch {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapAllLink {
+    transition: none;
   }
 }
 

@@ -12,11 +12,12 @@ const formatPercentage = (value) => {
   return `${Number(value).toFixed(2)}%`
 }
 
-function FundDetails({ fund }) {
+export function FundDetails({ fund }) {
   const details = [
     { label: '近 1 月收益率', value: formatPercentage(fund.return_1m) },
     { label: '近 6 月收益率', value: formatPercentage(fund.return_6m) },
     { label: '近 1 年收益率', value: formatPercentage(fund.return_1y) },
+    { label: '近 3 年收益率', value: formatPercentage(fund.return_3y) },
     { label: '成立以来收益率', value: formatPercentage(fund.return_since) },
     { label: '成立日', value: fund.inception_date || '—' },
     {
@@ -26,6 +27,14 @@ function FundDetails({ fund }) {
           ? '—'
           : `${Number(fund.fund_size).toFixed(2)} 亿元`,
       meta: fund.fund_size_date ? `截至 ${fund.fund_size_date}` : null,
+    },
+    {
+      label: '管理费率 / 年',
+      value: formatPercentage(fund.management_fee_rate),
+    },
+    {
+      label: '托管费率 / 年',
+      value: formatPercentage(fund.custody_fee_rate),
     },
   ]
 
@@ -38,7 +47,11 @@ function FundDetails({ fund }) {
             <dt>{item.label}</dt>
             <dd>
               <span className={styles.detailValue}>{item.value}</span>
-              {item.meta && <span className={styles.detailMeta}>{item.meta}</span>}
+              {item.meta && (
+                <span className={styles.detailMeta} title={item.meta}>
+                  {item.meta}
+                </span>
+              )}
             </dd>
           </div>
         ))}
@@ -47,7 +60,7 @@ function FundDetails({ fund }) {
   )
 }
 
-function HistoryTimeline({ fund }) {
+export function HistoryTimeline({ fund }) {
   const pts = compactHistory(fund.history)
   // 倒序展示，最新在上；仅一个点时标注首日监控
   const items = [...pts].reverse()

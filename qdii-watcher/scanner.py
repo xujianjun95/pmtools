@@ -35,6 +35,20 @@ INDEX_RULES = {
     "sp500": ("标普500", ["标普500"]),
 }
 
+# ---------------------------------------------------------------------------
+# 其他市场基金：按代码显式收录（名称关键词无法覆盖主动型基金）。
+# 值保留备用（国家 id / cross），当前统一记 index_key="world"。
+# data.json 只导出 INDEX_RULES 基金（美国页不受影响）；world 基金的快照与
+# 变更正常入库，供后续 world-data.json 导出使用。
+# ---------------------------------------------------------------------------
+WORLD_INDEX_KEY = "world"
+WORLD_CODES = {
+    "007280", "020712", "019454", "008763", "006105", "164824", "539003",
+    "000614", "021539", "021540", "020515", "006282", "019450", "021189",
+    "021190", "016664", "008284", "012535", "011420", "118001", "377016",
+    "457001", "002891",
+}
+
 RETRY_TIMES = 3
 RETRY_INTERVAL = 60  # 秒
 
@@ -51,6 +65,7 @@ DETAIL_RETURN_LABELS = {
     "return_1m": "近1月",
     "return_6m": "近6月",
     "return_1y": "近1年",
+    "return_3y": "近3年",
     "return_since": "成立来",
 }
 INCEPTION_DATE_RE = re.compile(
@@ -59,6 +74,12 @@ INCEPTION_DATE_RE = re.compile(
 FUND_SIZE_RE = re.compile(
     r'>规模</a>：\s*([\d.]+)\s*亿元（(\d{4}-\d{2}-\d{2})）', re.S
 )
+FUND_FEE_URL = "https://fundf10.eastmoney.com/jjfl_{code}.html"
+FEE_RATE_LABELS = {
+    "management_fee_rate": "管理费率",
+    "custody_fee_rate": "托管费率",
+    "sales_service_fee_rate": "销售服务费率",
+}
 TS_REQUEST_INTERVAL = 0.3  # 抓取间隔，避免请求过快
 
 logging.basicConfig(
@@ -87,7 +108,7 @@ def fetch_purchase() -> pd.DataFrame:
 
 
 def filter_funds(df: pd.DataFrame) -> list[dict]:
-    """按 INDEX_RULES 筛选目标场外基金，返回标准化记录。
+    """按 INDEX_RULES（关键词）+ WORLD_CODES（显式代码）筛选目标场外基金。
 
     排除场内品种：申购状态为"场内交易"的，以及名称含"ETF"但不含"联接"
     的纯场内 ETF（如 513100 纳指ETF国泰）。"ETF联接/发起联接"是场外，
@@ -95,27 +116,34 @@ def filter_funds(df: pd.DataFrame) -> list[dict]:
     """
     records = []
     name_col = df["基金简称"].astype(str)
+    code_col = df["基金代码"].astype(str).str.zfill(6)
+
+    def append_row(row, index_key: str) -> None:
+        name = str(row["基金简称"]).strip()
+        status = str(row["申购状态"]).strip()
+        if status == "场内交易":
+            return
+        if "ETF" in name and "联接" not in name:
+            return
+        records.append(
+            {
+                "code": str(row["基金代码"]).zfill(6),
+                "name": name,
+                "index_key": index_key,
+                "status": status,
+                "redeem": str(row["赎回状态"]).strip(),
+                "limit_amount": float(row["日累计限定金额"] or 0),
+                "min_buy": float(row["购买起点"] or 0),
+                "fee": float(row["手续费"] or 0),
+            }
+        )
+
     for index_key, (_, keywords) in INDEX_RULES.items():
         mask = name_col.apply(lambda n: any(k in n for k in keywords))
         for _, row in df[mask].iterrows():
-            name = str(row["基金简称"]).strip()
-            status = str(row["申购状态"]).strip()
-            if status == "场内交易":
-                continue
-            if "ETF" in name and "联接" not in name:
-                continue
-            records.append(
-                {
-                    "code": str(row["基金代码"]).zfill(6),
-                    "name": name,
-                    "index_key": index_key,
-                    "status": status,
-                    "redeem": str(row["赎回状态"]).strip(),
-                    "limit_amount": float(row["日累计限定金额"] or 0),
-                    "min_buy": float(row["购买起点"] or 0),
-                    "fee": float(row["手续费"] or 0),
-                }
-            )
+            append_row(row, index_key)
+    for _, row in df[code_col.isin(WORLD_CODES)].iterrows():
+        append_row(row, WORLD_INDEX_KEY)
     # 一只基金可能同时命中多条规则，保留先匹配到的
     seen, unique = set(), []
     for r in records:
@@ -146,11 +174,44 @@ def empty_fund_details() -> dict:
         "return_1m": None,
         "return_6m": None,
         "return_1y": None,
+        "return_3y": None,
         "return_since": None,
         "inception_date": None,
         "fund_size": None,
         "fund_size_date": None,
     }
+
+
+def empty_fee_details() -> dict:
+    """返回字段完整的空费率详情。"""
+    return {
+        "management_fee_rate": None,
+        "custody_fee_rate": None,
+        "sales_service_fee_rate": None,
+        "operation_fee_rate": None,
+    }
+
+
+def parse_fee_details_html(html: str) -> dict:
+    """解析天天基金费率页中的年度运作费率。"""
+    details = empty_fee_details()
+    for field, label in FEE_RATE_LABELS.items():
+        match = re.search(
+            rf'>{label}</td>\s*<td[^>]*>\s*([\d.]+)%',
+            html,
+            re.S,
+        )
+        if match:
+            details[field] = float(match.group(1))
+
+    management = details["management_fee_rate"]
+    custody = details["custody_fee_rate"]
+    if management is not None and custody is not None:
+        details["operation_fee_rate"] = round(
+            management + custody + (details["sales_service_fee_rate"] or 0),
+            4,
+        )
+    return details
 
 
 def parse_fund_details_html(html: str) -> dict:
@@ -193,12 +254,24 @@ def fetch_fund_details(code: str, session: requests.Session) -> dict:
         return empty_fund_details()
 
 
+def fetch_fee_details(code: str, session: requests.Session) -> dict:
+    """请求天天基金费率页；失败时返回全空字段，不中断扫描。"""
+    try:
+        response = session.get(FUND_FEE_URL.format(code=code), timeout=15)
+        response.raise_for_status()
+        return parse_fee_details_html(response.content.decode("utf-8-sig"))
+    except Exception as e:  # noqa: BLE001
+        log.debug("基金费率抓取失败 %s: %s", code, e)
+        return empty_fee_details()
+
+
 def enrich_fund_details(records: list[dict]) -> None:
-    """为每只基金补充跟踪误差、收益率、成立日和基金规模（原地更新）。"""
+    """为每只基金补充跟踪误差、收益、规模和运作费率（原地更新）。"""
     session = requests.Session()
     session.headers.update({"User-Agent": "Mozilla/5.0"})
     tracking_error_count = 0
     details_count = 0
+    fee_details_count = 0
     for i, r in enumerate(records):
         r["tracking_error"] = fetch_tracking_error(r["code"], session)
         if r["tracking_error"] is not None:
@@ -207,10 +280,15 @@ def enrich_fund_details(records: list[dict]) -> None:
         r.update(details)
         if any(value is not None for value in details.values()):
             details_count += 1
+        fee_details = fetch_fee_details(r["code"], session)
+        r.update(fee_details)
+        if fee_details["operation_fee_rate"] is not None:
+            fee_details_count += 1
         if i < len(records) - 1:
             time.sleep(TS_REQUEST_INTERVAL)
     log.info("跟踪误差获取成功 %d/%d", tracking_error_count, len(records))
     log.info("基金详情获取成功 %d/%d", details_count, len(records))
+    log.info("基金运作费率获取成功 %d/%d", fee_details_count, len(records))
 
 
 def init_db(conn: sqlite3.Connection) -> None:
@@ -219,7 +297,9 @@ def init_db(conn: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS funds (
             code TEXT PRIMARY KEY, name TEXT NOT NULL, index_key TEXT NOT NULL,
             status TEXT, redeem TEXT, limit_amount REAL, min_buy REAL, updated_at TEXT,
-            tracking_error REAL, fee REAL
+            tracking_error REAL, fee REAL, return_3y REAL,
+            management_fee_rate REAL, custody_fee_rate REAL,
+            sales_service_fee_rate REAL, operation_fee_rate REAL
         );
         CREATE TABLE IF NOT EXISTS snapshots (
             code TEXT NOT NULL, date TEXT NOT NULL, status TEXT, redeem TEXT,
@@ -241,10 +321,15 @@ def init_db(conn: sqlite3.Connection) -> None:
         "ALTER TABLE funds ADD COLUMN return_1m REAL",
         "ALTER TABLE funds ADD COLUMN return_6m REAL",
         "ALTER TABLE funds ADD COLUMN return_1y REAL",
+        "ALTER TABLE funds ADD COLUMN return_3y REAL",
         "ALTER TABLE funds ADD COLUMN return_since REAL",
         "ALTER TABLE funds ADD COLUMN inception_date TEXT",
         "ALTER TABLE funds ADD COLUMN fund_size REAL",
         "ALTER TABLE funds ADD COLUMN fund_size_date TEXT",
+        "ALTER TABLE funds ADD COLUMN management_fee_rate REAL",
+        "ALTER TABLE funds ADD COLUMN custody_fee_rate REAL",
+        "ALTER TABLE funds ADD COLUMN sales_service_fee_rate REAL",
+        "ALTER TABLE funds ADD COLUMN operation_fee_rate REAL",
     )
     for sql in MIGRATION_SQL:
         col = sql.split("ADD COLUMN ", 1)[1].split()[0]
@@ -302,31 +387,45 @@ def save_snapshot(conn: sqlite3.Connection, records: list[dict], today: str) -> 
         conn.execute(
             "INSERT INTO funds (code, name, index_key, status, redeem, limit_amount, "
             "min_buy, updated_at, tracking_error, fee, return_1m, return_6m, return_1y, "
-            "return_since, inception_date, fund_size, fund_size_date) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+            "return_3y, return_since, inception_date, fund_size, fund_size_date, "
+            "management_fee_rate, custody_fee_rate, sales_service_fee_rate, "
+            "operation_fee_rate) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
             "ON CONFLICT(code) DO UPDATE SET name=excluded.name, "
             "index_key=excluded.index_key, status=excluded.status, "
             "redeem=excluded.redeem, limit_amount=excluded.limit_amount, "
             "min_buy=excluded.min_buy, updated_at=excluded.updated_at, "
             "tracking_error=excluded.tracking_error, fee=excluded.fee, "
             "return_1m=excluded.return_1m, return_6m=excluded.return_6m, "
-            "return_1y=excluded.return_1y, return_since=excluded.return_since, "
+            "return_1y=excluded.return_1y, return_3y=excluded.return_3y, "
+            "return_since=excluded.return_since, "
             "inception_date=excluded.inception_date, fund_size=excluded.fund_size, "
-            "fund_size_date=excluded.fund_size_date",
+            "fund_size_date=excluded.fund_size_date, "
+            "management_fee_rate=excluded.management_fee_rate, "
+            "custody_fee_rate=excluded.custody_fee_rate, "
+            "sales_service_fee_rate=excluded.sales_service_fee_rate, "
+            "operation_fee_rate=excluded.operation_fee_rate",
             (r["code"], r["name"], r["index_key"], r["status"], r["redeem"],
              r["limit_amount"], r["min_buy"], today, r.get("tracking_error"),
              r.get("fee"), r.get("return_1m"), r.get("return_6m"),
-             r.get("return_1y"), r.get("return_since"), r.get("inception_date"),
-             r.get("fund_size"), r.get("fund_size_date")),
+             r.get("return_1y"), r.get("return_3y"), r.get("return_since"),
+             r.get("inception_date"), r.get("fund_size"), r.get("fund_size_date"),
+             r.get("management_fee_rate"), r.get("custody_fee_rate"),
+             r.get("sales_service_fee_rate"), r.get("operation_fee_rate")),
         )
     conn.commit()
     return changes
 
 
 def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_path: Path) -> None:
-    """导出 data.json：最新状态 + 每只基金全量历史 + 近 7 天变更。"""
+    """导出 data.json：最新状态 + 每只基金全量历史 + 近 7 天变更。
+
+    只导出 INDEX_RULES 基金（美国页口径）；world 基金仅入库不导出，
+    避免污染 /qdii 的全部基金列表、统计与 DCA 回测。
+    """
+    us_records = [r for r in records if r["index_key"] in INDEX_RULES]
     funds_out = []
-    for r in records:
+    for r in us_records:
         history = conn.execute(
             "SELECT date, status, redeem, limit_amount FROM snapshots "
             "WHERE code = ? ORDER BY date ASC",
@@ -342,7 +441,7 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
             }
         )
 
-    name_map = {r["code"]: r["name"] for r in records}
+    name_map = {r["code"]: r["name"] for r in us_records}
     recent = conn.execute(
         "SELECT date, code, field, old_val, new_val FROM changes "
         "ORDER BY date DESC, id DESC"
@@ -351,6 +450,7 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
         {"date": d, "code": c, "name": name_map.get(c, c), "field": f,
          "old_val": ov, "new_val": nv}
         for d, c, f, ov, nv in recent
+        if c in name_map
     ][:200]  # 前端只展示最近一批，限制体积
 
     payload = {
@@ -389,6 +489,8 @@ def main() -> int:
     for index_key, (label, _) in INDEX_RULES.items():
         n = sum(1 for r in records if r["index_key"] == index_key)
         log.info("  %s: %d 只", label, n)
+    log.info("  其他市场: %d 只",
+             sum(1 for r in records if r["index_key"] == WORLD_INDEX_KEY))
 
     enrich_fund_details(records)
 

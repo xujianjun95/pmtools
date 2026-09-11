@@ -1,4 +1,4 @@
-/* 世界地图基础样式：随 WorldMap 组件加载，保证 Hero/世界页两处一致 */
+/* 世界地图基础样式：随 WorldMap 组件加载 */
 .mapWrap {
   width: 100%;
 }
@@ -10,40 +10,74 @@
   outline: none;
 }
 
+/* 非覆盖国家：纯装饰，不可点也不可聚焦 */
 .geo {
   fill: var(--map-idle, #e3ddd2);
   stroke: var(--bg, #f7f5f2);
   stroke-width: 0.6;
   outline: none;
-  cursor: pointer;
-  transition: fill 0.15s ease;
+  cursor: default;
+  transition:
+    fill 0.15s ease,
+    opacity 0.15s ease;
 }
 
+/* 有基金可进入的国家：可点 + 圆点标记 + hover/focus 反馈 */
 .geoCovered {
   fill: var(--map-covered, #b99a6b);
+  cursor: pointer;
 }
 
+/* 当前页主角（纳指 100 / 标普 500 → 美国）：仅影响填色，不影响可点性 */
 .geoSelected {
   fill: var(--accent, #7a6040);
 }
 
-/* 安静 hover（Hero 外层）：所有国家 hover 都保持原色，无视觉变化 */
-.noHover .geo:hover {
-  fill: var(--map-idle, #e3ddd2);
+/* 悬停：填色变深。.geoSelected 的填色与 --map-hover 接近，美国自身变化不明显，
+   聚焦层次由下面"其余国家后退"承担。 */
+.geoCovered:hover {
+  fill: var(--map-hover, #8f744c);
 }
 
-.noHover .geoCovered:hover {
-  fill: var(--map-covered, #b99a6b);
+/* 键盘聚焦：SVG 的 outline 支持不一致，用描边代替焦点环 */
+.geoCovered:focus-visible {
+  fill: var(--map-hover, #8f744c);
+  stroke: var(--text-primary, #1a1714);
+  stroke-width: 2;
+  outline: none;
 }
 
-.noHover .geoSelected:hover {
+/* 聚焦层次：悬停/聚焦某个可点国家时，其余国家一律后退到 50% */
+.mapWrap:has(.geoCovered:hover) .geo:not(:hover) {
+  opacity: 0.5;
+}
+
+.mapWrap:has(.geoCovered:focus-visible) .geo:not(:focus-visible) {
+  opacity: 0.5;
+}
+
+/* 圆点标记：不接收指针事件，避免挡住下方国家的 hover / click */
+.marker {
+  pointer-events: none;
+}
+
+.markerHalo {
+  fill: var(--accent, #7a6040);
+  opacity: 0.16;
+}
+
+.markerDot {
   fill: var(--accent, #7a6040);
 }
 
-.mapCaption {
-  padding: 8px 8px 10px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  text-align: center;
-  min-height: 2.2em;
+/* 美国已由 .geoSelected 填成 --accent，圆点需描边才能在深色填充上分辨 */
+.markerDotFocus {
+  stroke: var(--bg, #f7f5f2);
+  stroke-width: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .geo {
+    transition: none;
+  }
 }
