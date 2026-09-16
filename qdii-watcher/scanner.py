@@ -25,6 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "fund.db"
 # 默认输出到前端 public/（开发模式 Vite 直接可用）；部署时用 --out 指向 dist 目录
 DATA_JSON = BASE_DIR / "frontend" / "public" / "data.json"
+WORLD_DATA_JSON = BASE_DIR.parent / "public" / "qdii" / "world-data.json"
+ACTIVE_QDII_POOL_PATH = BASE_DIR / "active_qdii_pool.json"
+ACTIVE_QDII_METADATA_PATH = BASE_DIR / "active_qdii_metadata.json"
 
 # ---------------------------------------------------------------------------
 # 筛选规则：index_key -> (展示名, 基金简称包含的任一关键词)
@@ -36,18 +39,26 @@ INDEX_RULES = {
 }
 
 # ---------------------------------------------------------------------------
-# 其他市场基金：按代码显式收录（名称关键词无法覆盖主动型基金）。
-# 值保留备用（国家 id / cross），当前统一记 index_key="world"。
+# 其他市场基金：以 2026Q2 的 104 只主动权益 QDII 产品为冻结母池。
+# 同一产品的人民币 A/C 等份额在清单中合并，页面只展示代表代码。
 # data.json 只导出 INDEX_RULES 基金（美国页不受影响）；world 基金的快照与
 # 变更正常入库，供后续 world-data.json 导出使用。
 # ---------------------------------------------------------------------------
 WORLD_INDEX_KEY = "world"
-WORLD_CODES = {
-    "007280", "020712", "019454", "008763", "006105", "164824", "539003",
-    "000614", "021539", "021540", "020515", "006282", "019450", "021189",
-    "021190", "016664", "008284", "012535", "011420", "118001", "377016",
-    "457001", "002891",
-}
+
+
+def load_json(path: Path, fallback):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        logging.getLogger("scanner").warning("读取 %s 失败: %s", path, exc)
+        return fallback
+
+
+ACTIVE_QDII_POOL = load_json(ACTIVE_QDII_POOL_PATH, {"funds": []})
+ACTIVE_QDII_FUNDS = ACTIVE_QDII_POOL.get("funds", [])
+ACTIVE_QDII_BY_CODE = {fund["code"]: fund for fund in ACTIVE_QDII_FUNDS}
+WORLD_CODES = set(ACTIVE_QDII_BY_CODE)
 
 RETRY_TIMES = 3
 RETRY_INTERVAL = 60  # 秒
@@ -116,11 +127,12 @@ def filter_funds(df: pd.DataFrame) -> list[dict]:
     """
     records = []
     name_col = df["基金简称"].astype(str)
-    code_col = df["基金代码"].astype(str).str.zfill(6)
-
-    def append_row(row, index_key: str) -> None:
+    def append_row(row, index_key: str, code_override: str = None,
+                   name_override: str = None, share_codes: list[str] = None) -> None:
         name = str(row["基金简称"]).strip()
         status = str(row["申购状态"]).strip()
+        if status.lower() in {"", "nan", "none"}:
+            status = "暂无申购信息"
         if status == "场内交易":
             return
         if "ETF" in name and "联接" not in name:
@@ -128,22 +140,41 @@ def filter_funds(df: pd.DataFrame) -> list[dict]:
         records.append(
             {
                 "code": str(row["基金代码"]).zfill(6),
-                "name": name,
+                "name": name_override or name,
                 "index_key": index_key,
                 "status": status,
-                "redeem": str(row["赎回状态"]).strip(),
+                "redeem": str(row["赎回状态"]).strip() or "暂无赎回信息",
                 "limit_amount": float(row["日累计限定金额"] or 0),
                 "min_buy": float(row["购买起点"] or 0),
                 "fee": float(row["手续费"] or 0),
+                "share_codes": share_codes or [str(row["基金代码"]).zfill(6)],
             }
         )
+        if code_override:
+            records[-1]["code"] = code_override
 
     for index_key, (_, keywords) in INDEX_RULES.items():
         mask = name_col.apply(lambda n: any(k in n for k in keywords))
         for _, row in df[mask].iterrows():
             append_row(row, index_key)
-    for _, row in df[code_col.isin(WORLD_CODES)].iterrows():
-        append_row(row, WORLD_INDEX_KEY)
+    rows_by_code = {
+        str(row["基金代码"]).zfill(6): row
+        for _, row in df.iterrows()
+    }
+    for fund in ACTIVE_QDII_FUNDS:
+        candidate_codes = list(dict.fromkeys([fund["code"], *fund.get("share_codes", [])]))
+        available_codes = [code for code in candidate_codes if code in rows_by_code]
+        available_code = next((code for code in available_codes
+                               if str(rows_by_code[code]["申购状态"]).strip()),
+                              available_codes[0] if available_codes else None)
+        if available_code:
+            append_row(
+                rows_by_code[available_code],
+                WORLD_INDEX_KEY,
+                code_override=fund["code"],
+                name_override=fund["name"],
+                share_codes=fund.get("share_codes", [fund["code"]]),
+            )
     # 一只基金可能同时命中多条规则，保留先匹配到的
     seen, unique = set(), []
     for r in records:
@@ -273,11 +304,27 @@ def enrich_fund_details(records: list[dict]) -> None:
     details_count = 0
     fee_details_count = 0
     for i, r in enumerate(records):
-        r["tracking_error"] = fetch_tracking_error(r["code"], session)
+        is_world = r["index_key"] == WORLD_INDEX_KEY
+        r["tracking_error"] = None if is_world else fetch_tracking_error(r["code"], session)
         if r["tracking_error"] is not None:
             tracking_error_count += 1
         details = fetch_fund_details(r["code"], session)
         r.update(details)
+        if is_world and len(r.get("share_codes", [])) > 1:
+            sizes = [details] if details.get("fund_size") is not None else []
+            for share_code in r["share_codes"]:
+                if share_code == r["code"]:
+                    continue
+                share_details = fetch_fund_details(share_code, session)
+                if share_details.get("fund_size") is not None:
+                    sizes.append(share_details)
+                time.sleep(0.05)
+            if sizes:
+                r["fund_size"] = round(sum(item["fund_size"] for item in sizes), 4)
+                r["fund_size_date"] = max(
+                    (item.get("fund_size_date") or "" for item in sizes),
+                    default=None,
+                ) or None
         if any(value is not None for value in details.values()):
             details_count += 1
         fee_details = fetch_fee_details(r["code"], session)
@@ -466,6 +513,52 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
     tmp.replace(out_path)  # 原子替换，避免前端读到半截文件
 
 
+def export_world_json(conn: sqlite3.Connection, records: list[dict], today: str,
+                      out_path: Path) -> None:
+    """导出扁平化的主动权益 QDII 母池，合并地区、主题与监控历史。"""
+    metadata_payload = load_json(ACTIVE_QDII_METADATA_PATH, {"funds": {}})
+    metadata = metadata_payload.get("funds", {})
+    world_records = [r for r in records if r["index_key"] == WORLD_INDEX_KEY]
+    funds_out = []
+    for record in world_records:
+        history = conn.execute(
+            "SELECT date, status, redeem, limit_amount FROM snapshots "
+            "WHERE code = ? ORDER BY date ASC",
+            (record["code"],),
+        ).fetchall()
+        fund_metadata = metadata.get(record["code"], {})
+        funds_out.append({
+            **record,
+            "kind": "主动",
+            "regions": fund_metadata.get("regions", []),
+            "themes": fund_metadata.get("themes", ["全球多元"]),
+            "top_industries": fund_metadata.get("top_industries", []),
+            "top_holdings": fund_metadata.get("top_holdings", []),
+            "report_title": fund_metadata.get("report_title"),
+            "report_date": fund_metadata.get("report_date"),
+            "source_url": fund_metadata.get("source_url"),
+            "history": [
+                {"date": d, "status": s, "redeem": rd, "limit_amount": la}
+                for d, s, rd, la in history
+            ],
+        })
+    funds_out.sort(key=lambda fund: (fund.get("fund_size") is None,
+                                     -(fund.get("fund_size") or 0), fund["code"]))
+    payload = {
+        "updated_at": today,
+        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "pool_as_of": ACTIVE_QDII_POOL.get("as_of"),
+        "methodology": ACTIVE_QDII_POOL.get("methodology"),
+        "expected_count": ACTIVE_QDII_POOL.get("count", len(ACTIVE_QDII_FUNDS)),
+        "count": len(funds_out),
+        "funds": funds_out,
+    }
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = out_path.with_suffix(".tmp")
+    temp_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    temp_path.replace(out_path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="QDII 基金限额每日扫描")
     parser.add_argument(
@@ -473,6 +566,12 @@ def main() -> int:
         type=Path,
         default=DATA_JSON,
         help="data.json 输出路径（默认: %(default)s）",
+    )
+    parser.add_argument(
+        "--world-out",
+        type=Path,
+        default=WORLD_DATA_JSON,
+        help="world-data.json 输出路径（默认: %(default)s）",
     )
     args = parser.parse_args()
 
@@ -499,11 +598,12 @@ def main() -> int:
         init_db(conn)
         changes = save_snapshot(conn, records, today)
         export_json(conn, records, today, args.out)
+        export_world_json(conn, records, today, args.world_out)
     finally:
         conn.close()
 
-    log.info("完成：快照 %d 只，本次变更 %d 条，已导出 %s",
-             len(records), len(changes), args.out)
+    log.info("完成：快照 %d 只，本次变更 %d 条，已导出 %s / %s",
+             len(records), len(changes), args.out, args.world_out)
     for c in changes:
         log.info("  变更 %s: %s %s -> %s", c["code"], c["field"], c["old_val"], c["new_val"])
     return 0

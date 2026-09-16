@@ -97,12 +97,6 @@
   vertical-align: -0.04em;
 }
 
-.fnote {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 400;
-}
-
 .detailToggle {
   display: inline-grid;
   place-items: center;
@@ -150,6 +144,11 @@
 }
 
 .crossCard {
+  margin-top: 16px;
+}
+
+/* 「全部」视图下每个地区独立一张卡，卡间距与 crossCard 一致 */
+.groupCard + .groupCard {
   margin-top: 16px;
 }
 

@@ -23,6 +23,7 @@ dist-ssr
 
 # 运行时数据（服务器 cron 生成，不入库）
 public/qdii/data.json
+qdii-watcher/fund.db
 
 # Editor directories and files
 .vscode/*

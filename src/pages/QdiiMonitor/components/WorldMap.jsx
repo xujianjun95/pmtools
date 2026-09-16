@@ -69,13 +69,29 @@ function WorldMap({ coveredIds, markers, labels, selectedId, onHover, onSelect }
           }
         </Geographies>
         {markers.map((m) => (
-          <Marker key={m.id} coordinates={m.coordinates} className={styles.marker}>
-            <circle r={7.5} className={styles.markerHalo} />
+          <Marker
+            key={m.id}
+            coordinates={m.coordinates}
+            className={styles.marker}
+            aria-label={labels[m.id]}
+            onClick={(e) => {
+              e.stopPropagation()
+              onSelect(m.id)
+            }}
+          >
+            <circle
+              r={7.5}
+              className={styles.markerHalo}
+              onMouseEnter={() => onHover(m.id)}
+              onMouseLeave={() => onHover('')}
+            />
             <circle
               r={3.2}
               className={[styles.markerDot, m.id === selectedId ? styles.markerDotFocus : '']
                 .filter(Boolean)
                 .join(' ')}
+              onMouseEnter={() => onHover(m.id)}
+              onMouseLeave={() => onHover('')}
             />
           </Marker>
         ))}

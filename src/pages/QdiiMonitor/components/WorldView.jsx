@@ -43,7 +43,7 @@ function LimitCell({ fund }) {
 }
 
 function FundRow({ fund, isOpen, onToggle }) {
-  const fullName = fund.note ? `${fund.name} · ${fund.note}` : fund.name
+  const fullName = fund.name
   const detailsFund = {
     ...fund,
     return_1y: fund.return_1y ?? fund.y1,
@@ -72,7 +72,6 @@ function FundRow({ fund, isOpen, onToggle }) {
           <span className={tableStyles.fname} data-fullname={fullName}>
             <span className={tableStyles.txt}>
               {fund.name}
-              {fund.note && <span className={styles.fnote}> · {fund.note}</span>}
             </span>
           </span>
         </td>
@@ -234,6 +233,16 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   const [sortConfig, setSortConfig] = useState({ key: 'limit_amount', direction: 'desc' })
   const [expandedKey, setExpandedKey] = useState(null)
   const sectionRef = useRef(null)
+
+  // URL 参数直达某地区（hero 地图跳入 / 前进后退）；非法 id 回落到「全部」
+  const [prevInitialId, setPrevInitialId] = useState(initialSelectedId)
+  if (prevInitialId !== initialSelectedId) {
+    setPrevInitialId(initialSelectedId)
+    setSelectedId(
+      initialSelectedId === 'all' || countryById(initialSelectedId) ? initialSelectedId : 'all'
+    )
+    setExpandedKey(null)
+  }
 
   const selected = selectedId === 'all' ? null : countryById(selectedId)
   const totalCount = useMemo(
@@ -411,23 +420,23 @@ export default function WorldView({ initialSelectedId = 'all' }) {
       </div>
 
       {selectedId === 'all' ? (
-        <div className={tableStyles.tableCard}>
-          <div className={styles.fundHead}>
-            <strong>其他市场</strong>
-            <span className={styles.fundCount}>{totalCount} 只</span>
+        !groups.length ? (
+          <div className={tableStyles.tableCard}>
+            <div className={styles.empty}>没有符合条件的基金</div>
           </div>
-          {!groups.length && <div className={styles.empty}>没有符合条件的基金</div>}
-          {groups.map((group) => (
-            <CountryTableSection
-              key={group.key}
-              group={group}
-              sortConfig={sortConfig}
-              onSort={handleSort}
-              expandedKey={expandedKey}
-              onToggle={handleToggle}
-            />
-          ))}
-        </div>
+        ) : (
+          groups.map((group) => (
+            <div className={`${tableStyles.tableCard} ${styles.groupCard}`} key={group.key}>
+              <CountryTableSection
+                group={group}
+                sortConfig={sortConfig}
+                onSort={handleSort}
+                expandedKey={expandedKey}
+                onToggle={handleToggle}
+              />
+            </div>
+          ))
+        )
       ) : selected ? (
         <div className={tableStyles.tableCard}>
           <div className={styles.fundHead}>
@@ -457,7 +466,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
           </div>
           <div className={styles.empty}>
             <strong>{fallbackName || '该国'}暂无覆盖的主动 / 联接基金</strong>
-            <p>当前快照只覆盖 9 国。点上方国家 pill 快速切换，或等后续 scanner 接入更多市场。</p>
+            <p>当前快照只覆盖 10 个市场。点上方国家 pill 快速切换，或等后续 scanner 接入更多市场。</p>
           </div>
         </div>
       )}

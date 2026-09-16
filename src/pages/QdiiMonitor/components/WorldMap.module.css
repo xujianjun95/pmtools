@@ -1,10 +1,14 @@
 /* 世界地图基础样式：随 WorldMap 组件加载 */
 .mapWrap {
   width: 100%;
+  /* 陆地两侧是太平洋空白（viewBox 左侧约 55 单位几乎全空，右侧出血为跨日界线碎片），
+     放大 SVG 并裁掉左侧空白，让地图内容撑满容器宽度 */
+  overflow: hidden;
 }
 
 .mapSvg {
-  width: 100%;
+  width: 107.4%;
+  margin-left: -7.4%;
   height: auto;
   display: block;
   outline: none;
@@ -58,7 +62,10 @@
 
 /* 圆点标记：不接收指针事件，避免挡住下方国家的 hover / click */
 .marker {
-  pointer-events: none;
+  /* 圆点自身可交互：香港/新加坡国土在底图上小到不可见，圆点下方是海、
+     没有国家 path 兜底，事件必须由圆点自己接收，否则悬停/点击无反应 */
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .markerHalo {
@@ -68,6 +75,9 @@
 
 .markerDot {
   fill: var(--accent, #7a6040);
+  /* 细描边把圆点从 halo 和国土底色里衬出来；欧洲三国点位相邻，靠描边区分各自 */
+  stroke: var(--bg, #f7f5f2);
+  stroke-width: 0.8;
 }
 
 /* 美国已由 .geoSelected 填成 --accent，圆点需描边才能在深色填充上分辨 */

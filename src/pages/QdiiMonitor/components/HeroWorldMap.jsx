@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import WorldMap from './WorldMap'
 import { WORLD_COUNTRIES } from '../worldFunds'
-import { fmtLimit } from '../utils'
 import styles from './HeroSection.module.css'
 
 // 首屏主角：本页监控纳指 100 / 标普 500 → 美国默认高亮；其他市场圆点跳世界页。
@@ -23,28 +22,6 @@ const LABELS = Object.fromEntries(
       : `${c.zh}，${c.funds.length} 只基金，进入该国市场`,
   ])
 )
-const STATUS_ORDER = ['开放申购', '限大额', '暂停申购']
-
-// 状态摘要：全部同一状态 → 均为「限大额」；混合 → 按 开放 → 限大额 → 暂停 排列
-function statusSummary(funds) {
-  const kinds = [...new Set(funds.map((f) => f.status))]
-  if (kinds.length === 1) return `均为「${kinds[0]}」`
-  return kinds
-    .sort((a, b) => STATUS_ORDER.indexOf(a) - STATUS_ORDER.indexOf(b))
-    .join(' / ')
-}
-
-// 限额区间：暂停申购没有有效限额、不参与统计；全部无有效值时返回 null
-function limitRange(funds) {
-  const values = funds
-    .filter((f) => !String(f.status).includes('暂停'))
-    .map((f) => Number(f.limit_amount))
-    .filter((n) => n > 0)
-  if (!values.length) return null
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  return min === max ? `${fmtLimit(min)} 元/日` : `${fmtLimit(min)} – ${fmtLimit(max)} 元/日`
-}
 
 // Hero 右侧世界小地图。
 //
@@ -71,7 +48,6 @@ export default function HeroWorldMap() {
   )
 
   const hovered = hoveredId ? worldCountryById(hoveredId) : null
-  const limits = hovered ? limitRange(hovered.funds) : null
 
   return (
     <div className={`${styles.worldMini} fi d3`}>
@@ -92,8 +68,7 @@ export default function HeroWorldMap() {
               <span className={styles.infoZh}>{hovered.zh}</span>
               <span className={styles.infoEn}>{hovered.en}</span>
               <span className={styles.infoMeta}>
-                {hovered.funds.length} 只基金 · {statusSummary(hovered.funds)}
-                {limits ? ` · ${limits}` : ''}
+                {hovered.funds.length} 只基金
               </span>
             </span>
           ) : (

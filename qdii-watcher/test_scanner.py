@@ -143,6 +143,13 @@ class WorldFundsTest(unittest.TestCase):
 
         self.assertEqual(filter_funds(df), [])
 
+    def test_replaces_blank_purchase_status(self):
+        records = filter_funds(purchase_df([
+            purchase_row("006282", "摩根欧洲动力策略股票(QDII)A", status=""),
+        ]))
+
+        self.assertEqual(records[0]["status"], "暂无申购信息")
+
     def test_export_json_excludes_world_records(self):
         conn = sqlite3.connect(":memory:")
         self.addCleanup(conn.close)

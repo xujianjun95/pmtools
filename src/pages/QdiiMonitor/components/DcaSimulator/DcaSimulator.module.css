@@ -1140,3 +1140,41 @@
     animation: none !important;
   }
 }
+
+/* ------ 知来 · 未来情景推演 ------ */
+
+.future {
+  margin-top: 16px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 入口卡 / 终幕卡：与复利点题块同一质感 */
+.futureCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--accent-subtle);
+}
+
+.futureTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.futureText {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
