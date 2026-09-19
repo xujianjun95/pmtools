@@ -320,7 +320,8 @@ export default function FundTable({ funds, filterVersion }) {
                   </td>
                   <td className={styles.tindex} data-label="跟踪标的">
                     <span className={styles.idxTag}>
-                      {f.track_target || (f.index_key === 'nasdaq100' ? 'NASDAQ 100' : 'S&P 500')}
+                      {/* 主表仅纳指100/标普500 两类，统一标准写法（等权重/S&P 等变体归一） */}
+                      {f.index_key === 'nasdaq100' ? '纳斯达克 100 指数' : '标普 500 指数'}
                     </span>
                   </td>
                   <td className={styles.tstatus} data-label="申购状态">
