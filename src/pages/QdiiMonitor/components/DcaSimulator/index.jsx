@@ -10,6 +10,7 @@ import { createJourneyState, journeyReducer } from '../../utils/journeyState'
 import { createDcaSession } from '../../../../utils/analytics.js'
 import AmountAdjustDialog from './AmountAdjustDialog'
 import EventDialog from './EventDialog'
+import FutureJourney from './FutureJourney'
 import JourneyPlayer from './JourneyPlayer'
 import JourneySetup from './JourneySetup'
 import JourneySummary from './JourneySummary'
@@ -407,7 +408,15 @@ export default function DcaSimulator() {
         )}
 
       {showSummary && (
-        <JourneySummary config={config} curve={curve} />
+        <>
+          <JourneySummary config={config} curve={curve} />
+          {/* 「知来」未来情景：剧本文案待确认，暂不上线（场景引擎与组件保留在仓库）
+          <FutureJourney
+            anchorPoint={curve.at(-1)}
+            onReport={(event, meta) => sessionRef.current?.report(event, meta)}
+          />
+          */}
+        </>
       )}
 
       {state.phase !== 'setup' && simData && (

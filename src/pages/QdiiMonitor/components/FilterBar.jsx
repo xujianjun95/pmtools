@@ -12,7 +12,7 @@ export default function FilterBar({
   return (
     <div className={styles.filters}>
       <div className={styles.filterGroup}>
-        <span className={styles.glabel}>跟踪指数</span>
+        <span className={styles.glabel}>跟踪标的</span>
         {indexOptions.map((opt) => (
           <button
             key={opt.key}

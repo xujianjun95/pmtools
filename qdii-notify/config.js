@@ -36,6 +36,7 @@ const env = { ...loadDotEnv(), ...process.env }
 export const config = {
   port: Number(env.PORT || 3100),
   dataJsonPath: env.DATA_JSON_PATH || path.join(__dirname, 'data.json'),
+  worldDataJsonPath: env.WORLD_DATA_JSON_PATH || path.join(path.dirname(env.DATA_JSON_PATH || path.join(__dirname, 'data.json')), 'worldpage-data.json'),
   snapshotPath: env.SNAPSHOT_PATH || path.join(__dirname, 'snapshot.json'),
   dbPath: env.DB_PATH || path.join(__dirname, 'subscribers.db'),
   // aliyun: 阿里云邮件推送 API（默认）；smtp: nodemailer 直连 SMTP 备用

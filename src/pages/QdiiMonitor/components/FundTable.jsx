@@ -1,22 +1,59 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { compactHistory, statusClass, statusLabel } from '../utils'
+import { compactHistory, fmtLimit, getChannelLimit, limitText, statusClass, statusLabel } from '../utils'
+import { getDirectChannel } from '../fundCompanies'
+import SortableTh from './SortableTh'
 import styles from './FundTable.module.css'
 
 gsap.registerPlugin(useGSAP)
+
+export function LimitValue({ amount }) {
+  if (!(amount > 0)) return <span className={styles.unit}>—</span>
+  if (amount >= 1e11) return <span className={styles.limitCell}>无限额</span>
+  return <>{fmtLimit(amount)} <span className={styles.unit}>元/日</span></>
+}
 
 const formatPercentage = (value) => {
   if (value == null || !Number.isFinite(Number(value))) return '—'
   return `${Number(value).toFixed(2)}%`
 }
 
-function FundDetails({ fund }) {
+// 收益率涨跌着色：红涨绿跌（A 股惯例）；0 / 缺失不着色
+const returnTone = (value) => {
+  const n = Number(value)
+  if (!Number.isFinite(n) || n === 0) return null
+  return n > 0 ? 'up' : 'down'
+}
+
+export function FundDetails({ fund }) {
+  const direct = getDirectChannel(fund.name, fund.code)
   const details = [
-    { label: '近 1 月收益率', value: formatPercentage(fund.return_1m) },
-    { label: '近 6 月收益率', value: formatPercentage(fund.return_6m) },
-    { label: '近 1 年收益率', value: formatPercentage(fund.return_1y) },
-    { label: '成立以来收益率', value: formatPercentage(fund.return_since) },
+    {
+      label: '近 1 月收益率',
+      value: formatPercentage(fund.return_1m),
+      tone: returnTone(fund.return_1m),
+    },
+    {
+      label: '近 6 月收益率',
+      value: formatPercentage(fund.return_6m),
+      tone: returnTone(fund.return_6m),
+    },
+    {
+      label: '近 1 年收益率',
+      value: formatPercentage(fund.return_1y),
+      tone: returnTone(fund.return_1y),
+    },
+    {
+      label: '近 3 年收益率',
+      value: formatPercentage(fund.return_3y),
+      tone: returnTone(fund.return_3y),
+    },
+    {
+      label: '成立以来收益率',
+      value: formatPercentage(fund.return_since),
+      tone: returnTone(fund.return_since),
+    },
     { label: '成立日', value: fund.inception_date || '—' },
     {
       label: '基金规模',
@@ -25,6 +62,32 @@ function FundDetails({ fund }) {
           ? '—'
           : `${Number(fund.fund_size).toFixed(2)} 亿元`,
       meta: fund.fund_size_date ? `截至 ${fund.fund_size_date}` : null,
+    },
+    {
+      label: '管理费率 / 年',
+      value: formatPercentage(fund.management_fee_rate),
+    },
+    {
+      label: '托管费率 / 年',
+      value: formatPercentage(fund.custody_fee_rate),
+    },
+    {
+      label: '代销渠道',
+      // 代销 = 第三方销售平台，监控的额度数据本身即代销口径
+      value: '天天基金、支付宝等第三方平台',
+    },
+    {
+      label: '直销渠道',
+      // 直销 = 基金公司自有平台（官网/APP），限购时额度通常高于代销渠道。
+      // 有已验证的产品详情页模板时直达该基金页面，否则落到官网首页
+      value: direct ? `${direct.company}官网/APP` : '基金公司官方平台',
+      href: direct?.detailUrl || direct?.url,
+    },
+    {
+      label: '持仓明细',
+      // 天天基金 F10 持仓页（股票/债券持仓分布），按基金代码直达
+      value: '基金持仓分布',
+      href: `https://fundf10.eastmoney.com/ccmx_${fund.code}.html`,
     },
   ]
 
@@ -36,8 +99,33 @@ function FundDetails({ fund }) {
           <div key={item.label} className={styles.detailItem}>
             <dt>{item.label}</dt>
             <dd>
-              <span className={styles.detailValue}>{item.value}</span>
-              {item.meta && <span className={styles.detailMeta}>{item.meta}</span>}
+              {item.href ? (
+                <a
+                  className={styles.detailLink}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={`前往 ${item.value}`}
+                >
+                  <span className={styles.detailValue}>{item.value}</span>
+                  <span className={styles.linkArrow} aria-hidden="true">
+                    ↗
+                  </span>
+                </a>
+              ) : (
+                <span
+                  className={
+                    item.tone ? `${styles.detailValue} ${styles[item.tone]}` : styles.detailValue
+                  }
+                >
+                  {item.value}
+                </span>
+              )}
+              {item.meta && (
+                <span className={styles.detailMeta} title={item.meta}>
+                  {item.meta}
+                </span>
+              )}
             </dd>
           </div>
         ))}
@@ -46,12 +134,11 @@ function FundDetails({ fund }) {
   )
 }
 
-function HistoryTimeline({ fund }) {
+export function HistoryTimeline({ fund }) {
   const pts = compactHistory(fund.history)
   // 倒序展示，最新在上；仅一个点时标注首日监控
   const items = [...pts].reverse()
 
-  const limitText = (v) => (v > 0 ? `${Number(v).toLocaleString('zh-CN')} 元/日` : '无限额')
 
   // 暂停申购时天天基金会残留旧限额值，展示无意义
   const limitTextIfOpen = (h) =>
@@ -71,31 +158,6 @@ function HistoryTimeline({ fund }) {
         </div>
       ))}
     </div>
-  )
-}
-
-function SortDirectionIcon({ direction }) {
-  return (
-    <svg
-      className={`${styles.sortIcon} ${direction === 'desc' ? styles.sortIconDown : ''}`}
-      viewBox="0 0 1024 1024"
-      aria-hidden="true"
-    >
-      <path
-        d="M547.328 296.661333l207.786667 200.448a17.578667 17.578667 0 0 0 24.405333 0l25.941333-25.173333a17.066667 17.066667 0 0 0 0-24.576l-281.258666-271.786667a17.578667 17.578667 0 0 0-24.405334 0l-281.258666 271.786667a17.066667 17.066667 0 0 0 0 24.576l25.941333 25.173333a17.578667 17.578667 0 0 0 24.448 0l207.786667-200.448v539.434667c0 9.514667 7.765333 17.237333 17.408 17.237333h35.754666c9.642667 0 17.450667-7.68 17.450667-17.237333V296.661333z"
-        stroke="currentColor"
-        strokeWidth="44"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function SortIdleIcon() {
-  return (
-    <svg className={styles.sortIconIdle} viewBox="0 0 1024 1024" aria-hidden="true">
-      <path d="M407.568 154.019c-11.952-11.925-26.904-17.894-41.853-17.894-5.972 0-11.952 2.984-17.929 2.984h-2.992c-8.964 5.961-14.94 11.941-20.921 17.902L81.77 398.634c-23.912 23.862-23.912 59.669 0 80.551 11.956 11.929 26.901 17.894 41.841 17.894 14.948 0 29.896-5.965 41.845-17.894l146.459-146.177v495.198c0 32.815 26.908 56.677 56.797 56.677 29.892 0 56.789-26.854 56.789-56.677V198.775c-0.001-14.925-5.973-32.819-17.933-44.756zM942.59 541.831c-11.956-11.941-26.904-17.905-41.849-17.905-14.944 0-29.889 5.965-41.845 17.905L709.45 690.977V195.791c0-32.819-26.901-56.681-56.785-56.681-29.892 0-56.797 26.85-56.797 56.681v635.391c0 32.811 26.904 56.693 56.797 56.693 14.944 0 29.885-5.98 41.841-17.905l245.097-244.615c26.896-23.859 26.896-59.658 2.987-83.524z" />
-    </svg>
   )
 }
 
@@ -142,8 +204,18 @@ export default function FundTable({ funds, filterVersion }) {
       })
     }
     check()
+    // web 字体加载完成会改变文本实测宽度，必须补测一次，否则部分行漏加 trunc
+    let cancelled = false
+    document.fonts.ready
+      .then(() => {
+        if (!cancelled) check()
+      })
+      .catch(() => {})
     window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
+    return () => {
+      cancelled = true
+      window.removeEventListener('resize', check)
+    }
   }, [funds])
 
   // 公司名 = 名称开头连续中文去掉「纳斯达克/纳指/标普」后缀，如「广发纳斯达克…」→「广发」
@@ -154,11 +226,9 @@ export default function FundTable({ funds, filterVersion }) {
     )
 
   const sortValue = (fund) => {
-    if (sortConfig.key === 'limit_amount') {
-      // 暂停申购或无有效限额时页面显示为“—”，排序时固定沉底
-      if (String(fund.status).includes('暂停')) return null
-      const limit = Number(fund.limit_amount)
-      return limit > 0 ? limit : null
+    if (sortConfig.key === 'limit_amount' || sortConfig.key === 'direct_limit_amount') {
+      const amount = getChannelLimit(fund, sortConfig.key)
+      return amount > 0 ? amount : null
     }
     if (sortConfig.key === 'tracking_error') {
       return fund.tracking_error == null ? null : Number(fund.tracking_error)
@@ -193,46 +263,8 @@ export default function FundTable({ funds, filterVersion }) {
     return a.name.localeCompare(b.name, 'zh-CN')
   })
 
-  const sortHeader = (key, label) => {
-    const active = sortConfig.key === key
-    const ascending = active && sortConfig.direction === 'asc'
-    const nextDirection = active && sortConfig.direction === 'desc' ? '从低到高' : '从高到低'
-
-    return (
-      <th aria-sort={active ? (ascending ? 'ascending' : 'descending') : 'none'}>
-        <button
-          type="button"
-          className={`${styles.sortButton} ${active ? styles.sortButtonActive : ''}`}
-          onClick={() => handleSort(key)}
-          aria-label={`${label}，点击按${nextDirection}排序`}
-        >
-          <span>{label}</span>
-          {active ? (
-            <SortDirectionIcon direction={sortConfig.direction} />
-          ) : (
-            <SortIdleIcon />
-          )}
-        </button>
-      </th>
-    )
-  }
-
-  const limitCell = (f) => {
-    if (String(f.status).includes('暂停'))
-      return (
-        <span className={styles.unit} title="暂停申购，无限额信息">
-          —
-        </span>
-      )
-    const n = Number(f.limit_amount)
-    if (!n || n <= 0) return <span className={styles.unit}>—</span>
-    const txt = n >= 1e8 ? `${(n / 1e8).toFixed(0)} 亿` : n.toLocaleString('zh-CN')
-    return (
-      <>
-        {txt} <span className={styles.unit}>元/日</span>
-      </>
-    )
-  }
+  const limitCell = (fund) => <LimitValue amount={getChannelLimit(fund)} />
+  const directLimitCell = (fund) => <LimitValue amount={getChannelLimit(fund, 'direct_limit_amount')} />
 
   return (
     <div className={styles.tableCard} ref={tableRef}>
@@ -241,11 +273,32 @@ export default function FundTable({ funds, filterVersion }) {
           <tr>
             <th>代码</th>
             <th>基金简称</th>
-            <th>跟踪指数</th>
+            <th>跟踪标的</th>
             <th>申购状态</th>
-            {sortHeader('limit_amount', '日累计限额（代销）')}
-            {sortHeader('tracking_error', '年化跟踪误差')}
-            {sortHeader('fee', '手续费')}
+            <SortableTh
+              label="日累计限额（代销）"
+              active={sortConfig.key === 'limit_amount'}
+              direction={sortConfig.direction}
+              onSort={() => handleSort('limit_amount')}
+            />
+            <SortableTh
+              label="日累计限额（直销）"
+              active={sortConfig.key === 'direct_limit_amount'}
+              direction={sortConfig.direction}
+              onSort={() => handleSort('direct_limit_amount')}
+            />
+            <SortableTh
+              label="年化跟踪误差"
+              active={sortConfig.key === 'tracking_error'}
+              direction={sortConfig.direction}
+              onSort={() => handleSort('tracking_error')}
+            />
+            <SortableTh
+              label="手续费"
+              active={sortConfig.key === 'fee'}
+              direction={sortConfig.direction}
+              onSort={() => handleSort('fee')}
+            />
             <th />
           </tr>
         </thead>
@@ -265,9 +318,9 @@ export default function FundTable({ funds, filterVersion }) {
                       <span className={styles.txt}>{f.name}</span>
                     </span>
                   </td>
-                  <td className={styles.tindex} data-label="跟踪指数">
+                  <td className={styles.tindex} data-label="跟踪标的">
                     <span className={styles.idxTag}>
-                      {f.index_key === 'nasdaq100' ? 'NASDAQ 100' : 'S&P 500'}
+                      {f.track_target || (f.index_key === 'nasdaq100' ? 'NASDAQ 100' : 'S&P 500')}
                     </span>
                   </td>
                   <td className={styles.tstatus} data-label="申购状态">
@@ -277,6 +330,9 @@ export default function FundTable({ funds, filterVersion }) {
                   </td>
                   <td className={styles.tlimit} data-label="日累计限额（代销）">
                     <span className={styles.limitCell}>{limitCell(f)}</span>
+                  </td>
+                  <td className={styles.tdirect} data-label="日累计限额（直销）">
+                    <span className={styles.limitCell} title={f.direct_as_of ? `直销数据日期 ${f.direct_as_of} · ${f.direct_source || ''}` : undefined}>{directLimitCell(f)}</span>
                   </td>
                   <td className={styles.tte} data-label="跟踪误差">
                     <span className={styles.limitCell}>
@@ -309,7 +365,7 @@ export default function FundTable({ funds, filterVersion }) {
                   </td>
                 </tr>,
                 <tr key={`${f.code}-hist`} className={styles.historyRow}>
-                  <td colSpan={8}>
+                  <td colSpan={9}>
                     <div className={`${styles.historyInner} ${isOpen ? styles.open : ''}`}>
                       <div className={styles.historyClip}>
                         <FundDetails fund={f} />

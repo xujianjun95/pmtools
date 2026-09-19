@@ -1,0 +1,84 @@
+import { useCallback, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import WorldMap from './WorldMap'
+import { WORLD_COUNTRIES } from '../worldFunds'
+import styles from './HeroSection.module.css'
+
+// 首屏主角：本页监控纳指 100 / 标普 500 → 美国默认高亮；其他市场圆点跳世界页。
+const FOCUS_ID = '840'
+
+const worldCountryById = (id) =>
+  WORLD_COUNTRIES.find((c) => c.id === String(id).padStart(3, '0')) || null
+
+// 以下三个常量必须是模块级：WorldMap 用 memo 包裹，靠引用稳定来避免
+// 悬停时重渲染 170 余个国家 path（见 WorldMap.jsx 注释）。
+const COVERED_IDS = new Set(WORLD_COUNTRIES.map((c) => c.id))
+const MARKERS = WORLD_COUNTRIES.map((c) => ({ id: c.id, coordinates: c.marker }))
+const LABELS = Object.fromEntries(
+  WORLD_COUNTRIES.map((c) => [
+    c.id,
+    c.id === FOCUS_ID
+      ? `${c.zh}，${c.funds.length} 只基金，查看本页监控`
+      : `${c.zh}，${c.funds.length} 只基金，进入该国市场`,
+  ])
+)
+
+// Hero 右侧世界小地图。
+//
+// 交互：地图本体即入口——圆点国家可点、可悬停、可用 Tab 聚焦；悬停/聚焦时下方信息条
+// 换成该国摘要。底部固定一行，左侧信息、右侧常驻「查看其他市场」，因此不依赖 hover
+// 也能进入世界页。整卡不再是链接（此前整卡可点但悬停只提示"点击地图"，反馈与结果不一致）。
+export default function HeroWorldMap() {
+  const navigate = useNavigate()
+  const [hoveredId, setHoveredId] = useState('')
+
+  const handleHover = useCallback((id) => setHoveredId(id), [])
+  const handleSelect = useCallback(
+    (id) => {
+      // 美国是本页主角：点圆点滚动到下方基金列表；其他国家进入世界页对应市场
+      if (id === FOCUS_ID) {
+        document
+          .getElementById('us-funds')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+      if (COVERED_IDS.has(id)) navigate(`/qdii/world?country=${id}`)
+    },
+    [navigate]
+  )
+
+  const hovered = hoveredId ? worldCountryById(hoveredId) : null
+
+  return (
+    <div className={`${styles.worldMini} fi d3`}>
+      <WorldMap
+        coveredIds={COVERED_IDS}
+        markers={MARKERS}
+        labels={LABELS}
+        selectedId={FOCUS_ID}
+        onHover={handleHover}
+        onSelect={handleSelect}
+      />
+      <div className={styles.mapFoot}>
+        <div className={styles.mapInfo} aria-live="polite">
+          {/* 触摸端常驻提示：无 hover，由 @media (hover: none) 切换显示 */}
+          <span className={styles.mapHintTouch}>点击圆点国家进入对应市场</span>
+          {hovered ? (
+            <span className={styles.infoHover}>
+              <span className={styles.infoZh}>{hovered.zh}</span>
+              <span className={styles.infoEn}>{hovered.en}</span>
+              <span className={styles.infoMeta}>
+                {hovered.funds.length} 只基金
+              </span>
+            </span>
+          ) : (
+            <span className={styles.mapHintHover}>圆点为已收录市场 · 悬停查看，点击进入</span>
+          )}
+        </div>
+        <Link to="/qdii/world" className={styles.mapAllLink}>
+          查看其他市场 →
+        </Link>
+      </div>
+    </div>
+  )
+}

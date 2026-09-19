@@ -1,0 +1,182 @@
+/* 世界 Tab：地图 + 国家基金列表。配色跟随站内主题变量（见 global.css --map-*）。 */
+.world {
+  margin-top: 44px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.titleRow :global(.section-title) {
+  margin-bottom: 0;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.backLink:hover {
+  color: var(--accent);
+}
+
+/* 卡片头部：位于 tableCard 内、列表上方 */
+.fundHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.en {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.fundCount {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* 列宽沿用外层表格；跟踪标的列不设固定宽（长指数名自适应），收益列收窄 */
+.wtable thead th:nth-of-type(8) {
+  width: 104px;
+  text-align: right;
+}
+
+/* 跟踪标的长指数名（如「中证韩交所中韩半导体指数」）在胶囊内折行，
+   配合 td 的 text-align: center 保持整体居中 */
+.trackTag {
+  white-space: normal;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.wtable thead th:nth-of-type(9) {
+  width: 44px;
+  text-align: center;
+}
+
+.wtable thead th:last-child {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* 「全部国家」模式：国家标题下紧跟该国表头与数据 */
+.countryTableSection + .countryTableSection {
+  border-top: 1px solid var(--border);
+}
+
+.countrySectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  background: color-mix(in srgb, var(--accent-subtle) 45%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.countrySectionHead h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.countryFlag {
+  display: inline-block;
+  margin-right: 7px;
+  font-size: 0.92em;
+  line-height: 1;
+  vertical-align: -0.04em;
+}
+
+.detailToggle {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.detailToggle:hover {
+  background: var(--accent-subtle);
+}
+
+.detailToggle:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.crossCard {
+  margin-top: 16px;
+}
+
+/* 「全部」视图下每个地区独立一张卡，卡间距与 crossCard 一致 */
+.groupCard + .groupCard {
+  margin-top: 16px;
+}
+
+.empty {
+  padding: 20px;
+  color: var(--text-body);
+}
+
+.empty p {
+  margin: 8px 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.footnote {
+  margin: 0;
+  padding: 12px 20px 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .world {
+    margin-top: 32px;
+  }
+
+  .fundHead {
+    padding: 14px 16px;
+  }
+
+  .countrySectionHead {
+    padding: 14px 16px 10px;
+  }
+
+  /* 与 FundTable 移动端一致：每行一张卡片 */
+  .frow {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 10px 0;
+  }
+
+  .frow td {
+    border: none;
+    padding: 4px 16px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .footnote {
+    padding: 10px 16px 14px;
+  }
+}

@@ -145,7 +145,8 @@ function summarize(changes) {
   let limitChanges = 0
   for (const c of changes) {
     if (c.field === '申购状态') statuses.add(c.to)
-    if (c.field === '日累计限额（代销）') limitChanges += 1
+    // 代销/直销两个渠道的日累计限额都计入
+    if (String(c.field).startsWith('日累计限额')) limitChanges += 1
   }
   const parts = []
   if (statuses.size) parts.push(`状态变化(${[...statuses].join('/')})`)

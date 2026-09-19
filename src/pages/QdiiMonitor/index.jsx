@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import HeroSection from './components/HeroSection'
 import RecentChanges from './components/RecentChanges'
+import Disclaimer from './components/Disclaimer'
 import FilterBar from './components/FilterBar'
 import FundTable from './components/FundTable'
 import { statusLabel } from './utils'
@@ -37,7 +38,11 @@ function QdiiMonitorPage() {
           // 去掉无有效限额的份额（美元现汇/封闭期等）与美元现汇/现钞份额，只看人民币可买
           funds: json.funds.filter((f) => {
             if (/美元|美汇|美钞|现汇|现钞/.test(f.name)) return false
-            return String(f.status).includes('暂停') || Number(f.limit_amount) > 0
+            return (
+              String(f.status).includes('暂停') ||
+              Number(f.limit_amount) > 0 ||
+              Number(f.direct_limit_amount) > 0
+            )
           }),
         })
       )
@@ -117,7 +122,7 @@ function QdiiMonitorPage() {
         <>
           <RecentChanges changes={data.recent_changes.slice(0, 30)} />
 
-          <section className={`${styles.section} fi d8`}>
+          <section id="us-funds" className={`${styles.section} fi d8`}>
             <div className={styles.titleRow}>
               <h2 className="section-title">全部基金</h2>
             </div>
@@ -149,6 +154,7 @@ function QdiiMonitorPage() {
               filterVersion={filterVersion}
             />
           </section>
+          <Disclaimer />
         </>
       )}
     </div>

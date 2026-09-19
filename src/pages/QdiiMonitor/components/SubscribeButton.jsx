@@ -7,14 +7,75 @@ const CODE_RESEND_SECONDS = 60
 const CODE_LENGTH = 6
 const STORAGE_KEY = 'qdii-sub-email'
 
+// 与 qdii-notify/regions.js 的地区定义保持一致
+const REGIONS = [
+  {
+    id: 'sp500',
+    label: '标普 500',
+    desc: '跟踪标普 500 指数的 QDII 基金',
+    icon: (
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <rect x="3" y="13" width="4.5" height="8" rx="1.2" fill="#8a6a2a" />
+        <rect x="9.75" y="8" width="4.5" height="13" rx="1.2" fill="#a3823c" />
+        <rect x="16.5" y="3" width="4.5" height="18" rx="1.2" fill="#c2a45e" />
+      </svg>
+    ),
+  },
+  {
+    id: 'nd100',
+    label: '纳斯达克 100',
+    desc: '跟踪纳斯达克 100 指数的 QDII 基金',
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        aria-hidden="true"
+        fill="none"
+        stroke="#2f6bb0"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M3 20 L9 13.5 L13 16.5 L21 6" />
+        <path d="M15.5 6 H21 V11" />
+      </svg>
+    ),
+  },
+  {
+    id: 'other',
+    label: '其他地区',
+    desc: '欧洲、香港、日本等其他海外市场 QDII 基金',
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        aria-hidden="true"
+        fill="none"
+        stroke="#2e7d4f"
+        strokeWidth="1.8"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <ellipse cx="12" cy="12" rx="4.2" ry="9" />
+        <path d="M3.6 9 H20.4 M3.6 15 H20.4" />
+      </svg>
+    ),
+  },
+]
+const ALL_REGION_IDS = REGIONS.map((region) => region.id)
+const regionLabel = (id) => REGIONS.find((region) => region.id === id)?.label || id
+
 export default function SubscribeButton() {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
+  const [regions, setRegions] = useState(ALL_REGION_IDS)
   const [digits, setDigits] = useState(Array(CODE_LENGTH).fill(''))
   const [state, setState] = useState('idle') // idle | sending | submitting | success | error
   const [message, setMessage] = useState('')
   const [countdown, setCountdown] = useState(0)
   const [subscribedEmail, setSubscribedEmail] = useState(null)
+  const [subscribedRegions, setSubscribedRegions] = useState(null)
   const timerRef = useRef(null)
   const cellRefs = useRef([])
 
@@ -33,6 +94,7 @@ export default function SubscribeButton() {
         if (json.ok && json.subscribed) {
           setSubscribedEmail(saved)
           setEmail(saved)
+          if (Array.isArray(json.regions)) setSubscribedRegions(json.regions)
         }
       })
       .catch(() => {
@@ -42,11 +104,13 @@ export default function SubscribeButton() {
 
   const reset = () => {
     setEmail('')
+    setRegions(ALL_REGION_IDS)
     setDigits(Array(CODE_LENGTH).fill(''))
     setState('idle')
     setMessage('')
     setCountdown(0)
     setSubscribedEmail(null)
+    setSubscribedRegions(null)
     clearInterval(timerRef.current)
   }
 
@@ -54,6 +118,12 @@ export default function SubscribeButton() {
     setOpen(false)
     // 关闭后短暂延迟重置，避免下次打开闪现旧状态
     setTimeout(reset, 300)
+  }
+
+  const toggleRegion = (id) => {
+    setRegions((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    )
   }
 
   const handleCellChange = (index, rawValue) => {
@@ -134,6 +204,11 @@ export default function SubscribeButton() {
 
   const submit = async (event) => {
     event.preventDefault()
+    if (regions.length === 0) {
+      setState('error')
+      setMessage('请至少选择一个订阅地区')
+      return
+    }
     const normalizedEmail = email.trim().toLowerCase()
     if (!EMAIL_RE.test(normalizedEmail)) {
       setState('error')
@@ -153,7 +228,7 @@ export default function SubscribeButton() {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalizedEmail, code: verificationCode }),
+        body: JSON.stringify({ email: normalizedEmail, code: verificationCode, regions }),
       })
       const json = await response.json().catch(() => ({ message: '服务暂不可用' }))
       if (response.ok && json.ok) {
@@ -188,7 +263,7 @@ export default function SubscribeButton() {
         <span className={styles.btnDot} aria-hidden="true" />
       </button>
 
-      <Modal open={open} onClose={close} title="QDII 额度变动订阅">
+      <Modal open={open} onClose={close} title="QDII 额度变动订阅" wide>
         <div className={styles.body}>
           {subscribedEmail && state === 'idle' ? (
             <div className={`${styles.feedback} ${styles.successBox}`} role="status">
@@ -196,6 +271,11 @@ export default function SubscribeButton() {
               <p>
                 <strong>{subscribedEmail}</strong> 已在订阅列表中，额度变动时会邮件通知您。
               </p>
+              {subscribedRegions?.length > 0 && (
+                <p className={styles.regionEcho}>
+                  订阅范围：{subscribedRegions.map(regionLabel).join(' · ')}
+                </p>
+              )}
               <button className={styles.doneBtn} onClick={close}>
                 好的
               </button>
@@ -203,7 +283,7 @@ export default function SubscribeButton() {
           ) : (
             <>
               <p className={styles.desc}>
-                当监控基金出现<strong>日累计限额（代销）</strong>变动时，
+                当监控基金出现<strong>日累计限额</strong>变动时，
                 我们会第一时间通过邮件通知您。无变动不打扰。
               </p>
 
@@ -217,6 +297,50 @@ export default function SubscribeButton() {
                 </div>
               ) : (
                 <form onSubmit={submit} noValidate className={styles.form}>
+                  <div className={styles.field}>
+                    <span className={styles.fieldLabel} id="sub-regions-label">
+                      选择订阅的区域（可多选）
+                    </span>
+                    <div className={styles.regionGrid} role="group" aria-labelledby="sub-regions-label">
+                      {REGIONS.map((region) => {
+                        const checked = regions.includes(region.id)
+                        return (
+                          <label
+                            key={region.id}
+                            className={`${styles.regionCard} ${checked ? styles.regionCardActive : ''}`}
+                          >
+                            <input
+                              type="checkbox"
+                              className={styles.regionInput}
+                              checked={checked}
+                              onChange={() => toggleRegion(region.id)}
+                              disabled={state === 'submitting'}
+                            />
+                            <span className={styles.regionIcon} aria-hidden="true">
+                              {region.icon}
+                            </span>
+                            <span className={styles.regionText}>
+                              <span className={styles.regionName}>{region.label}</span>
+                              <span className={styles.regionDesc}>{region.desc}</span>
+                            </span>
+                            <span className={styles.regionBox} aria-hidden="true">
+                              <svg
+                                viewBox="0 0 12 12"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M2 6.2 L4.8 9 L10 3.2" />
+                              </svg>
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                  </div>
+
                   <div className={styles.field}>
                     <label className={styles.fieldLabel} htmlFor="sub-email">
                       接收通知的邮箱

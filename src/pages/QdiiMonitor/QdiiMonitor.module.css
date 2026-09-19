@@ -73,6 +73,14 @@
   color: var(--text-body);
 }
 
+/* 免责声明：主表与世界页页脚共用 */
+.disclaimer {
+  margin: 28px 4px 0;
+  font-size: 0.75rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
 @media (max-width: 768px) {
   .section {
     margin-top: 32px;
