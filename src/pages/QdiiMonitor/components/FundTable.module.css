@@ -83,13 +83,15 @@
 :where(.tableCard) thead th:nth-of-type(3) { width: 136px; text-align: center; }
 :where(.tableCard) thead th:nth-of-type(4) { width: 128px; text-align: center; }
 :where(.tableCard) thead th:nth-of-type(5) { width: 156px; text-align: right; }
-:where(.tableCard) thead th:nth-of-type(6) { width: 120px; text-align: right; }
-:where(.tableCard) thead th:nth-of-type(7) { width: 92px; text-align: right; }
-:where(.tableCard) thead th:nth-of-type(8) { width: 44px; text-align: center; }
+:where(.tableCard) thead th:nth-of-type(6) { width: 156px; text-align: right; }
+:where(.tableCard) thead th:nth-of-type(7) { width: 120px; text-align: right; }
+:where(.tableCard) thead th:nth-of-type(8) { width: 92px; text-align: right; }
+:where(.tableCard) thead th:nth-of-type(9) { width: 44px; text-align: center; }
 
 :where(.tableCard) thead th:nth-of-type(5) .sortButton,
 :where(.tableCard) thead th:nth-of-type(6) .sortButton,
-:where(.tableCard) thead th:nth-of-type(7) .sortButton {
+:where(.tableCard) thead th:nth-of-type(7) .sortButton,
+:where(.tableCard) thead th:nth-of-type(8) .sortButton {
   justify-content: flex-end;
 }
 
@@ -136,7 +138,7 @@
 
 /* 自定义 tooltip：仅在名称被截断时显示（trunc 类由 JS 检测溢出后添加）。
    展示在名称上方：下方会被后续行 / 卡片 overflow 挡住 */
-.fname:global(.trunc):hover::after {
+.fname:global(.trunc)::after {
   content: attr(data-fullname);
   position: absolute;
   left: 0;
@@ -147,11 +149,27 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   box-shadow: var(--shadow-card);
+  /* 单行展示：QDII 基金全称最长约 20 字，不会超出视口 */
   white-space: nowrap;
   font-size: 0.84rem;
   font-weight: 400;
   color: var(--text-body);
   pointer-events: none;
+  opacity: 0;
+  transform: translateY(3px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+
+.fname:global(.trunc):hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* hover 暗示：截断的名字变色，提示可以悬停看全称 */
+.fname:global(.trunc):hover {
+  color: var(--accent);
 }
 
 .idxTag {
@@ -240,6 +258,7 @@ td.tstatus {
 
 /* 数值列右对齐，便于纵向比较数值大小 */
 td.tlimit,
+td.tdirect,
 td.tte,
 td.tfee {
   text-align: right;
@@ -256,8 +275,8 @@ td.tfee {
   padding-right: 12px;
 }
 
-:where(.tableCard) th:nth-of-type(6),
-:where(.tableCard) th:nth-of-type(7) {
+:where(.tableCard) th:nth-of-type(7),
+:where(.tableCard) th:nth-of-type(8) {
   padding-left: 12px;
   padding-right: 12px;
 }
@@ -369,6 +388,60 @@ td.tchev {
   font-weight: 500;
   color: var(--text-primary);
   white-space: nowrap;
+}
+
+/* 收益率涨跌着色：红涨绿跌；放在 .detailValue 之后以覆盖其默认色 */
+.up {
+  color: #b3261e;
+}
+
+.down {
+  color: #188038;
+}
+
+:global([data-theme='dark']) .up {
+  color: #d08168;
+}
+
+:global([data-theme='dark']) .down {
+  color: #5cb87e;
+}
+
+/* 直销渠道外链：accent 色暗示可点，悬停加深并微移箭头 */
+.detailLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.detailLink .detailValue {
+  overflow: hidden;
+  color: var(--accent);
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+.detailLink:hover .detailValue,
+.detailLink:focus-visible .detailValue {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.linkArrow {
+  font-size: 0.72rem;
+  color: var(--accent);
+  opacity: 0.75;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.detailLink:hover .linkArrow {
+  transform: translate(1px, -1px);
+  opacity: 1;
 }
 
 .detailMeta {
@@ -500,6 +573,7 @@ td.tchev {
   .tindex,
   .tstatus,
   .tlimit,
+  .tdirect,
   .tte,
   .tfee {
     display: flex;
@@ -513,6 +587,7 @@ td.tchev {
   .tindex::before,
   .tstatus::before,
   .tlimit::before,
+  .tdirect::before,
   .tte::before,
   .tfee::before {
     content: attr(data-label);
@@ -531,6 +606,12 @@ td.tchev {
     max-width: none;
     min-width: 0;
     overflow: hidden;
+  }
+
+  /* 触屏没有 hover：名称直接换行显示全称，不依赖 tooltip */
+  .fname .txt {
+    white-space: normal;
+    overflow: visible;
   }
 
   .idxTag {

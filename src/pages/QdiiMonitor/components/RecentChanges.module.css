@@ -30,6 +30,17 @@
   margin-right: 2px;
 }
 
+/* 世界页基金变更的市场标签（日本/中国香港…），轻量 pill 与日期同行 */
+.regionTag {
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--surface-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .cname {
   color: var(--text-primary);
   font-weight: 600;

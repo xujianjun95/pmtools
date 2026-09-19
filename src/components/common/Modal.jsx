@@ -5,7 +5,7 @@ import styles from './Modal.module.css'
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
 
-function Modal({ open, onClose, title, children }) {
+function Modal({ open, onClose, title, wide = false, children }) {
   const backdropRef = useRef(null)
   const modalRef = useRef(null)
   /** 打开前的焦点元素，关闭后归还焦点 */
@@ -73,7 +73,7 @@ function Modal({ open, onClose, title, children }) {
       }}
     >
       <div
-        className={styles.modal}
+        className={`${styles.modal} ${wide ? styles.wide : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}

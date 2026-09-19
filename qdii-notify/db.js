@@ -5,6 +5,7 @@
 import Database from 'better-sqlite3'
 import { randomBytes } from 'node:crypto'
 import { config } from './config.js'
+import { DEFAULT_REGIONS, normalizeRegions, parseRegionsJson } from './regions.js'
 
 let db = null
 
@@ -35,6 +36,14 @@ export function initDb() {
       PRIMARY KEY (email, date)
     );
   `)
+  // 老库迁移：subscribers 增加 regions 列（JSON 数组文本），存量行默认全地区，行为不变
+  const columns = db.prepare('PRAGMA table_info(subscribers)').all()
+  if (!columns.some((column) => column.name === 'regions')) {
+    const defaultJson = JSON.stringify(DEFAULT_REGIONS)
+    db.exec(
+      `ALTER TABLE subscribers ADD COLUMN regions TEXT NOT NULL DEFAULT '${defaultJson}'`
+    )
+  }
   return db
 }
 
@@ -51,23 +60,26 @@ export function generateToken() {
 
 /**
  * 订阅（幂等）：
- * - 若已存在：重新激活为订阅状态，复用原有 token（旧邮件中的退订链接保持有效）
+ * - 若已存在：重新激活为订阅状态并更新地区选择，复用原有 token（旧邮件中的退订链接保持有效）
  * - 若不存在：新增，返回 { existed: false }
+ * regions 为用户勾选的地区 id 数组；非法或缺省按全地区处理。
  */
-export function subscribe(email) {
+export function subscribe(email, regions = DEFAULT_REGIONS) {
   const d = initDb()
+  const normalized = normalizeRegions(regions) || [...DEFAULT_REGIONS]
+  const regionsJson = JSON.stringify(normalized)
   const now = new Date().toISOString()
   const existing = d.prepare('SELECT * FROM subscribers WHERE email = ?').get(email)
   if (existing) {
     d.prepare(
-      'UPDATE subscribers SET active = 1, unsubscribed_at = NULL WHERE email = ?'
-    ).run(email)
+      'UPDATE subscribers SET active = 1, unsubscribed_at = NULL, regions = ? WHERE email = ?'
+    ).run(regionsJson, email)
     return { existed: true, token: existing.token }
   }
   const token = generateToken()
   d.prepare(
-    'INSERT INTO subscribers (email, token, active, created_at) VALUES (?, ?, 1, ?)'
-  ).run(email, token, now)
+    'INSERT INTO subscribers (email, token, active, created_at, regions) VALUES (?, ?, 1, ?, ?)'
+  ).run(email, token, now, regionsJson)
   return { existed: false, token }
 }
 
@@ -89,10 +101,20 @@ export function isSubscribed(email) {
   return Boolean(row && row.active === 1)
 }
 
-/** 获取所有订阅中的邮箱（含 token，供退订链接使用） */
+/** 查询某个邮箱的地区选择；未订阅返回 null */
+export function getRegionsByEmail(email) {
+  const d = initDb()
+  const row = d.prepare('SELECT regions FROM subscribers WHERE email = ?').get(email)
+  return row ? parseRegionsJson(row.regions) : null
+}
+
+/** 获取所有订阅中的邮箱（含 token 供退订链接、regions 供按地区过滤发信） */
 export function listActiveEmails() {
   const d = initDb()
-  return d.prepare('SELECT email, token FROM subscribers WHERE active = 1').all()
+  return d
+    .prepare('SELECT email, token, regions FROM subscribers WHERE active = 1')
+    .all()
+    .map((row) => ({ email: row.email, token: row.token, regions: parseRegionsJson(row.regions) }))
 }
 
 /** 订阅总数（含已退订），用于管理统计 */

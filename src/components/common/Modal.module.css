@@ -25,6 +25,11 @@
   animation: scaleIn 0.25s ease;
 }
 
+/* 宽版：多列内容（如订阅地区卡片）用 */
+.wide {
+  max-width: 920px;
+}
+
 [data-theme='dark'] .modal {
   background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }

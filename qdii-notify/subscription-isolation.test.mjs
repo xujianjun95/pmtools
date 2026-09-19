@@ -62,7 +62,7 @@ async function harness({ baseline = false, fault = '' } = {}) {
       : `export const ${key} = stub[${JSON.stringify(key)}];`).join('\n')
     fs.writeFileSync(join(directory, filename), `const stub = globalThis[${JSON.stringify(fixtureKey)}][${JSON.stringify(name)}];\n${exports}`)
   }
-  for (const name of ['server.js', 'db.js', 'notify.js', 'detect.js', 'analytics.js']) {
+  for (const name of ['server.js', 'db.js', 'notify.js', 'detect.js', 'analytics.js', 'regions.js']) {
     if (fault === 'missing' && name === 'analytics.js') continue
     let source = baseline && ['server.js', 'db.js'].includes(name)
       ? execFileSync('git', ['show', `HEAD:qdii-notify/${name}`], { encoding: 'utf8' })
@@ -110,6 +110,65 @@ async function harness({ baseline = false, fault = '' } = {}) {
 }
 
 const payload = { event: 'dca_start', visitor_id: '0123abcd-4567-4ef0-ab89-cdef01234567', visit_id: '0123abcd-4567-4ef0-ab89-cdef01234568', duration_ms: 1000 }
+
+test('其他地区数据进入检测并只发给对应订阅者', async () => {
+  const h = await harness()
+  try {
+    h.db.subscribe('world@example.test', ['other'])
+    h.db.subscribe('us@example.test', ['sp500'])
+    fs.writeFileSync(h.config.dataJsonPath, JSON.stringify({ updated_at: '2026-09-19', funds: [] }))
+    const worldPath = join(h.config.dbPath, '..', 'worldpage-data.json')
+    const writeWorld = limit => fs.writeFileSync(worldPath, JSON.stringify({ updated_at: '2026-09-19',
+      funds: [{ code: '012348', name: '天弘恒生科技ETF联接A', limit_amount: limit }] }))
+    writeWorld(1000)
+    await h.notify.runOnce()
+    writeWorld(500)
+    assert.equal((await h.notify.runOnce()).sent, 1)
+    assert.deepEqual(h.mails[0].recipients.map(s => s.email), ['world@example.test'])
+  } finally { h.cleanup() }
+})
+
+test('抓取缺失后仍用最近有效直销额度比较，不漏掉恢复后的变化', async () => {
+  const h = await harness()
+  try {
+    h.db.subscribe('us@example.test', ['nd100'])
+    const writeFund = amount => fs.writeFileSync(h.config.dataJsonPath, JSON.stringify({
+      updated_at: '2026-09-19', funds: [{ code: '018966', name: '汇添富纳斯达克100',
+        limit_amount: 100, direct_limit_amount: amount }],
+    }))
+    writeFund(1000)
+    await h.notify.runOnce()
+    writeFund(null)
+    assert.equal((await h.notify.runOnce()).changes, 0)
+    writeFund(5000)
+    assert.equal((await h.notify.runOnce()).sent, 1)
+    assert.equal(h.mails[0].body.changes[0].from, '1,000 元/日')
+    assert.equal(h.mails[0].body.changes[0].to, '5,000 元/日')
+  } finally { h.cleanup() }
+})
+
+test('世界数据损坏不影响美国通知，恢复后保留世界地区比较基线', async () => {
+  const h = await harness()
+  try {
+    h.db.subscribe('all@example.test')
+    const worldPath = join(h.config.dbPath, '..', 'worldpage-data.json')
+    const writeUs = limit => fs.writeFileSync(h.config.dataJsonPath, JSON.stringify({ funds: [
+      { code: '018966', name: '汇添富纳斯达克100', limit_amount: limit },
+    ] }))
+    const writeWorld = limit => fs.writeFileSync(worldPath, JSON.stringify({ funds: [
+      { code: '012348', name: '天弘恒生科技ETF联接A', limit_amount: limit },
+      { code: '018966', name: '汇添富纳斯达克100', limit_amount: 1 },
+    ] }))
+    writeUs(100); writeWorld(1000)
+    await h.notify.runOnce()
+    fs.writeFileSync(worldPath, '{broken')
+    writeUs(50)
+    assert.equal((await h.notify.runOnce()).sent, 1)
+    writeWorld(500)
+    assert.equal((await h.notify.runOnce()).sent, 1)
+    assert.deepEqual(h.mails[1].body.changes.map(c => c.code), ['012348'])
+  } finally { h.cleanup() }
+})
 
 for (const scenario of ['baseline', 'normal', 'missing', 'corrupt', 'unopenable', 'locked']) {
   test(`${scenario}：订阅/验证码/退订/恢复/定时邮件与快照不受埋点影响`, async () => {

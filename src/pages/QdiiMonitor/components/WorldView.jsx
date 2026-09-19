@@ -2,11 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import filterStyles from './FilterBar.module.css'
 import tableStyles from './FundTable.module.css'
-import { FundDetails, HistoryTimeline } from './FundTable'
+import { FundDetails, HistoryTimeline, LimitValue } from './FundTable'
 import SortableTh from './SortableTh'
+import Disclaimer from './Disclaimer'
 import styles from './WorldView.module.css'
 import qdiiStyles from '../QdiiMonitor.module.css'
-import { statusClass, statusLabel } from '../utils'
+import { statusClass, statusLabel, getChannelLimit } from '../utils'
 import {
   CROSS_MARKET,
   OTHER_MARKET_COUNTRIES,
@@ -14,32 +15,32 @@ import {
   countryById,
 } from '../worldFunds'
 
-const fmtY1 = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${Number(v).toFixed(2)}%`)
-
 // 类型筛选顺序固定，scanner 新增类型时自动追加到末尾
 const KIND_ORDER = ['主动', '被动联接', '被动FOF']
 
-// 天天基金以 1e11 标记开放式无限额，直接展示会变成“1000 亿/日”
-const UNLIMITED_LIMIT = 1e11
+// 天天基金「跟踪标的」官方全名含交易所前缀较长（如「中证韩交所中韩半导体指数」），
+// 展示用简写；数据保留全名，未命中映射显示原值
+const TRACK_TARGET_ABBR = {
+  中证韩交所中韩半导体指数: '中韩半导体',
+  恒生科技指数: '恒生科技',
+  纳斯达克100指数: '纳斯达克100',
+  标准普尔500指数: '标普500',
+  伦敦富时100指数: '富时100',
+  法兰克福DAX指数: '德国DAX',
+  法国CAC40指数: '法国CAC40',
+  东京日经225指数: '日经225',
+  富时亚太低碳精选指数: '亚太低碳精选',
+  新交所泛东南亚科技指数: '泛东南亚科技',
+}
 
-// 限额格式与外层 FundTable 的 limitCell 一致：暂停无意义、亿级省略、其余千分位
+const abbrTrackTarget = (v) => TRACK_TARGET_ABBR[v] || v
+
 function LimitCell({ fund }) {
-  if (String(fund.status).includes('暂停'))
-    return (
-      <span className={tableStyles.unit} title="暂停申购，无限额信息">
-        —
-      </span>
-    )
-  const n = Number(fund.limit_amount)
-  if (Number.isFinite(n) && n >= UNLIMITED_LIMIT)
-    return <span className={tableStyles.limitCell}>无限额</span>
-  if (!n || n <= 0) return <span className={tableStyles.unit}>—</span>
-  const txt = n >= 1e8 ? `${(n / 1e8).toFixed(0)} 亿` : n.toLocaleString('zh-CN')
-  return (
-    <>
-      {txt} <span className={tableStyles.unit}>元/日</span>
-    </>
-  )
+  return <LimitValue amount={getChannelLimit(fund)} />
+}
+
+function DirectLimitCell({ fund }) {
+  return <LimitValue amount={getChannelLimit(fund, 'direct_limit_amount')} />
 }
 
 function FundRow({ fund, isOpen, onToggle }) {
@@ -55,7 +56,7 @@ function FundRow({ fund, isOpen, onToggle }) {
             status: fund.status,
             // 无限额标记归零，共享时间线会显示为“无限额”而非巨额数字
             limit_amount:
-              Number(fund.limit_amount) >= UNLIMITED_LIMIT ? 0 : fund.limit_amount,
+              fund.limit_amount,
             redeem: fund.redeem,
           },
         ],
@@ -75,8 +76,12 @@ function FundRow({ fund, isOpen, onToggle }) {
             </span>
           </span>
         </td>
-        <td className={tableStyles.tindex} data-label="类型">
-          <span className={tableStyles.idxTag}>{fund.kind}</span>
+        <td className={tableStyles.tindex} data-label="跟踪标的">
+          <span className={`${tableStyles.idxTag} ${styles.trackTag}`}>
+            {/* 被动基金显示天天基金「跟踪标的」字段（快照注入的 track_target），
+                主动基金 / FOF 无跟踪标的直接标注类型 */}
+            {abbrTrackTarget(fund.track_target) || (fund.kind === '主动' ? '主动基金' : fund.kind)}
+          </span>
         </td>
         <td className={tableStyles.tstatus} data-label="申购状态">
           <span className={`${tableStyles.statusBadge} ${tableStyles[statusClass(fund.status)]}`}>
@@ -86,6 +91,11 @@ function FundRow({ fund, isOpen, onToggle }) {
         <td className={tableStyles.tlimit} data-label="日累计限额（代销）">
           <span className={tableStyles.limitCell}>
             <LimitCell fund={fund} />
+          </span>
+        </td>
+        <td className={tableStyles.tdirect} data-label="日累计限额（直销）">
+          <span className={tableStyles.limitCell} title={fund.direct_as_of ? `直销数据日期 ${fund.direct_as_of} · ${fund.direct_source || ''}` : undefined}>
+            <DirectLimitCell fund={fund} />
           </span>
         </td>
         <td className={tableStyles.tte} data-label="年化跟踪误差">
@@ -115,13 +125,6 @@ function FundRow({ fund, isOpen, onToggle }) {
               <span className={tableStyles.unit}>—</span>
             )}
           </span>
-        </td>
-        <td className={styles.ty1} data-label="近1年收益">
-          {fund.y1 == null ? (
-            <span className={tableStyles.unit}>—</span>
-          ) : (
-            <span className={fund.y1 >= 0 ? styles.up : styles.down}>{fmtY1(fund.y1)}</span>
-          )}
         </td>
         <td className={tableStyles.tchev}>
           <button
@@ -159,13 +162,19 @@ function FundTable({ groups, sortConfig, onSort, expandedKey, onToggle }) {
         <tr>
           <th>代码</th>
           <th>基金简称</th>
-          <th>类型</th>
+          <th>跟踪标的</th>
           <th>申购状态</th>
           <SortableTh
             label="日累计限额（代销）"
             active={sortConfig.key === 'limit_amount'}
             direction={sortConfig.direction}
             onSort={() => onSort('limit_amount')}
+          />
+          <SortableTh
+            label="日累计限额（直销）"
+            active={sortConfig.key === 'direct_limit_amount'}
+            direction={sortConfig.direction}
+            onSort={() => onSort('direct_limit_amount')}
           />
           <SortableTh
             label="年化跟踪误差"
@@ -179,7 +188,6 @@ function FundTable({ groups, sortConfig, onSort, expandedKey, onToggle }) {
             direction={sortConfig.direction}
             onSort={() => onSort('fee')}
           />
-          <th>近1年收益</th>
           <th aria-label="详情" />
         </tr>
       </thead>
@@ -232,7 +240,68 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   const [kind, setKind] = useState('all')
   const [sortConfig, setSortConfig] = useState({ key: 'limit_amount', direction: 'desc' })
   const [expandedKey, setExpandedKey] = useState(null)
+  const [liveData, setLiveData] = useState(null)
   const sectionRef = useRef(null)
+
+  // scanner 每日扫描的世界页数据；文件缺失（未部署/首次运行前）整体回退静态快照
+  useEffect(() => {
+    let cancelled = false
+    fetch('/qdii/worldpage-data.json', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((json) => {
+        if (!cancelled) setLiveData(json)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // 动态字段合并：申购状态/限额/详情数据（跟踪误差、收益率、规模、费率）以
+  // 每日扫描为准；fee 是申购费口径（scanner 的费率列口径不同）不覆盖，
+  // 直销档位缺失时保留静态值，避免扫描未覆盖时开天窗
+  const liveByCode = useMemo(() => {
+    const map = new Map()
+    for (const f of liveData?.funds ?? []) map.set(f.code, f)
+    return map
+  }, [liveData])
+
+  const LIVE_FIELDS = [
+    'track_target',
+    'direct_as_of',
+    'direct_source',
+    'direct_source_url',
+    'tracking_error',
+    'return_1m',
+    'return_6m',
+    'return_1y',
+    'return_3y',
+    'return_since',
+    'inception_date',
+    'fund_size',
+    'fund_size_date',
+    'management_fee_rate',
+    'custody_fee_rate',
+  ]
+
+  const mergeFund = (fund) => {
+    const live = liveByCode.get(fund.code)
+    if (!live) return fund
+    const merged = { ...fund }
+    for (const key of LIVE_FIELDS) {
+      if (live[key] != null) merged[key] = live[key]
+    }
+    merged.status = live.status
+    merged.redeem = live.redeem
+    merged.limit_amount = live.limit_amount
+    if (live.direct_limit_amount != null) {
+      merged.direct_limit_amount = live.direct_limit_amount
+    }
+    if (live.history?.length) merged.history = live.history
+    return merged
+  }
+
+  const dataDate = liveData?.updated_at || WORLD_SNAPSHOT_DATE
 
   // URL 参数直达某地区（hero 地图跳入 / 前进后退）；非法 id 回落到「全部」
   const [prevInitialId, setPrevInitialId] = useState(initialSelectedId)
@@ -259,8 +328,18 @@ export default function WorldView({ initialSelectedId = 'all' }) {
       })
     }
     check()
+    // web 字体加载完成会改变文本实测宽度，必须补测一次，否则部分行漏加 trunc
+    let cancelled = false
+    document.fonts.ready
+      .then(() => {
+        if (!cancelled) check()
+      })
+      .catch(() => {})
     window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
+    return () => {
+      cancelled = true
+      window.removeEventListener('resize', check)
+    }
   }, [selectedId, keyword])
 
   const handleSort = (key) => {
@@ -275,10 +354,9 @@ export default function WorldView({ initialSelectedId = 'all' }) {
     status === '开放申购' || status === '限大额' ? 0 : 1
 
   const sortValue = (fund) => {
-    if (sortConfig.key === 'limit_amount') {
-      if (String(fund.status).includes('暂停')) return null
-      const limit = Number(fund.limit_amount)
-      return limit > 0 ? limit : null
+    if (sortConfig.key === 'limit_amount' || sortConfig.key === 'direct_limit_amount') {
+      const amount = getChannelLimit(fund, sortConfig.key)
+      return amount > 0 ? amount : null
     }
     if (sortConfig.key === 'tracking_error') {
       return fund.tracking_error == null ? null : Number(fund.tracking_error)
@@ -329,14 +407,14 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   }, [])
 
   const groups = selectedId === 'all'
-    ? OTHER_MARKET_COUNTRIES.map((c) => ({ key: c.id, head: c, funds: sortFunds(c.funds.filter(matchKeyword).filter(matchKind)) })).filter(
+    ? OTHER_MARKET_COUNTRIES.map((c) => ({ key: c.id, head: c, funds: sortFunds(c.funds.map(mergeFund).filter(matchKeyword).filter(matchKind)) })).filter(
         (g) => g.funds.length > 0
       )
     : selected
-      ? [{ key: selected.id, funds: sortFunds(selected.funds.filter(matchKeyword).filter(matchKind)) }]
+      ? [{ key: selected.id, funds: sortFunds(selected.funds.map(mergeFund).filter(matchKeyword).filter(matchKind)) }]
       : []
 
-  const crossFunds = sortFunds(CROSS_MARKET.funds.filter(matchKeyword).filter(matchKind))
+  const crossFunds = sortFunds(CROSS_MARKET.funds.map(mergeFund).filter(matchKeyword).filter(matchKind))
 
   const handleSelect = (id, englishName) => {
     setSelectedId(id)
@@ -491,9 +569,13 @@ export default function WorldView({ initialSelectedId = 'all' }) {
           />
         )}
         <p className={styles.footnote}>
-          快照日期 {WORLD_SNAPSHOT_DATE} · 年化跟踪误差与近 1 年收益为快照值，实时申购限额以天天基金页面为准。
+          {liveData
+            ? `数据日期 ${dataDate} · 每日扫描`
+            : `快照日期 ${WORLD_SNAPSHOT_DATE}`}{' '}
+          · 年化跟踪误差与近 1 年收益为快照值，实时申购限额以天天基金页面为准。
         </p>
       </div>
+      <Disclaimer />
     </section>
   )
 }

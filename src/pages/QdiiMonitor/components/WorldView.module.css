@@ -48,14 +48,18 @@
   color: var(--text-muted);
 }
 
-/* 列宽沿用外层表格（1/2/4/5/6/7 列），仅调整类型列与收益列 */
-.wtable thead th:nth-of-type(3) {
-  width: 112px;
-}
-
+/* 列宽沿用外层表格；跟踪标的列不设固定宽（长指数名自适应），收益列收窄 */
 .wtable thead th:nth-of-type(8) {
   width: 104px;
   text-align: right;
+}
+
+/* 跟踪标的长指数名（如「中证韩交所中韩半导体指数」）在胶囊内折行，
+   配合 td 的 text-align: center 保持整体居中 */
+.trackTag {
+  white-space: normal;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .wtable thead th:nth-of-type(9) {
@@ -119,30 +123,6 @@
   outline-offset: 2px;
 }
 
-/* 近1年收益列：数值样式与外层限额列一致，红涨绿跌 */
-.ty1 {
-  font-family: var(--font-mono);
-  font-size: 0.86rem;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.up {
-  color: #b3261e;
-}
-
-.down {
-  color: #188038;
-}
-
-:global([data-theme='dark']) .up {
-  color: #d08168;
-}
-
-:global([data-theme='dark']) .down {
-  color: #5cb87e;
-}
-
 .crossCard {
   margin-top: 16px;
 }
@@ -194,22 +174,6 @@
     padding: 4px 16px;
     min-width: 0;
     overflow: hidden;
-  }
-
-  .ty1 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .ty1::before {
-    content: attr(data-label);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   .footnote {

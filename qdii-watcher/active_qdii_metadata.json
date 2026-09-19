@@ -1,0 +1,5225 @@
+{
+  "generated_at": "2026-09-14 11:21:00",
+  "count": 104,
+  "failed_codes": [
+    "026492",
+    "027205"
+  ],
+  "funds": {
+    "001691": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 82.88
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 5.75
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 56.65
+        },
+        {
+          "label": "科技",
+          "weight": 56.65
+        },
+        {
+          "label": "工业",
+          "weight": 15.91
+        },
+        {
+          "label": "能源",
+          "weight": 14.82
+        },
+        {
+          "label": "医疗保健",
+          "weight": 2.34
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "建滔积层板控股有限公司",
+          "weight": 9.56
+        },
+        {
+          "name": "华虹宏力半导体有限公司",
+          "weight": 9.2
+        },
+        {
+          "name": "长飞光纤光缆股份有限公司",
+          "weight": 8.26
+        }
+      ],
+      "report_title": "南方香港成长灵活配置混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828754983_1.pdf"
+    },
+    "000041": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 84.1
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 5.04
+        }
+      ],
+      "themes": [
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 89.14
+        },
+        {
+          "label": "信息技术",
+          "weight": 52.16
+        },
+        {
+          "label": "工业",
+          "weight": 9.93
+        },
+        {
+          "label": "通信服务",
+          "weight": 9.82
+        },
+        {
+          "label": "金融",
+          "weight": 6.19
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "华夏全球精选股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828778333_1.pdf"
+    },
+    "001984": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 49.48
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 37.57
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费"
+      ],
+      "top_industries": [
+        {
+          "label": "医疗保健",
+          "weight": 85.37
+        },
+        {
+          "label": "消费者常用品",
+          "weight": 1.68
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "泽璟制药",
+          "weight": 10.23
+        },
+        {
+          "name": "药明康德",
+          "weight": 9.95
+        },
+        {
+          "name": "艾力斯",
+          "weight": 9.9
+        }
+      ],
+      "report_title": "摩根中国生物医药混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828781900_1.pdf"
+    },
+    "002230": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 18.39
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 7.04
+        }
+      ],
+      "themes": [
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "通信服务",
+          "weight": 86.42
+        },
+        {
+          "label": "信息技术",
+          "weight": 77.08
+        },
+        {
+          "label": "工业",
+          "weight": 3.74
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "华夏大中华企业精选灵活配置混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828780342_1.pdf"
+    },
+    "001668": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 92.77
+        }
+      ],
+      "themes": [
+        "互联网"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "网易股份有限公司",
+          "weight": 2.67
+        },
+        {
+          "name": "铿腾电子科技",
+          "weight": 0.9
+        },
+        {
+          "name": "数据狗",
+          "weight": 0.53
+        }
+      ],
+      "report_title": "汇添富全球移动互联灵活配置混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828776380_1.pdf"
+    },
+    "000934": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 49.23
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 16.28
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 11.07
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 7.56
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 35.93
+        },
+        {
+          "label": "电信服务",
+          "weight": 13.55
+        },
+        {
+          "label": "医疗保健",
+          "weight": 8.94
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 8.51
+        },
+        {
+          "label": "工业",
+          "weight": 5.43
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 9.59
+        },
+        {
+          "name": "百度集团股份有限公司",
+          "weight": 6.79
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 3.67
+        }
+      ],
+      "report_title": "富兰克林国海大中华精选混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828779631_1.pdf"
+    },
+    "000988": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 62.8
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 23.59
+        }
+      ],
+      "themes": [
+        "互联网",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 86.4
+        },
+        {
+          "label": "通信服务",
+          "weight": 30.62
+        },
+        {
+          "label": "工业",
+          "weight": 21.69
+        },
+        {
+          "label": "信息技术",
+          "weight": 21.69
+        },
+        {
+          "label": "原材料",
+          "weight": 2.75
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "Alphabet股份有限公司",
+          "weight": 9.36
+        },
+        {
+          "name": "好未来教育集团",
+          "weight": 8.45
+        },
+        {
+          "name": "网易股份有限公司",
+          "weight": 7.89
+        }
+      ],
+      "report_title": "嘉实全球互联网股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787996_1.pdf"
+    },
+    "002379": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 70.78
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 15.53
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "华虹宏力半导体有限公司",
+          "weight": 10.12
+        },
+        {
+          "name": "联想集团有限公司",
+          "weight": 7.45
+        },
+        {
+          "name": "潍柴动力股份有限公司",
+          "weight": 5.39
+        }
+      ],
+      "report_title": "工银瑞信香港中小盘股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828750128_1.pdf"
+    },
+    "002891": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 63.23
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 9.04
+        }
+      ],
+      "themes": [
+        "互联网",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "通信服务",
+          "weight": 87.56
+        },
+        {
+          "label": "信息技术",
+          "weight": 84.86
+        },
+        {
+          "label": "工业",
+          "weight": 0.85
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "华夏移动互联灵活配置混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828779105_1.pdf"
+    },
+    "000043": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 94.94
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 54.48
+        },
+        {
+          "label": "通信服务",
+          "weight": 10.95
+        },
+        {
+          "label": "工业",
+          "weight": 8.83
+        },
+        {
+          "label": "医疗保健",
+          "weight": 5.9
+        },
+        {
+          "label": "金融",
+          "weight": 2.64
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "苹果公司",
+          "weight": 8.29
+        },
+        {
+          "name": "英伟达",
+          "weight": 7.81
+        },
+        {
+          "name": "Alphabet股份有限公司",
+          "weight": 7.78
+        }
+      ],
+      "report_title": "嘉实美国成长股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788158_1.pdf"
+    },
+    "003243": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 57.93
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 30.79
+        }
+      ],
+      "themes": [
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 52.62
+        },
+        {
+          "label": "基础材料",
+          "weight": 19.62
+        },
+        {
+          "label": "工业",
+          "weight": 15.44
+        },
+        {
+          "label": "电信服务",
+          "weight": 1.04
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "东山精密",
+          "weight": 9.68
+        },
+        {
+          "name": "天华新能",
+          "weight": 8.79
+        },
+        {
+          "name": "中际旭创",
+          "weight": 8.59
+        }
+      ],
+      "report_title": "摩根中国世纪灵活配置混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787436_1.pdf"
+    },
+    "005534": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 21.44
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 6.42
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "能源",
+          "weight": 86.53
+        },
+        {
+          "label": "信息技术",
+          "weight": 76.73
+        },
+        {
+          "label": "工业",
+          "weight": 0.83
+        },
+        {
+          "label": "金融",
+          "weight": 0.36
+        },
+        {
+          "label": "通信服务",
+          "weight": 0.01
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "华夏新时代灵活配置混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828774501_1.pdf"
+    },
+    "004877": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 80.15
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 6.83
+        }
+      ],
+      "themes": [
+        "医疗健康"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "诺华股份公司",
+          "weight": 9.99
+        },
+        {
+          "name": "礼来",
+          "weight": 8.73
+        },
+        {
+          "name": "强生",
+          "weight": 6.21
+        }
+      ],
+      "report_title": "汇添富全球医疗保健混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788691_1.pdf"
+    },
+    "005699": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 40.13
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 26.49
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 22.15
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "闪迪公司/特拉华州",
+          "weight": 9.94
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 9.61
+        },
+        {
+          "name": "百奥赛图(北京)医药科技股份有限公司",
+          "weight": 9.55
+        }
+      ],
+      "report_title": "工银瑞信新经济灵活配置混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828750149_1.pdf"
+    },
+    "006282": {
+      "regions": [
+        {
+          "label": "英国",
+          "flag": "🇬🇧",
+          "weight": 26.59
+        },
+        {
+          "label": "法国",
+          "flag": "🇫🇷",
+          "weight": 16.63
+        },
+        {
+          "label": "德国",
+          "flag": "🇩🇪",
+          "weight": 14.13
+        },
+        {
+          "label": "荷兰",
+          "flag": "🇳🇱",
+          "weight": 12.93
+        },
+        {
+          "label": "瑞士",
+          "flag": "🇨🇭",
+          "weight": 8.82
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 22.7
+        },
+        {
+          "label": "工业",
+          "weight": 16.66
+        },
+        {
+          "label": "信息技术",
+          "weight": 13.57
+        },
+        {
+          "label": "医疗保健",
+          "weight": 9.56
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 8.24
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "摩根欧洲动力策略股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828784909_1.pdf"
+    },
+    "006105": {
+      "regions": [
+        {
+          "label": "印度",
+          "flag": "🇮🇳",
+          "weight": 93.28
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 29.95
+        },
+        {
+          "label": "工业",
+          "weight": 16.19
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 10.97
+        },
+        {
+          "label": "医疗保健",
+          "weight": 7.9
+        },
+        {
+          "label": "通信服务",
+          "weight": 6.94
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "爱西爱西爱银行有限公司",
+          "weight": 8.11
+        },
+        {
+          "name": "印度住房开发金融银行",
+          "weight": 4.72
+        },
+        {
+          "name": "信实工业有限公司",
+          "weight": 4.5
+        }
+      ],
+      "report_title": "宏利印度机会股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828779000_1.pdf"
+    },
+    "005698": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 23.17
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 16.66
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "能源",
+          "weight": 76.43
+        },
+        {
+          "label": "信息技术",
+          "weight": 60.31
+        },
+        {
+          "label": "工业",
+          "weight": 7.07
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "华夏全球科技先锋混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828774645_1.pdf"
+    },
+    "006555": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 73.31
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 9.61
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 7.59
+        }
+      ],
+      "themes": [
+        "AI",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 90.51
+        },
+        {
+          "label": "工业",
+          "weight": 0.88
+        },
+        {
+          "label": "原材料",
+          "weight": 0.45
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "闪迪公司/特拉华州",
+          "weight": 9.52
+        },
+        {
+          "name": "铠侠控股株式会社",
+          "weight": 8.81
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 8.5
+        }
+      ],
+      "report_title": "浦银全球智能科技股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828785953_1.pdf"
+    },
+    "006308": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 70.65
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 9.68
+        }
+      ],
+      "themes": [
+        "消费"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "亚马逊公司",
+          "weight": 9.72
+        },
+        {
+          "name": "家得宝",
+          "weight": 7.93
+        },
+        {
+          "name": "Alphab et Inc -",
+          "weight": 6.7
+        }
+      ],
+      "report_title": "汇添富全球消费行业混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828786628_1.pdf"
+    },
+    "006373": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 71.95
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 8.74
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 85.29
+        },
+        {
+          "label": "信息技术",
+          "weight": 79.35
+        },
+        {
+          "label": "电信服务",
+          "weight": 3.21
+        },
+        {
+          "label": "医疗保健",
+          "weight": 2.72
+        },
+        {
+          "label": "工业",
+          "weight": 2.72
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 8.42
+        },
+        {
+          "name": "MKS 股份 有限公司",
+          "weight": 7.47
+        },
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 7.47
+        }
+      ],
+      "report_title": "富兰克林国海全球科技互联混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828779589_1.pdf"
+    },
+    "007729": {
+      "regions": [
+        {
+          "label": "全球",
+          "flag": "🌐",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 13.37
+        },
+        {
+          "label": "信息技术",
+          "weight": 10.85
+        },
+        {
+          "label": "原材料",
+          "weight": 0.67
+        },
+        {
+          "label": "医疗保健",
+          "weight": 0.6
+        },
+        {
+          "label": "工业",
+          "weight": 0.6
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "闪迪公司/特拉华州",
+          "weight": 1.69
+        },
+        {
+          "name": "建滔积层板控股有限公司",
+          "weight": 1.13
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 0.93
+        }
+      ],
+      "report_title": "招商普盛全球配置证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788340_1.pdf"
+    },
+    "007455": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 58.86
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 13.87
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 8.69
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 39.28
+        },
+        {
+          "label": "金融",
+          "weight": 13.11
+        },
+        {
+          "label": "通信服务",
+          "weight": 9.35
+        },
+        {
+          "label": "工业",
+          "weight": 8.97
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 3.91
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中国建设银行股份有限公司",
+          "weight": 5.42
+        },
+        {
+          "name": "中际旭创股份有限公司",
+          "weight": 4.76
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 4.39
+        }
+      ],
+      "report_title": "富国蓝筹精选股票型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828786483_1.pdf"
+    },
+    "007280": {
+      "regions": [
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 93.0
+        }
+      ],
+      "themes": [
+        "消费",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "工业",
+          "weight": 30.62
+        },
+        {
+          "label": "信息技术",
+          "weight": 20.4
+        },
+        {
+          "label": "金融",
+          "weight": 14.4
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 11.2
+        },
+        {
+          "label": "基础材料",
+          "weight": 4.37
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "摩根日本精选股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828783102_1.pdf"
+    },
+    "008253": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 78.73
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "科技",
+          "weight": 74.68
+        },
+        {
+          "label": "工业",
+          "weight": 4.2
+        },
+        {
+          "label": "房地产",
+          "weight": 0.46
+        },
+        {
+          "label": "医疗保健",
+          "weight": 0.46
+        },
+        {
+          "label": "能源",
+          "weight": 0.44
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "闪迪公司",
+          "weight": 9.12
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 8.46
+        },
+        {
+          "name": "泛林集团",
+          "weight": 3.67
+        }
+      ],
+      "report_title": "华宝致远混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828785665_1.pdf"
+    },
+    "009108": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 59.66
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "原材料",
+          "weight": 10.89
+        },
+        {
+          "label": "信息技术",
+          "weight": 10.37
+        },
+        {
+          "label": "工业",
+          "weight": 9.06
+        },
+        {
+          "label": "能源",
+          "weight": 8.14
+        },
+        {
+          "label": "通信服务",
+          "weight": 7.45
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中国移动有限公司",
+          "weight": 5.05
+        },
+        {
+          "name": "宁波力勤资源科技股份有限公司",
+          "weight": 4.08
+        },
+        {
+          "name": "中国长江电力股份有限公司",
+          "weight": 3.03
+        }
+      ],
+      "report_title": "富国红利精选混合型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787671_1.pdf"
+    },
+    "008763": {
+      "regions": [
+        {
+          "label": "越南",
+          "flag": "🇻🇳",
+          "weight": 92.55
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "其他-GICS未分类",
+          "weight": 92.55
+        },
+        {
+          "label": "医疗保健",
+          "weight": 43.77
+        },
+        {
+          "label": "金融",
+          "weight": 43.77
+        },
+        {
+          "label": "房地产",
+          "weight": 17.01
+        },
+        {
+          "label": "基础材料",
+          "weight": 8.65
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "和发集团股份公司",
+          "weight": 8.65
+        },
+        {
+          "name": "移动世界投资公司",
+          "weight": 6.44
+        }
+      ],
+      "report_title": "天弘越南市场股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828774094_1.pdf"
+    },
+    "009563": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 40.46
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 33.33
+        },
+        {
+          "label": "英国",
+          "flag": "🇬🇧",
+          "weight": 6.62
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 7.46
+        },
+        {
+          "name": "阿里巴巴集团控股有限公司",
+          "weight": 5.69
+        },
+        {
+          "name": "英伟达公司",
+          "weight": 3.16
+        }
+      ],
+      "report_title": "工银瑞信中国机会全球配置股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828750125_1.pdf"
+    },
+    "010644": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 36.63
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 27.79
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 26.97
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "医疗保健",
+          "weight": 90.64
+        },
+        {
+          "label": "信息技术",
+          "weight": 0.75
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "海思科医药集团股份有限公司",
+          "weight": 10.81
+        },
+        {
+          "name": "苏州泽璟生物制药股份有限公司",
+          "weight": 10.14
+        },
+        {
+          "name": "上海艾力斯医药科技股份有限公司",
+          "weight": 6.84
+        }
+      ],
+      "report_title": "富国全球健康生活主题混合型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788602_1.pdf"
+    },
+    "008284": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 79.12
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 10.81
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "能源资源"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 4.77
+        },
+        {
+          "label": "能源",
+          "weight": 0.47
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "四川科伦博泰生物医药股份有限公司",
+          "weight": 8.88
+        },
+        {
+          "name": "信达生物制药",
+          "weight": 7.93
+        },
+        {
+          "name": "康诺亚生物医药科技有限公司",
+          "weight": 6.74
+        }
+      ],
+      "report_title": "易方达全球医药行业混合型发起式证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828748182_1.pdf"
+    },
+    "011583": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 73.06
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 13.73
+        },
+        {
+          "label": "科技",
+          "weight": 10.74
+        },
+        {
+          "label": "医疗保健",
+          "weight": 10.39
+        },
+        {
+          "label": "工业",
+          "weight": 3.53
+        },
+        {
+          "label": "能源",
+          "weight": 2.19
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 7.11
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 7.07
+        },
+        {
+          "name": "招商银行股份有限公司",
+          "weight": 5.29
+        }
+      ],
+      "report_title": "大成港股精选混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828587684_1.pdf"
+    },
+    "011420": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 50.88
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 23.77
+        },
+        {
+          "label": "荷兰",
+          "flag": "🇳🇱",
+          "weight": 8.54
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 6.68
+        }
+      ],
+      "themes": [
+        "消费",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 89.86
+        },
+        {
+          "label": "信息技术",
+          "weight": 30.68
+        },
+        {
+          "label": "通讯业务",
+          "weight": 23.36
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 13.48
+        },
+        {
+          "label": "工业",
+          "weight": 12.3
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 9.62
+        },
+        {
+          "name": "谷歌公司",
+          "weight": 8.89
+        },
+        {
+          "name": "缤客控股公司",
+          "weight": 7.48
+        }
+      ],
+      "report_title": "广发全球科技三个月定期开放混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828771091_1.pdf"
+    },
+    "012208": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 79.11
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "能源",
+          "weight": 82.95
+        },
+        {
+          "label": "信息技术",
+          "weight": 44.94
+        },
+        {
+          "label": "通信服务",
+          "weight": 21.88
+        },
+        {
+          "label": "房地产",
+          "weight": 1.43
+        },
+        {
+          "label": "工业",
+          "weight": 1.1
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "上海天数智芯半导体股份有限公司",
+          "weight": 10.13
+        },
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 9.4
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 7.41
+        }
+      ],
+      "report_title": "华夏港股前沿经济混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828779706_1.pdf"
+    },
+    "012535": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 46.17
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 39.78
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 8.39
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 64.51
+        },
+        {
+          "label": "医疗保健",
+          "weight": 23.64
+        },
+        {
+          "label": "通信服务",
+          "weight": 6.11
+        },
+        {
+          "label": "工业",
+          "weight": 0.06
+        },
+        {
+          "label": "公用事业",
+          "weight": 0.01
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中科寒武纪科技股份有限公司",
+          "weight": 8.78
+        },
+        {
+          "name": "思瑞浦微电子科技(苏州)股份有限公司",
+          "weight": 8.01
+        },
+        {
+          "name": "深信服科技股份有限公司",
+          "weight": 7.76
+        }
+      ],
+      "report_title": "万家全球成长一年持有期混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828680895_1.pdf"
+    },
+    "012060": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 26.28
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 25.24
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 22.78
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 10.44
+        }
+      ],
+      "themes": [
+        "消费",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 28.0
+        },
+        {
+          "label": "日常消费品",
+          "weight": 14.86
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 14.52
+        },
+        {
+          "label": "工业",
+          "weight": 10.33
+        },
+        {
+          "label": "通信服务",
+          "weight": 8.76
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "TaiwanSemiconductorManufacturingCompanyLtd.",
+          "weight": 5.49
+        },
+        {
+          "name": "谷 歌 (Alphabet)",
+          "weight": 5.08
+        },
+        {
+          "name": "宁德时代新能源科技股份有限公司",
+          "weight": 4.79
+        }
+      ],
+      "report_title": "富国全球消费精选混合型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828786499_1.pdf"
+    },
+    "012584": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 34.22
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 19.81
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 6.73
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 66.06
+        },
+        {
+          "label": "科技",
+          "weight": 66.06
+        },
+        {
+          "label": "能源",
+          "weight": 4.12
+        },
+        {
+          "label": "工业",
+          "weight": 1.59
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "上海壁仞科技股份有限公司",
+          "weight": 8.66
+        },
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 5.44
+        },
+        {
+          "name": "中科寒武纪科技股份有限公司",
+          "weight": 4.65
+        }
+      ],
+      "report_title": "南方中国新兴经济9个月持有期混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828755878_1.pdf"
+    },
+    "012379": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 84.53
+        }
+      ],
+      "themes": [
+        "互联网",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 27.2
+        },
+        {
+          "label": "金融",
+          "weight": 2.61
+        },
+        {
+          "label": "工业",
+          "weight": 2.2
+        },
+        {
+          "label": "房地产",
+          "weight": 0.88
+        },
+        {
+          "label": "基础材料",
+          "weight": 0.86
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 8.02
+        },
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 7.83
+        },
+        {
+          "name": "网易股份有限公司",
+          "weight": 6.78
+        }
+      ],
+      "report_title": "创金合信港股互联网3个月持有期混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828563821_1.pdf"
+    },
+    "012920": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 42.76
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 8.53
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 8.03
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 88.59
+        },
+        {
+          "label": "工业",
+          "weight": 2.53
+        },
+        {
+          "label": "能源",
+          "weight": 0.35
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "泛林集团",
+          "weight": 6.41
+        },
+        {
+          "name": "铠侠控股株式会社",
+          "weight": 5.89
+        },
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 5.54
+        }
+      ],
+      "report_title": "易方达全球成长精选混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828747947_1.pdf"
+    },
+    "013328": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 50.42
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 19.3
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 5.19
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 45.69
+        },
+        {
+          "label": "金融",
+          "weight": 10.54
+        },
+        {
+          "label": "工业",
+          "weight": 9.22
+        },
+        {
+          "label": "通信服务",
+          "weight": 6.69
+        },
+        {
+          "label": "原材料",
+          "weight": 4.59
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 5.48
+        },
+        {
+          "name": "英伟达公司",
+          "weight": 3.99
+        },
+        {
+          "name": "Alphabet股份有限公司",
+          "weight": 3.85
+        }
+      ],
+      "report_title": "嘉实全球价值机会股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828754923_1.pdf"
+    },
+    "015204": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 57.34
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 14.33
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 12.29
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "新能源"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 40.76
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 27.23
+        },
+        {
+          "label": "医疗保健",
+          "weight": 7.79
+        },
+        {
+          "label": "工业",
+          "weight": 7.79
+        },
+        {
+          "label": "电信服务",
+          "weight": 7.41
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "特斯拉",
+          "weight": 8.5
+        },
+        {
+          "name": "超威半导体",
+          "weight": 8.11
+        },
+        {
+          "name": "宁德时代",
+          "weight": 6.39
+        }
+      ],
+      "report_title": "银华全球新能源车量化优选股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828680890_1.pdf"
+    },
+    "013363": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 86.1
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 32.35
+        },
+        {
+          "label": "医疗保健",
+          "weight": 32.35
+        },
+        {
+          "label": "工业",
+          "weight": 25.14
+        },
+        {
+          "label": "科技",
+          "weight": 8.83
+        },
+        {
+          "label": "能源",
+          "weight": 2.09
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "和誉开曼有限责任公司",
+          "weight": 10.35
+        },
+        {
+          "name": "紫金矿业集团股份有限公司",
+          "weight": 9.2
+        },
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 8.83
+        }
+      ],
+      "report_title": "大成中国优势混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828585982_1.pdf"
+    },
+    "015884": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 82.27
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 11.23
+        }
+      ],
+      "themes": [
+        "互联网",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 55.27
+        },
+        {
+          "label": "工业",
+          "weight": 13.75
+        },
+        {
+          "label": "电信服务",
+          "weight": 10.5
+        },
+        {
+          "label": "基础材料",
+          "weight": 9.47
+        },
+        {
+          "label": "金融",
+          "weight": 2.72
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "北京智谱华章科技股份有限公司",
+          "weight": 9.16
+        },
+        {
+          "name": "MINIMA",
+          "weight": 8.77
+        },
+        {
+          "name": "津上精密机床(中国)有限公司",
+          "weight": 8.56
+        }
+      ],
+      "report_title": "中欧港股数字经济混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828684165_1.pdf"
+    },
+    "017071": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 59.66
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "新能源",
+        "能源资源"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 84.58
+        },
+        {
+          "label": "医疗保健",
+          "weight": 47.49
+        },
+        {
+          "label": "工业",
+          "weight": 47.49
+        },
+        {
+          "label": "信息技术",
+          "weight": 23.0
+        },
+        {
+          "label": "原材料",
+          "weight": 7.91
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "Bloom 能源公司",
+          "weight": 5.84
+        },
+        {
+          "name": "卡特彼勒公司",
+          "weight": 5.35
+        },
+        {
+          "name": "通用电气Vernova股份有限公司",
+          "weight": 5.13
+        }
+      ],
+      "report_title": "申万菱信全球新能源股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787602_1.pdf"
+    },
+    "016664": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 38.93
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 24.23
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 8.59
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 7.64
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 66.4
+        },
+        {
+          "label": "信息技术",
+          "weight": 66.4
+        },
+        {
+          "label": "工业",
+          "weight": 11.04
+        },
+        {
+          "label": "基础材料",
+          "weight": 2.65
+        },
+        {
+          "label": "能源",
+          "weight": 0.92
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "铠侠控股株式会社",
+          "weight": 3.88
+        },
+        {
+          "name": "胜宏科技(惠州)股份有限公司",
+          "weight": 3.33
+        },
+        {
+          "name": "中际旭创",
+          "weight": 2.18
+        }
+      ],
+      "report_title": "天弘全球高端制造混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828773272_1.pdf"
+    },
+    "016701": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 87.89
+        }
+      ],
+      "themes": [
+        "互联网",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "工业",
+          "weight": 70.7
+        },
+        {
+          "label": "信息技术",
+          "weight": 70.7
+        },
+        {
+          "label": "电信服务",
+          "weight": 11.35
+        },
+        {
+          "label": "基础材料",
+          "weight": 8.4
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 8.4
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "英伟达",
+          "weight": 8.16
+        },
+        {
+          "name": "谷歌",
+          "weight": 7.42
+        },
+        {
+          "name": "苹果",
+          "weight": 6.27
+        }
+      ],
+      "report_title": "银华海外数字经济量化选股混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828680755_1.pdf"
+    },
+    "016199": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 63.54
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 19.39
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 6.79
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "特斯拉公司",
+          "weight": 11.73
+        },
+        {
+          "name": "安森美半导体",
+          "weight": 8.49
+        },
+        {
+          "name": "德州仪器公司",
+          "weight": 6.93
+        }
+      ],
+      "report_title": "汇添富全球汽车产业升级混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828782633_1.pdf"
+    },
+    "017144": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 88.57
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 5.61
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "新能源",
+        "能源资源"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 45.58
+        },
+        {
+          "label": "科技",
+          "weight": 40.73
+        },
+        {
+          "label": "医疗保健",
+          "weight": 7.35
+        },
+        {
+          "label": "工业",
+          "weight": 7.35
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "美满电子科技公司",
+          "weight": 9.83
+        },
+        {
+          "name": "特斯拉公司",
+          "weight": 9.61
+        },
+        {
+          "name": "蔚来集团",
+          "weight": 9.17
+        }
+      ],
+      "report_title": "华宝海外新能源汽车股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787607_1.pdf"
+    },
+    "017653": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 62.25
+        }
+      ],
+      "themes": [
+        "半导体",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 82.96
+        },
+        {
+          "label": "工业",
+          "weight": 4.3
+        },
+        {
+          "label": "基础材料",
+          "weight": 0.34
+        },
+        {
+          "label": "公用事业",
+          "weight": 0.25
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "美光科技公司",
+          "weight": 4.81
+        },
+        {
+          "name": "超威半导体公司",
+          "weight": 3.14
+        },
+        {
+          "name": "应用材料公司",
+          "weight": 2.85
+        }
+      ],
+      "report_title": "创金合信全球芯片产业股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828564672_1.pdf"
+    },
+    "017436": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 89.84
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "科技",
+          "weight": 56.61
+        },
+        {
+          "label": "公用事业",
+          "weight": 14.08
+        },
+        {
+          "label": "医疗保健",
+          "weight": 4.51
+        },
+        {
+          "label": "工业",
+          "weight": 4.51
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "英伟达公司",
+          "weight": 8.14
+        },
+        {
+          "name": "美满电子科技公司",
+          "weight": 7.98
+        },
+        {
+          "name": "苹果公司",
+          "weight": 6.73
+        }
+      ],
+      "report_title": "华宝纳斯达克精选股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828784783_1.pdf"
+    },
+    "018155": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 59.25
+        }
+      ],
+      "themes": [
+        "医疗健康"
+      ],
+      "top_industries": [
+        {
+          "label": "医疗保健",
+          "weight": 79.28
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "EdgewiseTherapeutics,",
+          "weight": 4.0
+        },
+        {
+          "name": "NewAmsterdamPharmaCompanyN.V.",
+          "weight": 3.82
+        },
+        {
+          "name": "ProtagonistTherapeutics,Inc.",
+          "weight": 3.78
+        }
+      ],
+      "report_title": "创金合信全球医药生物股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828562077_1.pdf"
+    },
+    "017730": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 42.56
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 32.63
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 8.42
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 85.21
+        },
+        {
+          "label": "信息技术",
+          "weight": 82.99
+        },
+        {
+          "label": "医疗保健",
+          "weight": 1.95
+        },
+        {
+          "label": "工业",
+          "weight": 1.95
+        },
+        {
+          "label": "通信服务",
+          "weight": 0.26
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "AMD 公",
+          "weight": 3.54
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 3.4
+        },
+        {
+          "name": "科磊公司",
+          "weight": 3.2
+        }
+      ],
+      "report_title": "嘉实全球产业升级股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828755151_1.pdf"
+    },
+    "017429": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 38.43
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 25.39
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 22.35
+        },
+        {
+          "label": "德国",
+          "flag": "🇩🇪",
+          "weight": 6.05
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 27.1
+        },
+        {
+          "label": "金融",
+          "weight": 24.3
+        },
+        {
+          "label": "医疗保健",
+          "weight": 24.3
+        },
+        {
+          "label": "工业",
+          "weight": 15.59
+        },
+        {
+          "label": "原材料",
+          "weight": 10.08
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "宁德时代新能源科技股份有限公司",
+          "weight": 7.82
+        },
+        {
+          "name": "特斯拉公司",
+          "weight": 7.39
+        },
+        {
+          "name": "英飞凌科技有限公司",
+          "weight": 6.05
+        }
+      ],
+      "report_title": "嘉实全球创新龙头股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828755082_1.pdf"
+    },
+    "019265": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 78.33
+        }
+      ],
+      "themes": [
+        "互联网",
+        "能源资源",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 58.66
+        },
+        {
+          "label": "科技",
+          "weight": 58.66
+        },
+        {
+          "label": "工业",
+          "weight": 6.39
+        },
+        {
+          "label": "能源",
+          "weight": 2.24
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "华虹宏力半导体有限公司",
+          "weight": 10.03
+        },
+        {
+          "name": "建滔积层板控股有限公司",
+          "weight": 9.73
+        },
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 9.66
+        }
+      ],
+      "report_title": "南方港股数字经济混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828755724_1.pdf"
+    },
+    "019415": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 74.9
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "医疗保健",
+          "weight": 83.0
+        },
+        {
+          "label": "工业",
+          "weight": 0.75
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "四川科伦博泰生物医药股份有限公司",
+          "weight": 8.69
+        },
+        {
+          "name": "无锡药明康德新药开发股份有限公司",
+          "weight": 8.5
+        },
+        {
+          "name": "药明合联生物技术有限公司",
+          "weight": 6.5
+        }
+      ],
+      "report_title": "南方港股医药行业混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828755788_1.pdf"
+    },
+    "019075": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 43.23
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 24.55
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 15.35
+        }
+      ],
+      "themes": [
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 83.13
+        },
+        {
+          "label": "信息技术",
+          "weight": 53.47
+        },
+        {
+          "label": "通信服务",
+          "weight": 7.06
+        },
+        {
+          "label": "原材料",
+          "weight": 5.96
+        },
+        {
+          "label": "金融",
+          "weight": 5.51
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中国移动有限公司",
+          "weight": 5.05
+        },
+        {
+          "name": "安集微电子科技(上海)股份有限公司",
+          "weight": 4.35
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 4.0
+        }
+      ],
+      "report_title": "嘉实全球产业精选混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828754898_1.pdf"
+    },
+    "018229": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 21.06
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 5.68
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 63.38
+        },
+        {
+          "label": "信息技术",
+          "weight": 63.38
+        },
+        {
+          "label": "工业",
+          "weight": 8.94
+        },
+        {
+          "label": "能源",
+          "weight": 3.45
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "铠侠控股株式会社",
+          "weight": 3.12
+        },
+        {
+          "name": "深圳中科飞测科技股份有限公司",
+          "weight": 3.07
+        },
+        {
+          "name": "应用材料公司",
+          "weight": 2.9
+        }
+      ],
+      "report_title": "易方达全球优质企业混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828748052_1.pdf"
+    },
+    "025070": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 66.37
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 23.79
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 90.17
+        },
+        {
+          "label": "消费者常用品",
+          "weight": 87.83
+        },
+        {
+          "label": "医疗保健",
+          "weight": 87.83
+        },
+        {
+          "label": "金融",
+          "weight": 1.74
+        },
+        {
+          "label": "基础材料",
+          "weight": 1.74
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "四川百利天恒药业股份有限",
+          "weight": 10.76
+        },
+        {
+          "name": "四川科伦博泰生物医药股份有限公司",
+          "weight": 8.78
+        },
+        {
+          "name": "诺诚健华医药有限公司",
+          "weight": 8.67
+        }
+      ],
+      "report_title": "东方红医疗创新混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828773574_1.pdf"
+    },
+    "019155": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 40.1
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 15.39
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 72.17
+        },
+        {
+          "label": "能源",
+          "weight": 2.33
+        },
+        {
+          "label": "房地产",
+          "weight": 1.91
+        },
+        {
+          "label": "工业",
+          "weight": 1.1
+        },
+        {
+          "label": "电信服务",
+          "weight": 0.56
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 6.39
+        },
+        {
+          "name": "康宁公司",
+          "weight": 4.95
+        }
+      ],
+      "report_title": "易方达全球配置混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828747954_1.pdf"
+    },
+    "025587": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 71.43
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 74.79
+        },
+        {
+          "label": "科技",
+          "weight": 37.76
+        },
+        {
+          "label": "工业",
+          "weight": 10.91
+        },
+        {
+          "label": "医疗保健",
+          "weight": 2.48
+        },
+        {
+          "label": "金融",
+          "weight": 1.63
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "建滔积层板控股有限公司",
+          "weight": 7.4
+        },
+        {
+          "name": "兆易创新科技集团股份有限公司",
+          "weight": 7.27
+        }
+      ],
+      "report_title": "光大保德信阳光香港精选混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828777133_1.pdf"
+    },
+    "025174": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 68.12
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 72.7
+        },
+        {
+          "label": "医疗保健",
+          "weight": 72.7
+        },
+        {
+          "label": "房地产",
+          "weight": 72.7
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "长城港股医疗保健精选混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787230_1.pdf"
+    },
+    "025654": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 51.5
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 23.62
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "医疗保健",
+          "weight": 75.03
+        },
+        {
+          "label": "信息技术",
+          "weight": 0.08
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "四川百利天恒药业股份有限公司",
+          "weight": 8.91
+        },
+        {
+          "name": "苏州泽璟生物制药股份有限公司",
+          "weight": 8.7
+        },
+        {
+          "name": "百奥赛图(北京)医药科技股份有限公司",
+          "weight": 8.43
+        }
+      ],
+      "report_title": "富国医药精选混合型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787949_1.pdf"
+    },
+    "025787": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 63.0
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 15.86
+        },
+        {
+          "label": "科技",
+          "weight": 8.8
+        },
+        {
+          "label": "房地产",
+          "weight": 4.72
+        },
+        {
+          "label": "工业",
+          "weight": 4.32
+        },
+        {
+          "label": "医疗保健",
+          "weight": 2.89
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 5.04
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 4.13
+        },
+        {
+          "name": "汇丰控股有限公司",
+          "weight": 3.2
+        }
+      ],
+      "report_title": "大成港股恒信混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828589680_1.pdf"
+    },
+    "026492": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "report_title": null,
+      "report_date": null,
+      "source_url": null,
+      "top_holdings": []
+    },
+    "025852": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 75.38
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 9.74
+        }
+      ],
+      "themes": [
+        "消费",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 33.28
+        },
+        {
+          "label": "工业",
+          "weight": 16.75
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 10.46
+        },
+        {
+          "label": "金融",
+          "weight": 7.67
+        },
+        {
+          "label": "医疗保健",
+          "weight": 7.15
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "华虹宏力半导体有限公司",
+          "weight": 5.06
+        },
+        {
+          "name": "建滔集团有限公司",
+          "weight": 4.23
+        },
+        {
+          "name": "汇丰控股有限公司",
+          "weight": 3.77
+        }
+      ],
+      "report_title": "富国港股精选混合型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828784453_1.pdf"
+    },
+    "026246": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 60.59
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "非日常生活消费品",
+          "weight": 13.52
+        },
+        {
+          "label": "信息技术",
+          "weight": 11.35
+        },
+        {
+          "label": "金融",
+          "weight": 10.14
+        },
+        {
+          "label": "医疗保健",
+          "weight": 9.37
+        },
+        {
+          "label": "通讯业务",
+          "weight": 7.05
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "阿里巴巴集团控股有限公司",
+          "weight": 3.94
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 3.86
+        },
+        {
+          "name": "美团",
+          "weight": 2.95
+        }
+      ],
+      "report_title": "汇丰晋信港股精选股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828786688_1.pdf"
+    },
+    "026291": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 81.72
+        }
+      ],
+      "themes": [
+        "消费"
+      ],
+      "top_industries": [
+        {
+          "label": "基础材料",
+          "weight": 34.55
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 34.55
+        },
+        {
+          "label": "消费者常用品",
+          "weight": 26.69
+        },
+        {
+          "label": "电信服务",
+          "weight": 11.39
+        },
+        {
+          "label": "公用事业",
+          "weight": 5.28
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 6.66
+        },
+        {
+          "name": "李宁有限公司",
+          "weight": 5.91
+        },
+        {
+          "name": "安井食品集团股份有限公司",
+          "weight": 5.68
+        }
+      ],
+      "report_title": "中欧港股消费混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828684055_1.pdf"
+    },
+    "027205": {
+      "regions": [
+        {
+          "label": "全球",
+          "flag": "🌐",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "report_title": null,
+      "report_date": null,
+      "source_url": null,
+      "top_holdings": []
+    },
+    "026357": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 86.9
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 91.36
+        },
+        {
+          "label": "公用事业",
+          "weight": 91.36
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "百奥赛图－Ｂ",
+          "weight": 10.41
+        },
+        {
+          "name": "信达生物",
+          "weight": 9.59
+        },
+        {
+          "name": "三生制药",
+          "weight": 9.38
+        }
+      ],
+      "report_title": "平安港股医疗优选股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828592647_1.pdf"
+    },
+    "026442": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 92.78
+        }
+      ],
+      "themes": [
+        "消费",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "非日常生活消费品",
+          "weight": 28.17
+        },
+        {
+          "label": "通讯业务",
+          "weight": 20.24
+        },
+        {
+          "label": "信息技术",
+          "weight": 16.9
+        },
+        {
+          "label": "工业",
+          "weight": 9.27
+        },
+        {
+          "label": "金融",
+          "weight": 9.09
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 6.41
+        },
+        {
+          "name": "网易股份有限公司",
+          "weight": 6.01
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 5.28
+        }
+      ],
+      "report_title": "国泰海通港股优势精选股票型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828778335_1.pdf"
+    },
+    "026259": {
+      "regions": [
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 55.68
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 34.87
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 90.55
+        },
+        {
+          "label": "医疗保健",
+          "weight": 90.55
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "恒瑞医药",
+          "weight": 8.78
+        },
+        {
+          "name": "药明康德",
+          "weight": 8.02
+        },
+        {
+          "name": "百济神州",
+          "weight": 5.35
+        }
+      ],
+      "report_title": "银华医疗创新混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828684346_1.pdf"
+    },
+    "027379": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 39.71
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 24.48
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 62.38
+        },
+        {
+          "label": "医疗保健",
+          "weight": 62.38
+        },
+        {
+          "label": "基础材料",
+          "weight": 1.81
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 1.81
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "康诺亚生物医药科技有限公司",
+          "weight": 7.51
+        },
+        {
+          "name": "四川百利天恒药业股份有限公司",
+          "weight": 5.75
+        },
+        {
+          "name": "贝达药业股份有限公司",
+          "weight": 4.99
+        }
+      ],
+      "report_title": "中欧港股医药混合型发起式证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828682107_1.pdf"
+    },
+    "026703": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 82.73
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "能源资源",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 21.41
+        },
+        {
+          "label": "医疗保健",
+          "weight": 19.06
+        },
+        {
+          "label": "工业",
+          "weight": 19.06
+        },
+        {
+          "label": "能源",
+          "weight": 18.23
+        },
+        {
+          "label": "基础材料",
+          "weight": 10.46
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "长城港股价值优选股票型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828785114_1.pdf"
+    },
+    "040018": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 68.92
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 16.97
+        }
+      ],
+      "themes": [
+        "消费",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 53.55
+        },
+        {
+          "label": "工业",
+          "weight": 15.66
+        },
+        {
+          "label": "原材料",
+          "weight": 9.25
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 3.22
+        },
+        {
+          "label": "金融",
+          "weight": 2.41
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "津上精密机床(中国)有限公司",
+          "weight": 4.87
+        },
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 4.8
+        },
+        {
+          "name": "华虹宏力半导体有限公司",
+          "weight": 4.05
+        }
+      ],
+      "report_title": "华安香港精选股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828785657_1.pdf"
+    },
+    "040021": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 40.78
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 35.86
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 6.31
+        }
+      ],
+      "themes": [
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 82.95
+        },
+        {
+          "label": "信息技术",
+          "weight": 63.84
+        },
+        {
+          "label": "原材料",
+          "weight": 7.25
+        },
+        {
+          "label": "工业",
+          "weight": 7.06
+        },
+        {
+          "label": "金融",
+          "weight": 2.2
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中芯国际集成电路制造有限公司",
+          "weight": 3.52
+        },
+        {
+          "name": "津上精密机床(中国)有限公司",
+          "weight": 3.4
+        },
+        {
+          "name": "国巨股份有限公司",
+          "weight": 3.16
+        }
+      ],
+      "report_title": "华安大中华升级股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828781593_1.pdf"
+    },
+    "050015": {
+      "regions": [
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 34.2
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 33.35
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 17.44
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 55.99
+        },
+        {
+          "label": "工业",
+          "weight": 23.75
+        },
+        {
+          "label": "医疗保健",
+          "weight": 3.61
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 1.65
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "MEDIATEK INC",
+          "weight": 9.75
+        },
+        {
+          "name": "TAIWAN",
+          "weight": 9.53
+        },
+        {
+          "name": "宁德时代",
+          "weight": 6.62
+        }
+      ],
+      "report_title": "博时大中华亚太精选股票证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828769626_1.pdf"
+    },
+    "100055": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 50.31
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 17.85
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 10.31
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 9.2
+        }
+      ],
+      "themes": [
+        "互联网",
+        "消费",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 67.31
+        },
+        {
+          "label": "通信服务",
+          "weight": 9.94
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 7.9
+        },
+        {
+          "label": "原材料",
+          "weight": 4.37
+        },
+        {
+          "label": "工业",
+          "weight": 2.66
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "ASMPT Limited",
+          "weight": 5.62
+        },
+        {
+          "name": "兆易创新科技集团股份有限公司",
+          "weight": 5.51
+        },
+        {
+          "name": "Sandisk Corporation",
+          "weight": 5.04
+        }
+      ],
+      "report_title": "富国全球科技互联网股票型证券投资基金(QDII)二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788065_1.pdf"
+    },
+    "080006": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 85.86
+        }
+      ],
+      "themes": [
+        "消费",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 55.26
+        },
+        {
+          "label": "通信服务",
+          "weight": 10.49
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 8.09
+        },
+        {
+          "label": "日常消费品",
+          "weight": 5.84
+        },
+        {
+          "label": "金融",
+          "weight": 2.67
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "英伟达公司",
+          "weight": 6.61
+        },
+        {
+          "name": "苹果公司",
+          "weight": 5.68
+        },
+        {
+          "name": "谷歌公司",
+          "weight": 2.78
+        }
+      ],
+      "report_title": "长盛环球景气行业大盘精选混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828682245_1.pdf"
+    },
+    "070012": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 79.14
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 21.47
+        },
+        {
+          "label": "通信服务",
+          "weight": 11.29
+        },
+        {
+          "label": "医疗保健",
+          "weight": 10.22
+        },
+        {
+          "label": "工业",
+          "weight": 5.86
+        },
+        {
+          "label": "信息技术",
+          "weight": 4.9
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "美的集团股份有限公司",
+          "weight": 6.05
+        },
+        {
+          "name": "中国建设银行股份有限公司",
+          "weight": 5.37
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 5.2
+        }
+      ],
+      "report_title": "嘉实海外中国股票混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788161_1.pdf"
+    },
+    "110011": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 37.48
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "电信服务",
+          "weight": 9.6
+        },
+        {
+          "label": "能源",
+          "weight": 9.55
+        },
+        {
+          "label": "金融",
+          "weight": 7.51
+        },
+        {
+          "label": "信息技术",
+          "weight": 7.51
+        },
+        {
+          "label": "工业",
+          "weight": 0.3
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "华住集团有限公司",
+          "weight": 9.41
+        },
+        {
+          "name": "贵州茅台酒股份有限公司",
+          "weight": 9.23
+        },
+        {
+          "name": "中国海洋石油有限公司",
+          "weight": 8.46
+        }
+      ],
+      "report_title": "易方达优质精选混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828748420_1.pdf"
+    },
+    "100061": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 75.28
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 6.26
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "消费",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 28.14
+        },
+        {
+          "label": "工业",
+          "weight": 16.21
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 12.08
+        },
+        {
+          "label": "医疗保健",
+          "weight": 11.55
+        },
+        {
+          "label": "原材料",
+          "weight": 3.76
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "TCL 电子控股 有限公司",
+          "weight": 4.06
+        },
+        {
+          "name": "华虹宏力半导体有限公司",
+          "weight": 3.7
+        },
+        {
+          "name": "建滔集团有限公司",
+          "weight": 3.6
+        }
+      ],
+      "report_title": "富国中国中小盘(香港上市)混合型证券投资基金二0二六年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828783572_1.pdf"
+    },
+    "160125": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 90.33
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "科技",
+          "weight": 38.53
+        },
+        {
+          "label": "金融",
+          "weight": 16.31
+        },
+        {
+          "label": "工业",
+          "weight": 10.61
+        },
+        {
+          "label": "能源",
+          "weight": 4.77
+        },
+        {
+          "label": "医疗保健",
+          "weight": 3.59
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "上海壁仞科技股份有限公司",
+          "weight": 7.77
+        },
+        {
+          "name": "中国建设银行",
+          "weight": 7.07
+        },
+        {
+          "name": "长春长光辰芯微电子股份有限公司",
+          "weight": 6.19
+        }
+      ],
+      "report_title": "南方香港优选股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608301828738712_1.pdf"
+    },
+    "118001": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 31.25
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 29.12
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 18.81
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 83.12
+        },
+        {
+          "label": "信息技术",
+          "weight": 44.22
+        },
+        {
+          "label": "工业",
+          "weight": 15.7
+        },
+        {
+          "label": "能源",
+          "weight": 11.17
+        },
+        {
+          "label": "电信服务",
+          "weight": 8.43
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "三星电子有限公司",
+          "weight": 9.5
+        },
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 6.14
+        }
+      ],
+      "report_title": "易方达亚洲精选股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828747769_1.pdf"
+    },
+    "161229": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 64.03
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 11.37
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 5.54
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "工业",
+          "weight": 80.94
+        },
+        {
+          "label": "金融",
+          "weight": 23.57
+        },
+        {
+          "label": "房地产",
+          "weight": 7.36
+        },
+        {
+          "label": "公用事业",
+          "weight": 4.53
+        },
+        {
+          "label": "医疗保健",
+          "weight": 2.94
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "中国移动有限公司",
+          "weight": 8.8
+        },
+        {
+          "name": "中国建设银行股份有限公司",
+          "weight": 7.36
+        },
+        {
+          "name": "腾讯控股有限公司",
+          "weight": 5.35
+        }
+      ],
+      "report_title": "国投瑞银中国价值发现股票型证券投资基金(LOF)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608271828557874_1.pdf"
+    },
+    "160644": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 51.52
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 42.29
+        }
+      ],
+      "themes": [
+        "消费",
+        "能源资源",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 73.51
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 14.1
+        },
+        {
+          "label": "通信服务",
+          "weight": 4.4
+        },
+        {
+          "label": "能源",
+          "weight": 1.6
+        },
+        {
+          "label": "原材料",
+          "weight": 0.11
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "鹏华香港美国互联网股票型证券投资基金(LOF)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608271828557866_1.pdf"
+    },
+    "163208": {
+      "regions": [
+        {
+          "label": "全球",
+          "flag": "🌐",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "能源资源"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "HUANENG",
+          "weight": 8.25
+        },
+        {
+          "name": "CHINA POWER INTE RNATIONAL DEVELO PMENT LTD",
+          "weight": 6.42
+        },
+        {
+          "name": "GOLDWIND SCIENCE & TECHNOLOGY C O., LTD",
+          "weight": 6.13
+        }
+      ],
+      "report_title": "诺安油气能源股票证券投资基金(LOF)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608301828738438_1.pdf"
+    },
+    "161620": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 80.24
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 66.65
+        },
+        {
+          "label": "科技",
+          "weight": 66.65
+        },
+        {
+          "label": "房地产",
+          "weight": 2.61
+        },
+        {
+          "label": "能源",
+          "weight": 2.61
+        },
+        {
+          "label": "工业",
+          "weight": 2.08
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "阿斯麦控股公司",
+          "weight": 3.08
+        },
+        {
+          "name": "德州仪器公司",
+          "weight": 3.07
+        },
+        {
+          "name": "微芯科技股份有限公司",
+          "weight": 3.04
+        }
+      ],
+      "report_title": "融通核心价值混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828561806_1.pdf"
+    },
+    "202801": {
+      "regions": [
+        {
+          "label": "全球",
+          "flag": "🌐",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "金融",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 2.33
+        },
+        {
+          "label": "科技",
+          "weight": 2.33
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "上海壁仞科技股份有限公司",
+          "weight": 2.27
+        },
+        {
+          "name": "百度集团股份有限公司",
+          "weight": 1.17
+        },
+        {
+          "name": "安克创新科技股份有限公司",
+          "weight": 0.04
+        }
+      ],
+      "report_title": "南方全球精选配置证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828755885_1.pdf"
+    },
+    "164824": {
+      "regions": [
+        {
+          "label": "印度",
+          "flag": "🇮🇳",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [],
+      "report_title": "工银瑞信印度市场证券投资基金(LOF)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608301828737021_1.pdf"
+    },
+    "164212": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 44.19
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 35.81
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 6.07
+        }
+      ],
+      "themes": [
+        "新能源",
+        "能源资源",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "金融",
+          "weight": 66.78
+        },
+        {
+          "label": "信息技术",
+          "weight": 66.78
+        },
+        {
+          "label": "能源",
+          "weight": 12.62
+        },
+        {
+          "label": "基础材料",
+          "weight": 12.62
+        },
+        {
+          "label": "工业",
+          "weight": 5.13
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "康宁公司",
+          "weight": 5.0
+        },
+        {
+          "name": "迈威迩电子科技股",
+          "weight": 4.15
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 3.98
+        }
+      ],
+      "report_title": "天弘全球新能源汽车股票型证券投资基金(QDII-LOF)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608301828737877_1.pdf"
+    },
+    "241001": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 94.63
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "科技",
+          "weight": 54.41
+        },
+        {
+          "label": "工业",
+          "weight": 11.59
+        },
+        {
+          "label": "房地产",
+          "weight": 5.07
+        },
+        {
+          "label": "医疗保健",
+          "weight": 5.07
+        },
+        {
+          "label": "金融",
+          "weight": 3.49
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "建滔积层板控股有限公司",
+          "weight": 7.83
+        },
+        {
+          "name": "北京智谱华章科技股份有限公司",
+          "weight": 7.82
+        },
+        {
+          "name": "兆易创新科技集团股份有限公司",
+          "weight": 5.4
+        }
+      ],
+      "report_title": "华宝海外中国成长混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828782884_1.pdf"
+    },
+    "262001": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 38.02
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 36.9
+        }
+      ],
+      "themes": [
+        "金融",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "科技",
+          "weight": 45.59
+        },
+        {
+          "label": "公用事业",
+          "weight": 6.9
+        },
+        {
+          "label": "金融",
+          "weight": 5.91
+        },
+        {
+          "label": "房地产",
+          "weight": 3.79
+        },
+        {
+          "label": "工业",
+          "weight": 1.79
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台积电",
+          "weight": 10.16
+        },
+        {
+          "name": "腾讯控股",
+          "weight": 6.38
+        },
+        {
+          "name": "台达电",
+          "weight": 6.18
+        }
+      ],
+      "report_title": "景顺长城大中华混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828564682_1.pdf"
+    },
+    "377016": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 26.53
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 22.18
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 20.79
+        },
+        {
+          "label": "澳大利亚",
+          "flag": "🇦🇺",
+          "weight": 10.9
+        },
+        {
+          "label": "印度",
+          "flag": "🇮🇳",
+          "weight": 5.98
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 34.24
+        },
+        {
+          "label": "金融",
+          "weight": 19.88
+        },
+        {
+          "label": "工业",
+          "weight": 12.4
+        },
+        {
+          "label": "电信服务",
+          "weight": 9.71
+        },
+        {
+          "label": "基础材料",
+          "weight": 6.19
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台湾集成电路制造股份有限公司",
+          "weight": 9.82
+        },
+        {
+          "name": "腾讯控股",
+          "weight": 6.1
+        }
+      ],
+      "report_title": "摩根亚太优势混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787698_1.pdf"
+    },
+    "270023": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 46.65
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 17.43
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 12.81
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 7.56
+        }
+      ],
+      "themes": [
+        "消费",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 66.89
+        },
+        {
+          "label": "通讯业务",
+          "weight": 4.37
+        },
+        {
+          "label": "非日常生活消费品",
+          "weight": 3.96
+        },
+        {
+          "label": "工业",
+          "weight": 3.28
+        },
+        {
+          "label": "原材料",
+          "weight": 3.18
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "北京智谱华章科技股份有限公司",
+          "weight": 9.01
+        },
+        {
+          "name": "美光科技股份有限公司",
+          "weight": 6.16
+        },
+        {
+          "name": "泛林集团",
+          "weight": 4.5
+        }
+      ],
+      "report_title": "广发全球精选股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828768969_1.pdf"
+    },
+    "378006": {
+      "regions": [
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 24.76
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 21.54
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 14.84
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 7.33
+        },
+        {
+          "label": "巴西",
+          "flag": "🇧🇷",
+          "weight": 6.12
+        }
+      ],
+      "themes": [
+        "能源资源",
+        "金融",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 36.81
+        },
+        {
+          "label": "金融",
+          "weight": 23.06
+        },
+        {
+          "label": "电信服务",
+          "weight": 9.18
+        },
+        {
+          "label": "能源",
+          "weight": 7.38
+        },
+        {
+          "label": "工业",
+          "weight": 6.1
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "摩根全球新兴市场混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787881_1.pdf"
+    },
+    "378546": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 56.5
+        },
+        {
+          "label": "加拿大",
+          "flag": "🇨🇦",
+          "weight": 14.34
+        },
+        {
+          "label": "英国",
+          "flag": "🇬🇧",
+          "weight": 10.4
+        },
+        {
+          "label": "澳大利亚",
+          "flag": "🇦🇺",
+          "weight": 5.11
+        }
+      ],
+      "themes": [
+        "能源资源"
+      ],
+      "top_industries": [
+        {
+          "label": "能源",
+          "weight": 51.1
+        },
+        {
+          "label": "基础材料",
+          "weight": 43.12
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "摩根全球天然资源混合型证券投资基金(QDII)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828787746_1.pdf"
+    },
+    "460010": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 71.81
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 14.9
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "能源资源",
+        "金融"
+      ],
+      "top_industries": [
+        {
+          "label": "能源",
+          "weight": 86.7
+        },
+        {
+          "label": "医疗保健",
+          "weight": 48.05
+        },
+        {
+          "label": "科技",
+          "weight": 31.91
+        },
+        {
+          "label": "金融",
+          "weight": 2.26
+        },
+        {
+          "label": "工业",
+          "weight": 0.99
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "信达生物制药",
+          "weight": 7.8
+        },
+        {
+          "name": "SK海力士株式会社",
+          "weight": 7.73
+        },
+        {
+          "name": "四川科伦博泰生物医药股份有限公司",
+          "weight": 7.51
+        }
+      ],
+      "report_title": "华泰柏瑞亚洲领导企业混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-29",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608291828681978_1.pdf"
+    },
+    "486002": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 60.24
+        },
+        {
+          "label": "英国",
+          "flag": "🇬🇧",
+          "weight": 9.81
+        },
+        {
+          "label": "日本",
+          "flag": "🇯🇵",
+          "weight": 5.75
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "英伟达公司",
+          "weight": 4.89
+        },
+        {
+          "name": "台湾积体电路制造股份有限",
+          "weight": 3.94
+        }
+      ],
+      "report_title": "工银瑞信全球精选股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828749989_1.pdf"
+    },
+    "470888": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 88.26
+        }
+      ],
+      "themes": [
+        "全球多元"
+      ],
+      "top_industries": [],
+      "top_holdings": [
+        {
+          "name": "三生制药",
+          "weight": 10.27
+        },
+        {
+          "name": "江苏恒瑞医药股份有限公司",
+          "weight": 9.87
+        },
+        {
+          "name": "四川科伦博泰生物医药股份有限公司",
+          "weight": 9.82
+        }
+      ],
+      "report_title": "汇添富香港优势精选混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828785664_1.pdf"
+    },
+    "457001": {
+      "regions": [
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 20.43
+        },
+        {
+          "label": "中国台湾",
+          "flag": "🇹🇼",
+          "weight": 20.21
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 18.44
+        },
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 14.9
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 5.51
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 84.4
+        },
+        {
+          "label": "信息技术",
+          "weight": 69.78
+        },
+        {
+          "label": "电信服务",
+          "weight": 5.61
+        },
+        {
+          "label": "医疗保健",
+          "weight": 4.93
+        },
+        {
+          "label": "工业",
+          "weight": 4.93
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台湾积体电路制造股份有限公司",
+          "weight": 8.93
+        },
+        {
+          "name": "SK海力士株式会社",
+          "weight": 7.95
+        },
+        {
+          "name": "三星电子有限公司",
+          "weight": 6.47
+        }
+      ],
+      "report_title": "富兰克林国海亚洲(除日本)机会股票型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828757966_1.pdf"
+    },
+    "501225": {
+      "regions": [
+        {
+          "label": "全球",
+          "flag": "🌐",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "半导体"
+      ],
+      "top_industries": [],
+      "top_holdings": [],
+      "report_title": "景顺长城全球半导体芯片产业股票型证券投资基金(QDII-LOF)2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608271828553087_1.pdf"
+    },
+    "501312": {
+      "regions": [
+        {
+          "label": "全球",
+          "flag": "🌐",
+          "weight": null
+        }
+      ],
+      "themes": [
+        "科技"
+      ],
+      "top_industries": [],
+      "top_holdings": [],
+      "report_title": "华宝海外科技股票型证券投资基金(QDII-LOF)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608301828742990_1.pdf"
+    },
+    "501226": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 74.62
+        },
+        {
+          "label": "中国大陆",
+          "flag": "🇨🇳",
+          "weight": 8.47
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 5.16
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "新能源",
+        "能源资源"
+      ],
+      "top_industries": [
+        {
+          "label": "房地产",
+          "weight": 88.27
+        },
+        {
+          "label": "电信服务",
+          "weight": 11.37
+        },
+        {
+          "label": "医疗保健",
+          "weight": 6.91
+        },
+        {
+          "label": "工业",
+          "weight": 6.91
+        },
+        {
+          "label": "消费者非必需品",
+          "weight": 0.52
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "台积电",
+          "weight": 8.71
+        },
+        {
+          "name": "美光科技",
+          "weight": 7.55
+        },
+        {
+          "name": "博通股份有限公司",
+          "weight": 6.03
+        }
+      ],
+      "report_title": "长城全球新能源汽车股票型发起式证券投资基金(QDII-LOF)2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788190_1.pdf"
+    },
+    "519601": {
+      "regions": [
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 82.31
+        }
+      ],
+      "themes": [
+        "金融",
+        "高端制造",
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "信息技术",
+          "weight": 35.52
+        },
+        {
+          "label": "金融",
+          "weight": 14.99
+        },
+        {
+          "label": "工业",
+          "weight": 11.24
+        },
+        {
+          "label": "原材料",
+          "weight": 7.97
+        },
+        {
+          "label": "医疗保健",
+          "weight": 4.37
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "东岳集团有限公司",
+          "weight": 7.97
+        },
+        {
+          "name": "兆易创新科技集团股份有限公司",
+          "weight": 6.64
+        },
+        {
+          "name": "澜起科技股份有限公司",
+          "weight": 4.91
+        }
+      ],
+      "report_title": "海富通中国海外精选混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828788278_1.pdf"
+    },
+    "539002": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 59.65
+        },
+        {
+          "label": "韩国",
+          "flag": "🇰🇷",
+          "weight": 17.51
+        }
+      ],
+      "themes": [
+        "科技"
+      ],
+      "top_industries": [
+        {
+          "label": "公用事业",
+          "weight": 81.6
+        },
+        {
+          "label": "房地产",
+          "weight": 81.18
+        },
+        {
+          "label": "信息技术",
+          "weight": 81.18
+        },
+        {
+          "label": "电信服务",
+          "weight": 0.42
+        }
+      ],
+      "top_holdings": [],
+      "report_title": "建信新兴市场优选混合型证券投资基金2026年中期报告",
+      "report_date": "2026-08-28",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608281828588412_1.pdf"
+    },
+    "519696": {
+      "regions": [
+        {
+          "label": "美国",
+          "flag": "🇺🇸",
+          "weight": 68.86
+        },
+        {
+          "label": "中国香港",
+          "flag": "🇭🇰",
+          "weight": 17.48
+        }
+      ],
+      "themes": [
+        "医疗健康",
+        "金融",
+        "高端制造"
+      ],
+      "top_industries": [
+        {
+          "label": "科技",
+          "weight": 31.42
+        },
+        {
+          "label": "金融",
+          "weight": 11.2
+        },
+        {
+          "label": "医疗保健",
+          "weight": 4.91
+        },
+        {
+          "label": "工业",
+          "weight": 4.1
+        },
+        {
+          "label": "公用事业",
+          "weight": 3.39
+        }
+      ],
+      "top_holdings": [
+        {
+          "name": "英伟达公司",
+          "weight": 5.33
+        },
+        {
+          "name": "苹果公",
+          "weight": 4.39
+        },
+        {
+          "name": "微软公司",
+          "weight": 3.09
+        }
+      ],
+      "report_title": "交银施罗德环球精选价值证券投资基金2026年中期报告",
+      "report_date": "2026-08-31",
+      "source_url": "https://pdf.dfcfw.com/pdf/H2_AN202608311828774011_1.pdf"
+    }
+  }
+}

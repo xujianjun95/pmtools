@@ -6,6 +6,7 @@
 import express from 'express'
 import { config, assertMailConfigured } from './config.js'
 import * as db from './db.js'
+import { normalizeRegions } from './regions.js'
 import { sendVerificationCode } from './mailer.js'
 import { initCron } from './notify.js'
 
@@ -80,12 +81,16 @@ app.post('/api/send-code', rateLimit, async (req, res) => {
   return res.json({ ok: true, message: '验证码已发送，请查收邮件' })
 })
 
-/** 订阅：POST /api/subscribe  body: { email, code }（验证码校验通过才会写入） */
+/** 订阅：POST /api/subscribe  body: { email, code, regions? }（验证码校验通过才会写入；regions 缺省按全地区） */
 app.post('/api/subscribe', rateLimit, (req, res) => {
   const email = String(req.body?.email || '').trim().toLowerCase()
   const code = String(req.body?.code || '').trim()
+  const regions = normalizeRegions(req.body?.regions)
   if (!EMAIL_RE.test(email)) {
     return res.status(400).json({ ok: false, message: '请输入有效的邮箱地址' })
+  }
+  if (!regions) {
+    return res.status(400).json({ ok: false, message: '请至少选择一个订阅地区' })
   }
   if (!/^\d{6}$/.test(code)) {
     return res.status(400).json({ ok: false, message: '请输入 6 位数字验证码' })
@@ -108,7 +113,7 @@ app.post('/api/subscribe', rateLimit, (req, res) => {
   }
   db.deleteEmailVerification(email)
   try {
-    const { existed } = db.subscribe(email)
+    const { existed } = db.subscribe(email, regions)
     return res.json({
       ok: true,
       existed,
@@ -135,11 +140,16 @@ app.get('/api/unsubscribe', (req, res) => {
   )
 })
 
-/** 状态查询：GET /api/status?email=xxx（供前端回显是否已订阅） */
+/** 状态查询：GET /api/status?email=xxx（供前端回显订阅状态与地区范围） */
 app.get('/api/status', (req, res) => {
   const email = String(req.query.email || '').trim().toLowerCase()
   if (!EMAIL_RE.test(email)) return res.json({ ok: true, subscribed: false })
-  res.json({ ok: true, subscribed: db.isSubscribed(email) })
+  const subscribed = db.isSubscribed(email)
+  res.json({
+    ok: true,
+    subscribed,
+    ...(subscribed ? { regions: db.getRegionsByEmail(email) } : {}),
+  })
 })
 
 /**

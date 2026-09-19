@@ -20,17 +20,43 @@ export function statusClass(s) {
   return 'sOther'
 }
 
+// 限额数值格式化：超过 5 位数（≥10 万）万元化、≥1 亿亿元化，其余千分位。
+// 只返回数值部分，不带「元/日」后缀（调用方按各自排版拼接）
 export function fmtLimit(v) {
   const n = Number(v)
-  if (!n || n <= 0) return '—'
-  return n >= 1e8 ? `${(n / 1e8).toFixed(0)} 亿` : n.toLocaleString('zh-CN')
+  if (!Number.isFinite(n) || n <= 0) return '—'
+  if (n >= 1e11) return '无限额'
+  if (n >= 1e8) return `${Number((n / 1e8).toFixed(4))} 亿`
+  if (n >= 1e5) {
+    const w = n / 1e4
+    return `${w % 1 === 0 ? w.toLocaleString('zh-CN') : w.toFixed(1)} 万`
+  }
+  return n.toLocaleString('zh-CN')
+}
+
+function validLimit(value) {
+  if (value == null || typeof value === 'boolean' || String(value).trim() === '') return null
+  const n = Number(value)
+  return Number.isFinite(n) && n >= 0 ? n : null
+}
+
+// 暂停按既有展示规则隐藏；直销明确为 0 时不得回退代销。
+export function getChannelLimit(fund, channel = 'limit_amount') {
+  if (String(fund.status).includes('暂停')) return null
+  const amount = validLimit(fund[channel])
+  return channel === 'direct_limit_amount' && amount === null ? validLimit(fund.limit_amount) : amount
+}
+
+export function limitText(value) {
+  const n = validLimit(value)
+  if (n === null || n === 0) return '—'
+  return n >= 1e11 ? '无限额' : `${fmtLimit(n)} 元/日`
 }
 
 // 变更值展示：仅限额字段做数值格式化，状态类字段走展示文案映射
 export function fmtChangeVal(field, v) {
   if (field === 'limit_amount') {
-    const n = Number(v)
-    return n > 0 ? `${n.toLocaleString('zh-CN')} 元/日` : '不限'
+    return limitText(v)
   }
   return statusLabel(v)
 }

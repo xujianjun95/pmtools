@@ -24,6 +24,10 @@ dist-ssr
 # 运行时数据（服务器 cron 生成，不入库）
 public/qdii/data.json
 qdii-watcher/fund.db
+public/qdii/world-data.json
+public/qdii/worldpage-data.json
+qdii-watcher/ai_direct_limits.json
+qdii-watcher/*.publish.lock
 
 # Editor directories and files
 .vscode/*
@@ -44,3 +48,5 @@ qdii-watcher/fund.db
 # SQLite 运行时临时文件
 *.db-shm
 *.db-wal
+qdii-watcher/direct_limits.json
+qdii-watcher/frontend/

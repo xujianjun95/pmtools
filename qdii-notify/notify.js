@@ -11,6 +11,7 @@ import { config } from './config.js'
 import { detect, consume } from './detect.js'
 import { buildMailBody, sendToSubscribers } from './mailer.js'
 import { listActiveEmails } from './db.js'
+import { DEFAULT_REGIONS } from './regions.js'
 
 /**
  * 执行一次检测+发信。
@@ -67,14 +68,38 @@ export async function runOnce({ dryRun = false } = {}) {
     return { changes: changes.length, sent: 0 }
   }
 
-  const mailBody = buildMailBody(changes, {
-    updatedAt: data.updatedAt,
-    rawCount: data.rawCount,
-  })
+  // 按订阅地区过滤并分组：同组订阅者的变动集合相同，共享同一封邮件。
+  // 地区缺失或异常的订阅者按全地区处理（与存量行为一致）。
+  const groups = new Map()
+  for (const sub of subscribers) {
+    const regions = Array.isArray(sub.regions) && sub.regions.length > 0 ? sub.regions : DEFAULT_REGIONS
+    const subChanges = changes.filter((change) => regions.includes(change.region))
+    if (subChanges.length === 0) continue
+    const key = regions.join(',')
+    if (!groups.has(key)) {
+      groups.set(key, { subscribers: [], changes: subChanges })
+    }
+    groups.get(key).subscribers.push(sub)
+  }
 
-  let sent, failed
+  const matched = [...groups.values()].reduce((sum, group) => sum + group.subscribers.length, 0)
+  if (matched === 0) {
+    consume(result)
+    console.log('[notify] 变动均不在订阅者选择的地区范围内，跳过发信（已推进快照）')
+    return { changes: changes.length, sent: 0 }
+  }
+  console.log(`[notify] 地区匹配 ${matched} 人，分 ${groups.size} 组发送`)
+
+  const meta = { updatedAt: data.updatedAt, rawCount: data.rawCount }
+  let sent = 0
+  let failed = 0
   try {
-    ;({ sent, failed } = await sendToSubscribers(subscribers, mailBody))
+    for (const group of groups.values()) {
+      const mailBody = buildMailBody(group.changes, meta)
+      const outcome = await sendToSubscribers(group.subscribers, mailBody)
+      sent += outcome.sent
+      failed += outcome.failed
+    }
   } catch (err) {
     // SMTP 整体故障（如连接失败/未配置）：不推进快照，保留变动，下轮重试
     console.error(`[notify] 发送失败，快照未推进，将在下轮重试：${err.message}`)
