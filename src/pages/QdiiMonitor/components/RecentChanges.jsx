@@ -31,14 +31,14 @@ export default function RecentChanges({ changes }) {
         {shown.map((c, i) => (
           <div key={`${c.code}-${c.field}-${i}`} className={styles.changeItem}>
             <span className={styles.cdate}>{c.date}</span>
-            {/* region：世界页基金变更的市场归属（日本/中国香港…），美国基金不标 */}
-            {c.region && <span className={styles.regionTag}>{c.region}</span>}
             <span className={styles.cname}>{c.name}</span>
             <span className={styles.ccode}>{c.code}</span>
             <span>{FIELD_LABELS[c.field] || c.field}</span>
             <span className={styles.old}>{fmtChangeVal(c.field, c.old_val)}</span>
             <span className={styles.arrow}>→</span>
             <span className={styles.new}>{fmtChangeVal(c.field, c.new_val)}</span>
+            {/* region：世界页基金变更的市场归属（日本/中国香港…），美国基金不标 */}
+            {c.region && <span className={styles.regionTag}>{c.region}</span>}
           </div>
         ))}
       </div>
