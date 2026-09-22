@@ -37,7 +37,7 @@ export default function RecentChanges({ changes }) {
             <span className={styles.old}>{fmtChangeVal(c.field, c.old_val)}</span>
             <span className={styles.arrow}>→</span>
             <span className={styles.new}>{fmtChangeVal(c.field, c.new_val)}</span>
-            {/* region：世界页基金变更的市场归属（日本/中国香港…），美国基金不标 */}
+            {/* region：基金变更对应的市场归属（美国/日本/中国香港…） */}
             {c.region && <span className={styles.regionTag}>{c.region}</span>}
           </div>
         ))}

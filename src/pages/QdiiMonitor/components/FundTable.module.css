@@ -264,6 +264,13 @@ td.tfee {
   text-align: right;
 }
 
+/* 表头排序图标位于字段文字右侧；数据为该图标预留相同空间，
+   使数值末位与字段文字（而非“文字 + 图标”整体）右边缘对齐。 */
+td.tlimit,
+td.tdirect {
+  padding-right: 38px;
+}
+
 td.tchev {
   text-align: center;
 }
@@ -272,7 +279,7 @@ td.tchev {
 td.tte,
 td.tfee {
   padding-left: 12px;
-  padding-right: 12px;
+  padding-right: 30px;
 }
 
 :where(.tableCard) th:nth-of-type(7),

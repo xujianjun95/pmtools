@@ -301,8 +301,6 @@ export default function WorldView({ initialSelectedId = 'all' }) {
     return merged
   }
 
-  const dataDate = liveData?.updated_at || WORLD_SNAPSHOT_DATE
-
   // URL 参数直达某地区（hero 地图跳入 / 前进后退）；非法 id 回落到「全部」
   const [prevInitialId, setPrevInitialId] = useState(initialSelectedId)
   if (prevInitialId !== initialSelectedId) {
@@ -568,12 +566,6 @@ export default function WorldView({ initialSelectedId = 'all' }) {
             onToggle={handleToggle}
           />
         )}
-        <p className={styles.footnote}>
-          {liveData
-            ? `数据日期 ${dataDate} · 每日扫描`
-            : `快照日期 ${WORLD_SNAPSHOT_DATE}`}{' '}
-          · 年化跟踪误差与近 1 年收益为快照值，实时申购限额以天天基金页面为准。
-        </p>
       </div>
       <Disclaimer />
     </section>

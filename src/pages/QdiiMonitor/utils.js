@@ -55,7 +55,7 @@ export function limitText(value) {
 
 // 变更值展示：仅限额字段做数值格式化，状态类字段走展示文案映射
 export function fmtChangeVal(field, v) {
-  if (field === 'limit_amount') {
+  if (field === 'limit_amount' || field === 'direct_limit_amount') {
     return limitText(v)
   }
   return statusLabel(v)
@@ -76,5 +76,6 @@ export function compactHistory(history) {
 export const FIELD_LABELS = {
   status: '申购状态',
   limit_amount: '日累计限额（代销）',
+  direct_limit_amount: '日累计限额（直销）',
   redeem: '赎回状态',
 }

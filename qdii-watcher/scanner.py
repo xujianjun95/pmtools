@@ -432,7 +432,8 @@ def init_db(conn: sqlite3.Connection) -> None:
         );
         CREATE TABLE IF NOT EXISTS snapshots (
             code TEXT NOT NULL, date TEXT NOT NULL, status TEXT, redeem TEXT,
-            limit_amount REAL, PRIMARY KEY (code, date)
+            limit_amount REAL, direct_limit_amount REAL,
+            PRIMARY KEY (code, date)
         );
         CREATE TABLE IF NOT EXISTS changes (
             id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL,
@@ -465,6 +466,9 @@ def init_db(conn: sqlite3.Connection) -> None:
         col = sql.split("ADD COLUMN ", 1)[1].split()[0]
         if col not in cols:
             conn.execute(sql)
+    snapshot_cols = {row[1] for row in conn.execute("PRAGMA table_info(snapshots)")}
+    if "direct_limit_amount" not in snapshot_cols:
+        conn.execute("ALTER TABLE snapshots ADD COLUMN direct_limit_amount REAL")
     conn.commit()
 
 
@@ -473,7 +477,7 @@ def save_snapshot(conn: sqlite3.Connection, records: list[dict], today: str) -> 
     changes = []
     for r in records:
         prev = conn.execute(
-            "SELECT status, redeem, limit_amount FROM snapshots "
+            "SELECT status, redeem, limit_amount, direct_limit_amount FROM snapshots "
             "WHERE code = ? ORDER BY date DESC LIMIT 1",
             (r["code"],),
         ).fetchone()
@@ -483,19 +487,24 @@ def save_snapshot(conn: sqlite3.Connection, records: list[dict], today: str) -> 
             "DELETE FROM snapshots WHERE code = ? AND date = ?", (r["code"], today)
         )
         conn.execute(
-            "INSERT INTO snapshots (code, date, status, redeem, limit_amount) "
-            "VALUES (?, ?, ?, ?, ?)",
-            (r["code"], today, r["status"], r["redeem"], r["limit_amount"]),
+            "INSERT INTO snapshots "
+            "(code, date, status, redeem, limit_amount, direct_limit_amount) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (r["code"], today, r["status"], r["redeem"], r["limit_amount"],
+             r.get("direct_limit_amount")),
         )
 
         if prev:
-            old_status, old_redeem, old_limit = prev
+            old_status, old_redeem, old_limit, old_direct_limit = prev
             for field, old, new in (
                 ("status", old_status, r["status"]),
                 ("redeem", old_redeem, r["redeem"]),
                 ("limit_amount", old_limit, r["limit_amount"]),
+                ("direct_limit_amount", old_direct_limit,
+                 r.get("direct_limit_amount")),
             ):
-                if field == 'limit_amount' and (old is None or new is None):
+                if field in {'limit_amount', 'direct_limit_amount'} and (
+                        old is None or new is None):
                     continue
                 if old != new:
                     old_text = str(old)
@@ -562,7 +571,8 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
     funds_out = []
     for r in us_records:
         history = conn.execute(
-            "SELECT date, status, redeem, limit_amount FROM snapshots "
+            "SELECT date, status, redeem, limit_amount, direct_limit_amount "
+            "FROM snapshots "
             "WHERE code = ? ORDER BY date ASC",
             (r["code"],),
         ).fetchall()
@@ -570,8 +580,9 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
             {
                 **r,
                 "history": [
-                    {"date": d, "status": s, "redeem": rd, "limit_amount": la}
-                    for d, s, rd, la in history
+                    {"date": d, "status": s, "redeem": rd, "limit_amount": la,
+                     "direct_limit_amount": dla}
+                    for d, s, rd, la, dla in history
                 ],
             }
         )
@@ -579,8 +590,9 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
     name_map = {r["code"]: r["name"] for r in us_records}
     # 世界页基金的变更同样进入「最近变更」；region 供前端展示市场小标签。
     # 主动权益母池（world key）依旧不进：主页用户对其无上下文。
-    region_map = {code: fund["country"] for code, fund in WORLD_PAGE_BY_CODE.items()
-                  if fund["country"] != "美国"}
+    region_map = {r["code"]: "美国" for r in us_records}
+    region_map.update({code: fund["country"] for code, fund in WORLD_PAGE_BY_CODE.items()
+                       if fund["country"] != "美国"})
     for code, fund in WORLD_PAGE_BY_CODE.items():
         name_map.setdefault(code, fund["name"])
     recent = conn.execute(
@@ -620,7 +632,8 @@ def export_world_json(conn: sqlite3.Connection, records: list[dict], today: str,
     funds_out = []
     for record in world_records:
         history = conn.execute(
-            "SELECT date, status, redeem, limit_amount FROM snapshots "
+            "SELECT date, status, redeem, limit_amount, direct_limit_amount "
+            "FROM snapshots "
             "WHERE code = ? ORDER BY date ASC",
             (record["code"],),
         ).fetchall()
@@ -636,8 +649,9 @@ def export_world_json(conn: sqlite3.Connection, records: list[dict], today: str,
             "report_date": fund_metadata.get("report_date"),
             "source_url": fund_metadata.get("source_url"),
             "history": [
-                {"date": d, "status": s, "redeem": rd, "limit_amount": la}
-                for d, s, rd, la in history
+                {"date": d, "status": s, "redeem": rd, "limit_amount": la,
+                 "direct_limit_amount": dla}
+                for d, s, rd, la, dla in history
             ],
         })
     funds_out.sort(key=lambda fund: (fund.get("fund_size") is None,
@@ -699,7 +713,8 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
             direct_limit_amount = None
             details = dict(zip(detail_fields, row[3:]))
         history = conn.execute(
-            "SELECT date, status, redeem, limit_amount FROM snapshots "
+            "SELECT date, status, redeem, limit_amount, direct_limit_amount "
+            "FROM snapshots "
             "WHERE code = ? ORDER BY date ASC",
             (code,),
         ).fetchall()
@@ -715,8 +730,9 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
                 **observations.get(code, {}),
                 **details,
                 "history": [
-                    {"date": d, "status": s, "redeem": rd, "limit_amount": la}
-                    for d, s, rd, la in history
+                    {"date": d, "status": s, "redeem": rd, "limit_amount": la,
+                     "direct_limit_amount": dla}
+                    for d, s, rd, la, dla in history
                 ],
             }
         )

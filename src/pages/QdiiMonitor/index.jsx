@@ -10,6 +10,17 @@ import styles from './QdiiMonitor.module.css'
 
 const STATUS_ORDER = ['开放申购', '限大额', '暂停申购']
 
+const DEV_RECENT_CHANGES = [
+  {
+    code: '000834',
+    name: '大成纳斯达克100ETF联接(QDII)A',
+    field: 'direct_limit_amount',
+    old_val: 100,
+    new_val: 200,
+    region: '美国',
+  },
+]
+
 // 「鉴往」旅程总结会通过 /qdii?index=nasdaq100|sp500 跳转回来；
 // 非法值一律回落为 all，不修改监控数据接口与基金字段。
 const VALID_INDEX_KEYS = new Set(['nasdaq100', 'sp500'])
@@ -35,6 +46,13 @@ function QdiiMonitorPage() {
       .then((json) =>
         setData({
           ...json,
+          recent_changes:
+            import.meta.env.DEV && json.recent_changes.length === 0
+              ? DEV_RECENT_CHANGES.map((change) => ({
+                  ...change,
+                  date: json.updated_at,
+                }))
+              : json.recent_changes,
           // 去掉无有效限额的份额（美元现汇/封闭期等）与美元现汇/现钞份额，只看人民币可买
           funds: json.funds.filter((f) => {
             if (/美元|美汇|美钞|现汇|现钞/.test(f.name)) return false

@@ -90,6 +90,55 @@ class SaveSnapshotTest(unittest.TestCase):
 
         self.assertEqual(changes, [("10000.0", "2000.0"), ("2000.0", "10.0")])
 
+    def test_records_direct_limit_changes_and_exports_snapshot_history(self):
+        conn = sqlite3.connect(":memory:")
+        self.addCleanup(conn.close)
+        init_db(conn)
+
+        first = fund_record(1000.0)
+        first["direct_limit_amount"] = 1000.0
+        second = fund_record(1000.0)
+        second["direct_limit_amount"] = 2000.0
+
+        save_snapshot(conn, [first], "2026-09-21")
+        changes = save_snapshot(conn, [second], "2026-09-22")
+
+        self.assertEqual(changes, [{
+            "code": "018966",
+            "date": "2026-09-22",
+            "field": "direct_limit_amount",
+            "old_val": "1000.0",
+            "new_val": "2000.0",
+        }])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            out_path = Path(tmp) / "data.json"
+            export_json(conn, [second], "2026-09-22", out_path)
+            payload = json.loads(out_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            payload["funds"][0]["history"][-1]["direct_limit_amount"],
+            2000.0,
+        )
+        self.assertEqual(
+            payload["recent_changes"][0]["field"],
+            "direct_limit_amount",
+        )
+
+    def test_migrates_existing_snapshot_table(self):
+        conn = sqlite3.connect(":memory:")
+        self.addCleanup(conn.close)
+        conn.execute(
+            "CREATE TABLE snapshots ("
+            "code TEXT NOT NULL, date TEXT NOT NULL, status TEXT, redeem TEXT, "
+            "limit_amount REAL, PRIMARY KEY (code, date))"
+        )
+
+        init_db(conn)
+
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(snapshots)")}
+        self.assertIn("direct_limit_amount", columns)
+
 
 class FundDetailsParserTest(unittest.TestCase):
     def test_parses_tracking_target_from_tiantian_detail(self):
@@ -314,8 +363,7 @@ class WorldPageTest(unittest.TestCase):
         by_code = {c["code"]: c for c in payload["recent_changes"]}
         self.assertIn("012348", by_code)
         self.assertEqual(by_code["012348"]["region"], "中国香港")
-        # 美国基金变更不带 region 标签
-        self.assertNotIn("region", by_code["018966"])
+        self.assertEqual(by_code["018966"]["region"], "美国")
 
 
 if __name__ == "__main__":
