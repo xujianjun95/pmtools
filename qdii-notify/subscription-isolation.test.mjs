@@ -15,7 +15,7 @@ async function harness({ baseline = false, fault = '' } = {}) {
   const dbPath = join(directory, 'subscribers.db')
   const analyticsPath = `${dbPath}.analytics.db`
   const config = { dbPath, dataJsonPath: join(directory, 'data.json'), snapshotPath: join(directory, 'snapshot.json'),
-    port: 0, notifyCron: '0 8 * * *;10 12,18 * * *', mailProvider: 'mock',
+    port: 0, notifyCron: '30 20 * * *', mailProvider: 'mock',
     code: { ttlMinutes: 10, maxSendPerDay: 10, maxAttempts: 5 } }
   const opened = []; const schedules = []; const codes = []; const mails = []; const logs = []
   const routes = new Map(); let listening = false; let sendFailure = false
@@ -175,7 +175,7 @@ for (const scenario of ['baseline', 'normal', 'missing', 'corrupt', 'unopenable'
     const h = await harness({ baseline: scenario === 'baseline', fault: scenario })
     try {
       assert.equal(h.listening, true)
-      assert.deepEqual(h.schedules.map(s => s.expression), ['0 8 * * *', '10 12,18 * * *'])
+      assert.deepEqual(h.schedules.map(s => s.expression), ['30 20 * * *'])
       assert.equal(h.codes.length + h.mails.length, 0, '服务启动不发信')
       const existing = h.db.subscribe('existing@example.test')
       if (scenario !== 'baseline') {

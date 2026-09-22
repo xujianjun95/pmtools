@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from scanner import (
+    apply_fund_overrides,
     export_json,
     export_worldpage_json,
     filter_funds,
@@ -194,6 +195,22 @@ class FeeDetailsParserTest(unittest.TestCase):
 
 
 class WorldFundsTest(unittest.TestCase):
+    def test_applies_only_confirmed_manual_overrides(self):
+        records = [
+            {"code": "012979", "status": "开放申购", "direct_limit_amount": 0},
+            {"code": "012980", "status": "开放申购", "direct_limit_amount": 0},
+            {"code": "022005", "status": "开放申购", "direct_limit_amount": 50},
+            {"code": "018966", "status": "限大额", "direct_limit_amount": 10},
+        ]
+
+        apply_fund_overrides(records)
+
+        self.assertEqual(records[0]["direct_limit_amount"], 100_000_000_000)
+        self.assertEqual(records[1]["direct_limit_amount"], 100_000_000_000)
+        self.assertEqual(records[2]["status"], "暂停申购")
+        self.assertEqual(records[2]["direct_limit_amount"], 50)
+        self.assertEqual(records[3]["direct_limit_amount"], 10)
+
     def test_includes_world_codes_by_code_with_world_key(self):
         df = purchase_df([
             purchase_row("040046", "华安纳斯达克100ETF联接A"),
@@ -246,6 +263,28 @@ class WorldFundsTest(unittest.TestCase):
 
 
 class WorldPageTest(unittest.TestCase):
+    def test_worldpage_export_applies_manual_override_after_stored_direct_limit(self):
+        conn = sqlite3.connect(":memory:")
+        self.addCleanup(conn.close)
+        init_db(conn)
+        conn.execute(
+            "INSERT INTO direct_limits VALUES (?, ?, ?, ?, ?, ?)",
+            ("012979", 0, "2026-09-22", "anxinletech.com", None, "2026-09-22T00:00:00"),
+        )
+        record = {
+            "code": "012979", "status": "开放申购", "redeem": "开放赎回",
+            "limit_amount": 100_000_000_000, "direct_limit_amount": 0,
+        }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            out_path = Path(tmp) / "worldpage-data.json"
+            export_worldpage_json(conn, [record], "2026-09-22", out_path)
+            payload = json.loads(out_path.read_text(encoding="utf-8"))
+
+        fund = next(fund for fund in payload["funds"] if fund["code"] == "012979")
+        self.assertEqual(fund["direct_limit_amount"], 100_000_000_000)
+        self.assertEqual(fund["direct_source"], "人工核验")
+
     def test_filter_funds_includes_worldpage_watchlist_by_code(self):
         df = purchase_df([
             purchase_row("012348", "天弘恒生科技ETF联接(QDII)A"),
@@ -261,6 +300,16 @@ class WorldPageTest(unittest.TestCase):
         # 美国段基金同时命中 INDEX_RULES 关键词与世界页清单，保留指数归属
         df = purchase_df([
             purchase_row("000834", "大成纳斯达克100ETF联接A"),
+        ])
+
+        records = filter_funds(df)
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["index_key"], "nasdaq100")
+
+    def test_filter_funds_groups_nasdaq_tech_under_nasdaq100(self):
+        df = purchase_df([
+            purchase_row("017091", "景顺长城纳斯达克科技ETF联接(QDII)A人民币"),
         ])
 
         records = filter_funds(df)

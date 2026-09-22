@@ -62,8 +62,8 @@ export const config = {
     maxAttempts: Number(env.CODE_MAX_ATTEMPTS || 5),
   },
   publicBaseUrl: (env.PUBLIC_BASE_URL || 'http://localhost:3100').replace(/\/+$/, ''),
-  // 多个时间段用分号分隔，避免 cron 的“分钟 × 小时”组合产生额外触发。
-  notifyCron: env.NOTIFY_CRON || '0 8 * * *;10 12,18 * * *',
+  // 多个时间段用分号分隔；默认每天 20:30 仅检测一次。
+  notifyCron: env.NOTIFY_CRON || '30 20 * * *',
   batchSize: Number(env.BATCH_SIZE || 10),
 }
 

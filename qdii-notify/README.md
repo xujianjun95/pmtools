@@ -12,8 +12,8 @@ nginx (80/443) ── / ──> pmtools 静态前端（/var/www/pmtools/main）
                               ├── GET  /api/unsubscribe    退订（邮件内链接）
                               ├── GET  /api/status         订阅状态查询
                               ├── POST /api/track          「鉴往」使用统计上报
-                              └── 定时任务（8:00 / 12:10 / 18:10）检测 data.json 变动 → 邮件群发
-scanner.py（cron 1:00 / 12:00 / 18:00）──> /var/www/pmtools/main/qdii/data.json（本服务只读它）
+                              └── 定时任务（每天 20:30）检测 data.json 变动 → 邮件群发
+scanner.py（cron 9:00 / 12:00 / 15:00 / 18:00 / 20:00）──> /var/www/pmtools/main/qdii/data.json（本服务只读它）
 ```
 
 ## 文件说明

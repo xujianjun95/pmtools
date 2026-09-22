@@ -40,9 +40,25 @@ ACTIVE_QDII_METADATA_PATH = BASE_DIR / "active_qdii_metadata.json"
 # 新增跟踪指数只需在这里加一行，例如 "spinfo": ("标普信息科技", ["标普信息科技"])
 # ---------------------------------------------------------------------------
 INDEX_RULES = {
-    "nasdaq100": ("纳斯达克100", ["纳斯达克100", "纳指"]),
+    "nasdaq100": ("纳斯达克100", ["纳斯达克100", "纳指", "纳斯达克科技"]),
     "sp500": ("标普500", ["标普500"]),
 }
+
+# 业务人工核验值：数据源同步正确后应删除对应覆盖项。
+FUND_OVERRIDES = {
+    "012979": {"direct_limit_amount": 100_000_000_000,
+               "direct_as_of": "2026-09-22", "direct_source": "人工核验"},
+    "012980": {"direct_limit_amount": 100_000_000_000,
+               "direct_as_of": "2026-09-22", "direct_source": "人工核验"},
+    "022005": {"status": "暂停申购"},
+}
+
+
+def apply_fund_overrides(records: list[dict]) -> None:
+    for record in records:
+        override = FUND_OVERRIDES.get(record["code"])
+        if override:
+            record.update(override)
 
 # ---------------------------------------------------------------------------
 # 其他市场基金：以 2026Q2 的 104 只主动权益 QDII 产品为冻结母池。
@@ -718,24 +734,24 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
             "WHERE code = ? ORDER BY date ASC",
             (code,),
         ).fetchall()
-        funds_out.append(
-            {
-                "code": code,
-                "name": fund["name"],
-                "country": fund["country"],
-                "status": status,
-                "redeem": redeem,
-                "limit_amount": limit_amount,
-                "direct_limit_amount": direct_limit_amount,
-                **observations.get(code, {}),
-                **details,
-                "history": [
-                    {"date": d, "status": s, "redeem": rd, "limit_amount": la,
-                     "direct_limit_amount": dla}
-                    for d, s, rd, la, dla in history
-                ],
-            }
-        )
+        output = {
+            "code": code,
+            "name": fund["name"],
+            "country": fund["country"],
+            "status": status,
+            "redeem": redeem,
+            "limit_amount": limit_amount,
+            "direct_limit_amount": direct_limit_amount,
+            **observations.get(code, {}),
+            **details,
+            "history": [
+                {"date": d, "status": s, "redeem": rd, "limit_amount": la,
+                 "direct_limit_amount": dla}
+                for d, s, rd, la, dla in history
+            ],
+        }
+        output.update(FUND_OVERRIDES.get(code, {}))
+        funds_out.append(output)
 
     payload = {
         "updated_at": today,
@@ -795,6 +811,7 @@ def main() -> int:
         try:
             init_db(conn)
             direct_as_of = merge_direct_limits(records, conn)
+            apply_fund_overrides(records)
             changes = save_snapshot(conn, records, today)
             export_json(conn, records, today, args.out, direct_as_of=direct_as_of)
             export_world_json(conn, records, today, args.world_out)

@@ -16,10 +16,10 @@ export const DEFAULT_REGIONS = [...REGION_IDS]
 
 const REGION_PATTERNS = [
   { id: 'sp500', pattern: /标普\s*500/i },
-  { id: 'nd100', pattern: /纳斯达克\s*100|纳指\s*100/i },
+  { id: 'nd100', pattern: /纳斯达克\s*100|纳指\s*100|纳斯达克科技/i },
 ]
 
-/** 按基金名称归类地区：标普500 → sp500，纳斯达克100 → nd100，其余 → other */
+/** 按基金名称归类地区：标普500 → sp500，纳斯达克100/科技 → nd100，其余 → other */
 export function classifyRegion(name) {
   const text = String(name || '')
   for (const { id, pattern } of REGION_PATTERNS) {
