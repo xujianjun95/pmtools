@@ -6,9 +6,14 @@ import Disclaimer from './components/Disclaimer'
 import FilterBar from './components/FilterBar'
 import FundTable from './components/FundTable'
 import { statusLabel } from './utils'
+import { CROSS_MARKET, OTHER_MARKET_COUNTRIES } from './worldFunds'
 import styles from './QdiiMonitor.module.css'
 
 const STATUS_ORDER = ['开放申购', '限大额', '暂停申购']
+const OTHER_MARKET_FUNDS = [
+  ...OTHER_MARKET_COUNTRIES.flatMap((country) => country.funds),
+  ...CROSS_MARKET.funds,
+]
 
 const DEV_RECENT_CHANGES = [
   {
@@ -29,6 +34,7 @@ function QdiiMonitorPage() {
   const [searchParams] = useSearchParams()
   const requestedIndex = searchParams.get('index')
   const [data, setData] = useState(null)
+  const [worldLiveFunds, setWorldLiveFunds] = useState([])
   const [error, setError] = useState(null)
   const [indexKey, setIndexKey] = useState(
     VALID_INDEX_KEYS.has(requestedIndex) ? requestedIndex : 'all',
@@ -43,16 +49,21 @@ function QdiiMonitorPage() {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
       })
-      .then((json) =>
+      .then((json) => {
+        const usFundCodes = new Set(json.funds.map((fund) => fund.code))
+        const recentChanges = json.recent_changes.map((change) => ({
+          ...change,
+          region: change.region || (usFundCodes.has(change.code) ? '美国' : undefined),
+        }))
         setData({
           ...json,
           recent_changes:
-            import.meta.env.DEV && json.recent_changes.length === 0
+            import.meta.env.DEV && recentChanges.length === 0
               ? DEV_RECENT_CHANGES.map((change) => ({
                   ...change,
                   date: json.updated_at,
                 }))
-              : json.recent_changes,
+              : recentChanges,
           // 去掉无有效限额的份额（美元现汇/封闭期等）与美元现汇/现钞份额，只看人民币可买
           funds: json.funds.filter((f) => {
             if (/美元|美汇|美钞|现汇|现钞/.test(f.name)) return false
@@ -63,8 +74,22 @@ function QdiiMonitorPage() {
             )
           }),
         })
-      )
+      })
       .catch((err) => setError(String(err)))
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/qdii/worldpage-data.json', { cache: 'no-store' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        return response.json()
+      })
+      .then((json) => {
+        if (!cancelled && Array.isArray(json.funds)) setWorldLiveFunds(json.funds)
+      })
+      .catch(() => {}) // 与其他市场页面一致：扫描文件不可用时使用静态快照
+    return () => { cancelled = true }
   }, [])
 
   const metaLine = useMemo(() => {
@@ -75,14 +100,24 @@ function QdiiMonitorPage() {
 
   const stats = useMemo(() => {
     if (!data) return []
-    const count = (s) => data.funds.filter((f) => f.status === s).length
+    const fundsByCode = new Map(data.funds.map((fund) => [fund.code, fund]))
+    const worldLiveByCode = new Map(worldLiveFunds.map((fund) => [fund.code, fund]))
+    for (const fund of OTHER_MARKET_FUNDS) {
+      if (fundsByCode.has(fund.code)) continue
+      fundsByCode.set(fund.code, {
+        ...fund,
+        status: worldLiveByCode.get(fund.code)?.status || fund.status,
+      })
+    }
+    const monitoredFunds = [...fundsByCode.values()]
+    const count = (s) => monitoredFunds.filter((fund) => fund.status === s).length
     return [
-      { cls: 'all', num: data.funds.length, label: '监控基金' },
+      { cls: 'all', num: monitoredFunds.length, label: '监控基金' },
       { cls: 'open', num: count('开放申购'), label: '开放申购' },
       { cls: 'limited', num: count('限大额'), label: statusLabel('限大额') },
       { cls: 'suspended', num: count('暂停申购'), label: '暂停申购' },
     ]
-  }, [data])
+  }, [data, worldLiveFunds])
 
   const indexOptions = useMemo(() => {
     if (!data) return []
@@ -142,7 +177,7 @@ function QdiiMonitorPage() {
 
           <section id="us-funds" className={`${styles.section} fi d8`}>
             <div className={styles.titleRow}>
-              <h2 className="section-title">全部基金</h2>
+              <h2 className="section-title">美国</h2>
             </div>
             <FilterBar
               indexOptions={indexOptions}

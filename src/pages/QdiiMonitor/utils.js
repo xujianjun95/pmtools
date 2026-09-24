@@ -66,7 +66,8 @@ export function compactHistory(history) {
   const out = []
   for (const h of history || []) {
     const p = out[out.length - 1]
-    if (!p || p.status !== h.status || p.limit_amount !== h.limit_amount || p.redeem !== h.redeem) {
+    if (!p || p.status !== h.status || p.limit_amount !== h.limit_amount ||
+        p.direct_limit_amount !== h.direct_limit_amount || p.redeem !== h.redeem) {
       out.push(h)
     }
   }

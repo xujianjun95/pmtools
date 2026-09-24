@@ -76,7 +76,7 @@ export default function HeroWorldMap() {
           )}
         </div>
         <Link to="/qdii/world" className={styles.mapAllLink}>
-          查看其他市场 →
+          查看其他市场 <span className={styles.mapAllArrow} aria-hidden="true">→</span>
         </Link>
       </div>
     </div>

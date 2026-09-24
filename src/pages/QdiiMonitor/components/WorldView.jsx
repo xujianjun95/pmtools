@@ -4,6 +4,7 @@ import filterStyles from './FilterBar.module.css'
 import tableStyles from './FundTable.module.css'
 import { FundDetails, HistoryTimeline, LimitValue } from './FundTable'
 import SortableTh from './SortableTh'
+import HorizontalScroll from './HorizontalScroll'
 import Disclaimer from './Disclaimer'
 import styles from './WorldView.module.css'
 import qdiiStyles from '../QdiiMonitor.module.css'
@@ -57,6 +58,7 @@ function FundRow({ fund, isOpen, onToggle }) {
             // 无限额标记归零，共享时间线会显示为“无限额”而非巨额数字
             limit_amount:
               fund.limit_amount,
+            direct_limit_amount: fund.direct_limit_amount,
             redeem: fund.redeem,
           },
         ],
@@ -157,6 +159,7 @@ function FundRow({ fund, isOpen, onToggle }) {
 
 function FundTable({ groups, sortConfig, onSort, expandedKey, onToggle }) {
   return (
+    <HorizontalScroll>
     <table className={styles.wtable}>
       <thead>
         <tr>
@@ -207,6 +210,7 @@ function FundTable({ groups, sortConfig, onSort, expandedKey, onToggle }) {
         )}
       </tbody>
     </table>
+    </HorizontalScroll>
   )
 }
 
@@ -338,7 +342,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
       cancelled = true
       window.removeEventListener('resize', check)
     }
-  }, [selectedId, keyword])
+  }, [selectedId, keyword, kind, sortConfig, expandedKey, liveData])
 
   const handleSort = (key) => {
     setSortConfig((current) => ({

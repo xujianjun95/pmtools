@@ -31,7 +31,7 @@
   margin-top: 44px;
 }
 
-/* "全部基金"标题与搜索框同行，垂直居中 */
+/* 美国基金标题与搜索框同行，垂直居中 */
 .titleRow {
   display: flex;
   align-items: center;

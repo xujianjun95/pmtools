@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { compactHistory, fmtLimit, getChannelLimit, limitText, statusClass, statusLabel } from '../utils'
 import { getDirectChannel } from '../fundCompanies'
 import SortableTh from './SortableTh'
+import HorizontalScroll from './HorizontalScroll'
 import styles from './FundTable.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -140,18 +141,31 @@ export function HistoryTimeline({ fund }) {
   const items = [...pts].reverse()
 
 
-  // 暂停申购时天天基金会残留旧限额值，展示无意义
-  const limitTextIfOpen = (h) =>
-    String(h.status).includes('暂停') ? '—' : limitText(h.limit_amount)
+  // 与列表保持一致：暂停时隐藏额度，直销缺数时显示代销额度
+  const limitTextIfOpen = (h, field) =>
+    limitText(getChannelLimit(h, field))
 
   return (
     <div className={styles.timeline}>
       <div className={styles.tlTitle}>HISTORY · 变化节点</div>
+      <div className={styles.tlHeader}>
+        <span>日期</span>
+        <span>申购状态</span>
+        <span>代销额度</span>
+        <span>直销额度</span>
+      </div>
       {items.map((h, i) => (
         <div key={h.date} className={`${styles.tlItem} ${i === 0 ? styles.latest : ''}`}>
           <span className={styles.tlDate}>{h.date}</span>
           <span className={styles.tlStatus}>{statusLabel(h.status)}</span>
-          <span className={styles.tlLimit}>{limitTextIfOpen(h)}</span>
+          <span className={styles.tlLimit}>
+            <span className={styles.tlMobileLabel}>代销额度</span>
+            {limitTextIfOpen(h, 'limit_amount')}
+          </span>
+          <span className={styles.tlLimit}>
+            <span className={styles.tlMobileLabel}>直销额度</span>
+            {limitTextIfOpen(h, 'direct_limit_amount')}
+          </span>
           {i === 0 ? (
             items.length === 1 ? <span className={styles.tlTag}>首日监控</span> : <span className={styles.tlTag}>当前</span>
           ) : null}
@@ -216,7 +230,7 @@ export default function FundTable({ funds, filterVersion }) {
       cancelled = true
       window.removeEventListener('resize', check)
     }
-  }, [funds])
+  }, [funds, sortConfig, expanded])
 
   // 公司名 = 名称开头连续中文去掉「纳斯达克/纳指/标普」后缀，如「广发纳斯达克…」→「广发」
   const companyOf = (name) =>
@@ -268,6 +282,7 @@ export default function FundTable({ funds, filterVersion }) {
 
   return (
     <div className={styles.tableCard} ref={tableRef}>
+      <HorizontalScroll>
       <table>
         <thead>
           <tr>
@@ -380,6 +395,7 @@ export default function FundTable({ funds, filterVersion }) {
           })}
         </tbody>
       </table>
+      </HorizontalScroll>
       {!sorted.length && <div className={styles.noResult}>没有符合条件的基金</div>}
     </div>
   )

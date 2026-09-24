@@ -1,0 +1,45 @@
+.viewport {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.bar {
+  padding: 8px 12px 10px;
+}
+
+.track {
+  position: relative;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--border-subtle);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.thumb {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  opacity: 0.75;
+  cursor: grab;
+}
+
+.track:hover .thumb,
+.track:focus-visible .thumb {
+  opacity: 1;
+}
+
+.track:active .thumb {
+  cursor: grabbing;
+}

@@ -30,15 +30,20 @@ export default function RecentChanges({ changes }) {
       <div className={styles.changeList}>
         {shown.map((c, i) => (
           <div key={`${c.code}-${c.field}-${i}`} className={styles.changeItem}>
-            <span className={styles.cdate}>{c.date}</span>
-            <span className={styles.cname}>{c.name}</span>
-            <span className={styles.ccode}>{c.code}</span>
-            <span>{FIELD_LABELS[c.field] || c.field}</span>
-            <span className={styles.old}>{fmtChangeVal(c.field, c.old_val)}</span>
-            <span className={styles.arrow}>→</span>
-            <span className={styles.new}>{fmtChangeVal(c.field, c.new_val)}</span>
-            {/* region：基金变更对应的市场归属（美国/日本/中国香港…） */}
-            {c.region && <span className={styles.regionTag}>{c.region}</span>}
+            <div className={styles.changePrimary}>
+              <span className={styles.ccode}>{c.code}</span>
+              <span className={styles.cname}>{c.name}</span>
+            </div>
+            <div className={styles.changeDelta}>
+              <span>{FIELD_LABELS[c.field] || c.field}</span>
+              <span className={styles.old}>{fmtChangeVal(c.field, c.old_val)}</span>
+              <span className={styles.arrow}>→</span>
+              <span className={styles.new}>{fmtChangeVal(c.field, c.new_val)}</span>
+            </div>
+            <div className={styles.changeMeta}>
+              {c.region && <span className={styles.regionTag}>{c.region}</span>}
+              <span className={styles.cdate}>{c.date}</span>
+            </div>
           </div>
         ))}
       </div>

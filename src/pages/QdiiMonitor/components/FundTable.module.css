@@ -8,6 +8,7 @@
 
 :where(.tableCard) table {
   width: 100%;
+  min-width: 1198px;
   /* 固定列宽：切换筛选时表头不因内容变化而抖动 */
   table-layout: fixed;
   border-collapse: collapse;
@@ -467,12 +468,24 @@ td.tchev {
   margin-bottom: 12px;
 }
 
+.tlHeader,
+.tlItem {
+  display: grid;
+  grid-template-columns: 105px 130px 150px 150px 80px;
+  align-items: baseline;
+  gap: 10px;
+  max-width: 705px;
+}
+
+.tlHeader {
+  padding: 0 0 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
 .tlItem {
   position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
   padding: 0 0 12px 20px;
 }
 
@@ -519,7 +532,12 @@ td.tchev {
   color: var(--text-secondary);
 }
 
+.tlMobileLabel {
+  display: none;
+}
+
 .tlTag {
+  justify-self: start;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--accent);
@@ -536,6 +554,10 @@ td.tchev {
 
 @media (max-width: 768px) {
   /* 表格改卡片流 */
+  .tableCard {
+    overflow: hidden;
+  }
+
   :where(.tableCard) thead {
     display: none;
   }
@@ -546,6 +568,7 @@ td.tchev {
   :where(.tableCard) td {
     display: block;
     width: 100%;
+    min-width: 0;
   }
 
   .fundRow {
@@ -638,6 +661,22 @@ td.tchev {
   /* 展开的历史时间线：收窄内边距 */
   .timeline {
     padding: 14px 16px 16px;
+  }
+
+  .tlHeader {
+    display: none;
+  }
+
+  .tlItem {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 12px;
+  }
+
+  .tlMobileLabel {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.68rem;
+    color: var(--text-muted);
   }
 }
 
