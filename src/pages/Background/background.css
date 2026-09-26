@@ -745,3 +745,116 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- 基金管理 ---- */
+.bg-fundToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.bg-fundTools {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.bg-fundTagSelect {
+  width: 150px;
+  padding: 7px 10px;
+  font-size: 0.82rem;
+}
+
+.bg-fundSearch {
+  width: 200px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+}
+
+.bg-fundGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+
+.bg-fundLock {
+  margin-left: 8px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.bg-fundLock:hover {
+  text-decoration: underline;
+}
+
+.bg-fundMarket.is-us {
+  color: #1d6fb8;
+  background: rgb(29 111 184 / 0.1);
+}
+
+.bg-fundMarket.is-cross {
+  color: #8a5a17;
+  background: rgb(183 134 41 / 0.12);
+}
+
+.bg-fundMarket.is-other {
+  color: var(--text-muted);
+}
+
+.bg-fundTable {
+  min-width: 980px;
+}
+
+/* 基金表列对齐：市场、代销额度居中；地区、标签左对齐（覆盖通用 nth-child 规则） */
+.bg-fundTable th:nth-child(2),
+.bg-fundTable td:nth-child(2),
+.bg-fundTable th:nth-child(6),
+.bg-fundTable td:nth-child(6) {
+  text-align: center;
+}
+
+.bg-fundTable th:nth-child(3),
+.bg-fundTable td:nth-child(3),
+.bg-fundTable th:nth-child(4),
+.bg-fundTable td:nth-child(4) {
+  text-align: left;
+}
+
+.bg-fundColMarket {
+  width: 84px;
+}
+
+.bg-fundColRegion {
+  width: 170px;
+}
+
+.bg-fundColStatus {
+  width: 104px;
+}
+
+.bg-fundColAmount {
+  width: 104px;
+}
+
+@media (width <= 860px) {
+  .bg-fundGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .bg-fundTools {
+    width: 100%;
+  }
+
+  .bg-fundSearch {
+    flex: 1;
+    width: auto;
+  }
+}

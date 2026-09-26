@@ -8,6 +8,7 @@ QDII 指数基金限额监控 — 每日扫描脚本
 worldpage-data.json 供前端页面使用。cron 每日定时运行，同日重跑幂等。
 """
 import argparse
+import copy
 import json
 import logging
 import math
@@ -26,6 +27,7 @@ from typing import Optional
 from fetch_direct_limit import fetch_direct_limits
 from direct_limit_store import (init_store, save_observations, read_observations,
                                apply_observations, publication_lock, write_json)
+from fund_registry import init_fund_registry, read_registry, sync_registry_scan
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "fund.db"
@@ -257,6 +259,92 @@ def filter_funds(df: pd.DataFrame) -> list[dict]:
             seen.add(r["code"])
             unique.append(r)
     return unique
+
+
+def _parse_cell_number(value) -> Optional[float]:
+    """申购表单元格 → 数值（元）；保留未知，支持万/亿与费率百分号，允许负数。"""
+    if isinstance(value, bool) or value is None:
+        return None
+    multiplier = 1
+    if isinstance(value, str):
+        match = re.fullmatch(r'\s*(-?[\d,]+(?:\.\d+)?)\s*([万亿]?)\s*(?:元|%)?\s*', value)
+        if not match:
+            return None
+        value = match.group(1).replace(',', '')
+        multiplier = {'': 1, '万': 10000, '亿': 100000000}[match.group(2)]
+    try:
+        n = float(value) * multiplier
+    except (TypeError, ValueError):
+        return None
+    return n if math.isfinite(n) else None
+
+
+def build_registry_record(row, registry: dict) -> dict:
+    """后台新增、但未被静态关键词命中的基金：从申购行 + registry 主数据构造记录。"""
+    code = registry["code"]
+    name = registry.get("name") or str(row["基金简称"]).strip()
+    # 美国新增基金归 manual（随 data.json 出口），其余进世界页 worldpage
+    index_key = registry.get("index_key") or (
+        "manual" if registry.get("market") == "us" else WORLD_PAGE_INDEX_KEY
+    )
+    status = str(row["申购状态"]).strip()
+    if status.lower() in {"", "nan", "none"}:
+        status = "暂无申购信息"
+    return {
+        "code": code,
+        "name": name,
+        "kind": registry.get("kind") or "其他",
+        "index_key": index_key,
+        "status": status,
+        "redeem": str(row["赎回状态"]).strip() or "暂无赎回信息",
+        "limit_amount": _parse_cell_number(row["日累计限定金额"]),
+        "min_buy": _parse_cell_number(row["购买起点"]),
+        "fee": _parse_cell_number(row["手续费"]),
+        "region": registry.get("region") or "其他市场",
+        "share_codes": [code],
+    }
+
+
+def augment_records_with_registry(df: pd.DataFrame, records: list[dict],
+                                  registry_rows: list[dict]) -> list[dict]:
+    """把名册 active、但静态筛选未命中的基金从当日申购数据补入；并回填 kind/region。
+
+    kind / region 由后台管理、申购状态表不提供，静态筛选记录也缺这两个字段，
+    因此统一用名册主数据回填，保证前台类型筛选与国家分组对所有基金成立。
+    """
+    registry_by_code = {r["code"]: r for r in registry_rows}
+    for rec in records:
+        reg = registry_by_code.get(rec["code"])
+        if not reg:
+            continue
+        if not rec.get("kind") and reg.get("kind"):
+            rec["kind"] = reg["kind"]
+        if not rec.get("region") and reg.get("region"):
+            rec["region"] = reg["region"]
+
+    present = {r["code"] for r in records}
+    code_col = df["基金代码"].astype(str).str.zfill(6)
+    for registry in registry_rows:
+        code = registry["code"]
+        if code in present:
+            continue
+        fallback_key = registry.get("index_key") or (
+            "manual" if registry.get("market") == "us" else WORLD_PAGE_INDEX_KEY)
+        hit = df[code_col == code]
+        if hit.empty:
+            # 当日申购表无此基金行（如已停售下架）：保留主数据占位，enrich 补详情
+            records.append({
+                "code": code, "name": registry.get("name"),
+                "kind": registry.get("kind") or "其他",
+                "index_key": fallback_key,
+                "status": "暂无申购信息", "redeem": "暂无赎回信息",
+                "limit_amount": None, "min_buy": None, "fee": None,
+                "region": registry.get("region") or "其他市场",
+                "share_codes": [code],
+            })
+            continue
+        records.append(build_registry_record(hit.iloc[0], registry))
+    return records
 
 
 def fetch_tracking_error(code: str, session: requests.Session) -> Optional[float]:
@@ -583,7 +671,9 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
     只导出 INDEX_RULES 基金（美国页口径）；world 基金仅入库不导出，
     避免污染 /qdii 的全部基金列表、统计与 DCA 回测。
     """
-    us_records = [r for r in records if r["index_key"] in INDEX_RULES]
+    # INDEX_RULES 命中的纳指/标普基金 + 后台新增的美国基金（index_key=manual）
+    us_records = [r for r in records
+                  if r["index_key"] in INDEX_RULES or r["index_key"] == "manual"]
     funds_out = []
     for r in us_records:
         history = conn.execute(
@@ -707,7 +797,15 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
     records_by_code = {r["code"]: r for r in records}
     observations = read_observations(conn)
     funds_out = []
-    for fund in WORLD_PAGE_FUNDS:
+    # 静态世界页清单 + 后台新增的其他/跨市场基金（index_key=worldpage）
+    specs = [{"code": f["code"], "name": f["name"], "country": f["country"]}
+             for f in WORLD_PAGE_FUNDS]
+    static_codes = {f["code"] for f in WORLD_PAGE_FUNDS}
+    for r in records:
+        if r.get("index_key") == WORLD_PAGE_INDEX_KEY and r["code"] not in static_codes:
+            specs.append({"code": r["code"], "name": r["name"],
+                          "country": r.get("region") or "其他市场"})
+    for fund in specs:
         code = fund["code"]
         record = records_by_code.get(code)
         if record is not None:
@@ -715,6 +813,7 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
             redeem = record["redeem"]
             limit_amount = record["limit_amount"]
             direct_limit_amount = record.get("direct_limit_amount")
+            kind = record.get("kind")
             details = {key: record.get(key) for key in detail_fields}
         else:
             row = conn.execute(
@@ -727,6 +826,7 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
                 continue
             status, redeem, limit_amount = row[:3]
             direct_limit_amount = None
+            kind = None
             details = dict(zip(detail_fields, row[3:]))
         history = conn.execute(
             "SELECT date, status, redeem, limit_amount, direct_limit_amount "
@@ -737,6 +837,7 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
         output = {
             "code": code,
             "name": fund["name"],
+            "kind": kind,
             "country": fund["country"],
             "status": status,
             "redeem": redeem,
@@ -794,24 +895,49 @@ def main() -> int:
         log.error("拉取数据失败，本次不更新: %s", e)
         return 1
 
+    # 第一次进锁：初始化统一名册并读取当前 active 主数据（不做网络请求，快速完成）
+    with publication_lock(args.db):
+        pre_conn = sqlite3.connect(args.db)
+        try:
+            init_db(pre_conn)
+            init_fund_registry(pre_conn)
+            registry_rows = read_registry(pre_conn, active_only=True)
+        finally:
+            pre_conn.close()
+
     records = filter_funds(df)
-    log.info("筛选出目标基金 %d 只", len(records))
+    augment_records_with_registry(df, records, registry_rows)
+    log.info("纳入扫描基金 %d 只", len(records))
     for index_key, (label, _) in INDEX_RULES.items():
         n = sum(1 for r in records if r["index_key"] == index_key)
         log.info("  %s: %d 只", label, n)
-    log.info("  其他市场: %d 只",
+    log.info("  美国新增(manual): %d 只",
+             sum(1 for r in records if r["index_key"] == "manual"))
+    log.info("  其他市场母池: %d 只",
              sum(1 for r in records if r["index_key"] == WORLD_INDEX_KEY))
     log.info("  世界页清单: %d 只",
              sum(1 for r in records if r["index_key"] == WORLD_PAGE_INDEX_KEY))
 
+    # 详情网络请求在锁外执行，避免长时间持锁阻塞其他发布
     enrich_fund_details(records)
 
     with publication_lock(args.db):
         conn = sqlite3.connect(args.db)
         try:
-            init_db(conn)
             direct_as_of = merge_direct_limits(records, conn)
             apply_fund_overrides(records)
+            raw_records = copy.deepcopy(records)
+            # 名册同步在 BEGIN IMMEDIATE 内：抓取原值入 auto_values，锁定字段保留手工值
+            conn.execute("BEGIN IMMEDIATE")
+            try:
+                sync_registry_scan(conn, records, raw_records, today)
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+            # 后台已软删除的基金从当日结果剔除，不进快照与前台导出
+            active_codes = {row["code"] for row in read_registry(conn, active_only=True)}
+            records = [r for r in records if r["code"] in active_codes]
             changes = save_snapshot(conn, records, today)
             export_json(conn, records, today, args.out, direct_as_of=direct_as_of)
             export_world_json(conn, records, today, args.world_out)

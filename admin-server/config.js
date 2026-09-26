@@ -59,6 +59,10 @@ export const config = {
     // 图片目录前缀；本地联调用 OSS_IMAGES_PREFIX 隔离测试目录
     imagesPrefix: env.OSS_IMAGES_PREFIX || 'articles/images',
   },
+  // 基金名册库（与 qdii-watcher 扫描器共享；funds.js 幂等建表并迁移旧 funds 表）
+  funds: {
+    dbPath: env.FUNDS_DB_PATH || path.join(__dirname, '..', 'qdii-watcher', 'fund.db'),
+  },
   // 看板只读挂载的 qdii-notify 数据库（spec §4.2）；生产通过 .env 指向 /opt/qdii-notify
   qdii: {
     subscribersDbPath: env.QDII_DB_PATH || path.join(__dirname, '..', 'qdii-notify', 'subscribers.db'),

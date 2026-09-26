@@ -6,10 +6,12 @@ import './background.css'
 const Dashboard = lazy(() => import('./Dashboard'))
 const Articles = lazy(() => import('./Articles'))
 const Editor = lazy(() => import('./Editor'))
+const Funds = lazy(() => import('./Funds'))
 
 const NAV = [
   { key: 'dashboard', label: '数据看板' },
   { key: 'articles', label: '文章管理' },
+  { key: 'funds', label: '基金管理' },
 ]
 
 function LoadingFallback() {
@@ -117,6 +119,7 @@ function Background() {
         <Suspense fallback={<LoadingFallback />}>
           {view === 'dashboard' ? <Dashboard /> : null}
           {view === 'articles' ? <Articles onEdit={handleEdit} /> : null}
+          {view === 'funds' ? <Funds /> : null}
           {view === 'editor' && editingId ? (
             <Editor articleId={editingId} onBack={handleBackToArticles} />
           ) : null}

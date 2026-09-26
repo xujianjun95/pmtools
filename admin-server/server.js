@@ -33,6 +33,7 @@ import {
   SLUG_RE,
 } from './articles.js'
 import { detectImageExt, isImageSizeOk, buildImageKey, putImageBuffer } from './oss.js'
+import { createFundStore } from './funds.js'
 import {
   parseDays,
   getSummary,
@@ -72,6 +73,8 @@ function readRawBody(req, maxBytes) {
  */
 export function createApp(options = {}) {
   const ossPut = options.ossPut || putImageBuffer
+  // 惰性打开：首次访问基金路由才连接数据库，测试驱动 createApp 不会触碰真实库
+  const fundStore = createFundStore({ dbPath: config.funds.dbPath })
 
   const app = express()
   app.disable('x-powered-by')
@@ -113,6 +116,11 @@ export function createApp(options = {}) {
         const result = await handler(req)
         res.status(result.status).json(result.body)
       } catch (err) {
+        if (typeof err.status === 'number') {
+          // funds 预览等业务错误自带 HTTP 状态（400/404/502），原样转述
+          res.status(err.status).json({ ok: false, message: err.message })
+          return
+        }
         if (err.status === 413) {
           res.status(413).json({ ok: false, message: '图片超过 10MB 上限' })
           return
@@ -213,6 +221,46 @@ export function createApp(options = {}) {
     api.get('/admin/stats/qdii', requireAuth, stats('qdii', () => getQdiiSnapshot()))
     api.get('/admin/stats/dca', requireAuth, stats('dca', getDca))
     api.get('/admin/stats/content', requireAuth, stats('content', getContent))
+
+    // ---------- 基金管理（名册存储与扫描器共享，见 funds.js） ----------
+    const previewLimiter = makeRateLimit(60 * 60 * 1000, 30)
+
+    api.get('/admin/funds', requireAuth, safe(async () => ({
+      status: 200,
+      body: { ok: true, funds: fundStore.list() },
+    })))
+
+    // 资料预览：实时请求天天基金，限每小时 30 次
+    api.get('/admin/funds/preview', requireAuth, previewLimiter, safe(async (req) => {
+      const result = await fundStore.preview(String(req.query.code || ''))
+      return { status: 200, body: { ok: true, ...result } }
+    }))
+
+    api.post('/admin/funds', requireAuth, assertWriteOrigin, safe(async (req) => {
+      const result = fundStore.create(req.body || {})
+      if (!result.ok) return { status: result.code, body: { ok: false, errors: result.errors } }
+      return { status: 201, body: { ok: true, fund: result.fund } }
+    }))
+
+    api.put('/admin/funds/:code', requireAuth, assertWriteOrigin, safe(async (req) => {
+      const result = fundStore.update(req.params.code, req.body || {})
+      if (!result.ok) return { status: result.code, body: { ok: false, errors: result.errors } }
+      return { status: 200, body: { ok: true, fund: result.fund } }
+    }))
+
+    // 恢复字段自动更新：body { fields: [...] }
+    api.post('/admin/funds/:code/unlock', requireAuth, assertWriteOrigin, safe(async (req) => {
+      const fields = Array.isArray(req.body?.fields) ? req.body.fields : []
+      const result = fundStore.unlock(req.params.code, fields)
+      if (!result.ok) return { status: result.code, body: { ok: false, errors: result.errors } }
+      return { status: 200, body: { ok: true, fund: result.fund } }
+    }))
+
+    api.delete('/admin/funds/:code', requireAuth, assertWriteOrigin, safe(async (req) => {
+      const result = fundStore.delete(req.params.code)
+      if (!result.ok) return { status: result.code, body: { ok: false, errors: result.errors } }
+      return { status: 200, body: { ok: true } }
+    }))
   } else {
     // fail closed：凭据缺失时 admin 面板整体不可用
     api.all('/admin', (req, res) => {

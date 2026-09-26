@@ -36,6 +36,82 @@ const TRACK_TARGET_ABBR = {
 
 const abbrTrackTarget = (v) => TRACK_TARGET_ABBR[v] || v
 
+// live 每日扫描可覆盖的详情字段（静态快照里也有，live 非空才覆盖）
+const LIVE_FIELDS = [
+  'track_target',
+  'direct_as_of',
+  'direct_source',
+  'direct_source_url',
+  'tracking_error',
+  'return_1m',
+  'return_6m',
+  'return_1y',
+  'return_3y',
+  'return_since',
+  'inception_date',
+  'fund_size',
+  'fund_size_date',
+  'management_fee_rate',
+  'custody_fee_rate',
+]
+
+// 静态基金索引：新增基金没有静态底时退化为空对象，仍可正常渲染
+const STATIC_FUND_BY_CODE = new Map()
+for (const c of OTHER_MARKET_COUNTRIES) {
+  for (const f of c.funds) STATIC_FUND_BY_CODE.set(f.code, f)
+}
+for (const f of CROSS_MARKET.funds) STATIC_FUND_BY_CODE.set(f.code, f)
+
+// 以 live 记录为驱动合并：静态底（保留 note / fee / kind 等）+ live 非空覆盖。
+// 与组件内 mergeFund 的区别是它能处理静态快照里不存在的新增基金。
+function mergeLiveFund(liveFund) {
+  const base = STATIC_FUND_BY_CODE.get(liveFund.code) || {}
+  const merged = { ...base }
+  for (const key of LIVE_FIELDS) {
+    if (liveFund[key] != null) merged[key] = liveFund[key]
+  }
+  merged.code = liveFund.code
+  merged.name = liveFund.name || base.name || liveFund.code
+  merged.kind = liveFund.kind || base.kind || '其他'
+  merged.status = liveFund.status ?? base.status
+  merged.redeem = liveFund.redeem ?? base.redeem
+  merged.limit_amount = liveFund.limit_amount ?? base.limit_amount
+  if (liveFund.direct_limit_amount != null) {
+    merged.direct_limit_amount = liveFund.direct_limit_amount
+  }
+  if (liveFund.history?.length) merged.history = liveFund.history
+  return merged
+}
+
+// live 名册存在时以它为权威重建国家分组：成员集合、国家归属、数量都随管理变化；
+// 静态骨架只提供地图元数据（id / flag / marker）。live 缺失（fetch 失败 / 首次运行）返回 null。
+function buildLiveGroups(liveData) {
+  const liveFunds = liveData?.funds
+  if (!Array.isArray(liveFunds) || liveFunds.length === 0) return null
+  const countryGroups = OTHER_MARKET_COUNTRIES.map((c) => ({ ...c, funds: [] }))
+  const crossGroup = { ...CROSS_MARKET, funds: [] }
+  const byZh = new Map(countryGroups.map((g) => [g.zh, g]))
+  const extraGroups = []
+  const isCross = (country) => !country || /全球|多市场|跨市场/.test(country)
+
+  for (const liveFund of liveFunds) {
+    const fund = mergeLiveFund(liveFund)
+    const country = String(liveFund.country || '').trim()
+    if (isCross(country)) {
+      crossGroup.funds.push(fund)
+      continue
+    }
+    let group = byZh.get(country)
+    if (!group) {
+      group = { id: null, zh: country, flag: '', en: country, marker: null, funds: [] }
+      byZh.set(country, group)
+      extraGroups.push(group)
+    }
+    group.funds.push(fund)
+  }
+  return { countryGroups: [...countryGroups, ...extraGroups], crossGroup }
+}
+
 function LimitCell({ fund }) {
   return <LimitValue amount={getChannelLimit(fund)} />
 }
@@ -270,24 +346,6 @@ export default function WorldView({ initialSelectedId = 'all' }) {
     return map
   }, [liveData])
 
-  const LIVE_FIELDS = [
-    'track_target',
-    'direct_as_of',
-    'direct_source',
-    'direct_source_url',
-    'tracking_error',
-    'return_1m',
-    'return_6m',
-    'return_1y',
-    'return_3y',
-    'return_since',
-    'inception_date',
-    'fund_size',
-    'fund_size_date',
-    'management_fee_rate',
-    'custody_fee_rate',
-  ]
-
   const mergeFund = (fund) => {
     const live = liveByCode.get(fund.code)
     if (!live) return fund
@@ -305,6 +363,9 @@ export default function WorldView({ initialSelectedId = 'all' }) {
     return merged
   }
 
+  // 每日名册到位时以它为权威重建分组（新增 / 删除 / 数量随管理变化），否则回退静态快照
+  const liveGroups = useMemo(() => buildLiveGroups(liveData), [liveData])
+
   // URL 参数直达某地区（hero 地图跳入 / 前进后退）；非法 id 回落到「全部」
   const [prevInitialId, setPrevInitialId] = useState(initialSelectedId)
   if (prevInitialId !== initialSelectedId) {
@@ -316,10 +377,12 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   }
 
   const selected = selectedId === 'all' ? null : countryById(selectedId)
-  const totalCount = useMemo(
-    () => OTHER_MARKET_COUNTRIES.reduce((n, c) => n + c.funds.length, 0),
-    []
-  )
+  const totalCount = useMemo(() => {
+    if (liveGroups) {
+      return liveGroups.countryGroups.reduce((n, g) => n + g.funds.length, 0)
+    }
+    return OTHER_MARKET_COUNTRIES.reduce((n, c) => n + c.funds.length, 0)
+  }, [liveGroups])
 
   // 名称溢出时悬停显示全称（与外层 FundTable 的 trunc tooltip 一致）
   useEffect(() => {
@@ -395,10 +458,12 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   // 类型选项随快照数据动态生成，顺序固定：主动 → 被动联接 → 被动FOF → 其他
   const kindOptions = useMemo(() => {
     const counts = {}
-    for (const c of OTHER_MARKET_COUNTRIES) {
+    const sources = liveGroups
+      ? [...liveGroups.countryGroups, liveGroups.crossGroup]
+      : [...OTHER_MARKET_COUNTRIES, CROSS_MARKET]
+    for (const c of sources) {
       for (const f of c.funds) counts[f.kind] = (counts[f.kind] || 0) + 1
     }
-    for (const f of CROSS_MARKET.funds) counts[f.kind] = (counts[f.kind] || 0) + 1
     const order = (k) => {
       const i = KIND_ORDER.indexOf(k)
       return i === -1 ? KIND_ORDER.length : i
@@ -406,17 +471,35 @@ export default function WorldView({ initialSelectedId = 'all' }) {
     return Object.keys(counts)
       .sort((a, b) => order(a) - order(b))
       .map((k) => ({ key: k, count: counts[k] }))
-  }, [])
+  }, [liveGroups])
 
-  const groups = selectedId === 'all'
-    ? OTHER_MARKET_COUNTRIES.map((c) => ({ key: c.id, head: c, funds: sortFunds(c.funds.map(mergeFund).filter(matchKeyword).filter(matchKind)) })).filter(
-        (g) => g.funds.length > 0
-      )
-    : selected
-      ? [{ key: selected.id, funds: sortFunds(selected.funds.map(mergeFund).filter(matchKeyword).filter(matchKind)) }]
-      : []
+  const filterAndSort = (funds) => sortFunds(funds.filter(matchKeyword).filter(matchKind))
 
-  const crossFunds = sortFunds(CROSS_MARKET.funds.map(mergeFund).filter(matchKeyword).filter(matchKind))
+  const groups = liveGroups
+    ? selectedId === 'all'
+      ? liveGroups.countryGroups
+          .map((c) => ({ key: c.id || c.zh, head: c, funds: filterAndSort(c.funds) }))
+          .filter((g) => g.funds.length > 0)
+      : (() => {
+          const g = liveGroups.countryGroups.find((c) => c.id === selectedId)
+          return g ? [{ key: g.id, funds: filterAndSort(g.funds) }] : []
+        })()
+    : selectedId === 'all'
+      ? OTHER_MARKET_COUNTRIES.map((c) => ({ key: c.id, head: c, funds: sortFunds(c.funds.map(mergeFund).filter(matchKeyword).filter(matchKind)) })).filter(
+          (g) => g.funds.length > 0
+        )
+      : selected
+        ? [{ key: selected.id, funds: sortFunds(selected.funds.map(mergeFund).filter(matchKeyword).filter(matchKind)) }]
+        : []
+
+  const crossFunds = liveGroups
+    ? filterAndSort(liveGroups.crossGroup.funds)
+    : sortFunds(CROSS_MARKET.funds.map(mergeFund).filter(matchKeyword).filter(matchKind))
+
+  // 选中某国时头部数量（liveGroups 存在时用名册数量）
+  const selectedCount = liveGroups
+    ? liveGroups.countryGroups.find((c) => c.id === selectedId)?.funds.length
+    : selected?.funds.length
 
   const handleSelect = (id, englishName) => {
     setSelectedId(id)
@@ -464,7 +547,9 @@ export default function WorldView({ initialSelectedId = 'all' }) {
               onClick={() => handleSelect(c.id, c.en)}
             >
               {c.flag} {c.zh}
-              <span className={filterStyles.count}>{c.funds.length}</span>
+              <span className={filterStyles.count}>
+                {liveGroups?.countryGroups.find((g) => g.id === c.id)?.funds.length ?? c.funds.length}
+              </span>
             </button>
           ))}
         </div>
@@ -524,7 +609,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
               <span className={styles.countryFlag} aria-hidden="true">{selected.flag}</span>
               {selected.zh} <span className={styles.en}>{selected.en}</span>
             </strong>
-            <span className={styles.fundCount}>{selected.funds.length} 只</span>
+            <span className={styles.fundCount}>{selectedCount ?? 0} 只</span>
           </div>
           {!groups[0]?.funds.length ? (
             <div className={styles.empty}>没有符合条件的基金</div>
@@ -557,7 +642,9 @@ export default function WorldView({ initialSelectedId = 'all' }) {
             <span className={styles.countryFlag} aria-hidden="true">{CROSS_MARKET.flag}</span>
             {CROSS_MARKET.zh} <span className={styles.en}>{CROSS_MARKET.en}</span>
           </strong>
-          <span className={styles.fundCount}>{CROSS_MARKET.funds.length} 只</span>
+          <span className={styles.fundCount}>
+            {(liveGroups ? liveGroups.crossGroup.funds.length : CROSS_MARKET.funds.length)} 只
+          </span>
         </div>
         {!crossFunds.length ? (
           <div className={styles.empty}>没有符合条件的基金</div>

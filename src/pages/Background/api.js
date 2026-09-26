@@ -99,6 +99,41 @@ export async function deleteAdminArticle(id) {
   await request(`/admin/articles/${encodeURIComponent(id)}`, { method: 'DELETE' })
 }
 
+// ---------- 基金管理 ----------
+export async function listAdminFunds() {
+  const payload = await request('/admin/funds')
+  return payload.funds || []
+}
+
+export async function previewFund(code) {
+  return request('/admin/funds/preview', { query: { code } })
+}
+
+export async function createAdminFund(input) {
+  const payload = await request('/admin/funds', { method: 'POST', body: input })
+  return payload.fund
+}
+
+export async function updateAdminFund(code, input) {
+  const payload = await request(`/admin/funds/${encodeURIComponent(code)}`, {
+    method: 'PUT',
+    body: input,
+  })
+  return payload.fund
+}
+
+export async function unlockAdminFund(code, fields) {
+  const payload = await request(`/admin/funds/${encodeURIComponent(code)}/unlock`, {
+    method: 'POST',
+    body: { fields },
+  })
+  return payload.fund
+}
+
+export async function deleteAdminFund(code) {
+  await request(`/admin/funds/${encodeURIComponent(code)}`, { method: 'DELETE' })
+}
+
 // ---------- 图片上传：二进制 body，文件名放 X-File-Name（spec §7.3） ----------
 export async function uploadImage(articleId, file) {
   const controller = new AbortController()
