@@ -74,7 +74,7 @@ function readRawBody(req, maxBytes) {
 export function createApp(options = {}) {
   const ossPut = options.ossPut || putImageBuffer
   // 惰性打开：首次访问基金路由才连接数据库，测试驱动 createApp 不会触碰真实库
-  const fundStore = createFundStore({ dbPath: config.funds.dbPath })
+  const fundStore = options.fundStore || createFundStore({ dbPath: config.funds.dbPath })
 
   const app = express()
   app.disable('x-powered-by')
@@ -86,6 +86,15 @@ export function createApp(options = {}) {
 
   api.get('/health', (req, res) => {
     res.json({ ok: true, ts: new Date().toISOString() })
+  })
+
+  // 公开名册仅输出前台字段；后台保存后刷新前台即可读取，无须等待扫描。
+  api.get('/funds', (req, res) => {
+    try { res.json(fundStore.public()) }
+    catch (err) {
+      console.error('[funds] 读取失败：', err.code || err.name)
+      res.status(503).json({ ok: false, message: '基金数据暂时不可用' })
+    }
   })
 
   // ---------- 公开文章端点 ----------

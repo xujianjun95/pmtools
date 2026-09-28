@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 
 from direct_limit_store import (valid_amount, valid_date, save_observations,
                                read_observations, apply_observations, publication_lock, write_json)
+from fund_registry import read_registry
 
 BASE = Path(__file__).resolve().parent
 SRC = BASE / "ai_direct_limits.json"
@@ -48,19 +49,30 @@ def main() -> int:
             conn = sqlite3.connect(args.db)
             try:
                 count = save_observations(conn, payload)
+                # 发布期间阻止后台写入，JSON 同样使用名册中的人工锁定值。
+                conn.execute('BEGIN IMMEDIATE')
                 observations = read_observations(conn)
+                has_registry = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='fund_registry'").fetchone()
+                registry = {row['code']: row for row in read_registry(conn, active_only=False)} if has_registry else {}
                 for target in dict.fromkeys([args.out, args.world_page_out, args.world_out]):
                     if not target.exists():
                         print(f'数据已入库，等待扫描生成 {target}')
                         continue
                     page = json.loads(target.read_text(encoding='utf-8'))
                     apply_observations(page['funds'], observations)
+                    page['funds'] = [fund for fund in page['funds']
+                                     if fund['code'] not in registry or registry[fund['code']]['active']]
+                    for fund in page['funds']:
+                        row = registry.get(fund['code'])
+                        if row:
+                            fund.update({key: row[key] for key in ('direct_limit_amount', 'direct_as_of', 'direct_source', 'direct_source_url')})
                     dates = [fund['direct_as_of'] for fund in page['funds'] if fund.get('direct_as_of')]
                     page['direct_limits'] = {
                         'as_of': max(dates) if dates else None,
                         'source': ', '.join(sorted({fund['direct_source'] for fund in page['funds'] if fund.get('direct_source')})) or None,
                     }
                     write_json(target, page)
+                conn.commit()
             finally:
                 conn.close()
         print(f'已保存 {count} 条有效直销记录，并刷新已有页面数据（{data["as_of"]}）')

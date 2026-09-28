@@ -131,6 +131,9 @@ def init_fund_registry(conn: sqlite3.Connection) -> None:
             if statement.strip():
                 conn.execute(statement)
         if conn.execute("SELECT 1 FROM fund_registry_meta WHERE key = 'seed_v1'").fetchone():
+            repair_legacy_units(conn)
+            release_non_amount_locks(conn)
+            restore_index_keys(conn)
             return
         now = datetime.now().isoformat(timespec='seconds')
         seed = _read_json(SEED_PATH, {"funds": []})
@@ -195,9 +198,7 @@ def init_fund_registry(conn: sqlite3.Connection) -> None:
 
                     def merge_value(field):
                         value = old.get(field)
-                        # 旧静态表额度以万元存储，合并前换算为元
-                        if field in ('limit_amount', 'direct_limit_amount'):
-                            return _limit_to_yuan(value)
+                        # 旧扫描表已经使用元，静态 seed 才需要转换。
                         return value
 
                     values = [merge_value(field) for field in merge_fields]
@@ -236,6 +237,50 @@ def init_fund_registry(conn: sqlite3.Connection) -> None:
 
         conn.execute("INSERT INTO fund_registry_meta(key, value) VALUES ('seed_v1', ?)",
                      (datetime.now().isoformat(timespec='seconds'),))
+
+        conn.execute("INSERT OR IGNORE INTO fund_registry_meta(key,value) VALUES('funds_units_v2',?)", (now,))
+        release_non_amount_locks(conn)
+        restore_index_keys(conn)
+
+
+def repair_legacy_units(conn):
+    if conn.execute("SELECT 1 FROM fund_registry_meta WHERE key='funds_units_v2'").fetchone():
+        return
+    if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='funds'").fetchone():
+        columns = {row[1] for row in conn.execute('PRAGMA table_info(funds)')}
+        for field in ('limit_amount', 'direct_limit_amount'):
+            if field not in columns:
+                continue
+            for code, amount in conn.execute('SELECT code,' + field + ' FROM funds').fetchall():
+                row = conn.execute('SELECT ' + field + ',locked_fields,auto_values FROM fund_registry WHERE code=?', (code,)).fetchone()
+                if not row or field in json.loads(row[1] or '[]') or amount is None or not (0 < amount < 1e11) or row[0] != amount * 10000:
+                    continue
+                auto = json.loads(row[2] or '{}')
+                auto[field] = amount
+                conn.execute('UPDATE fund_registry SET ' + field + '=?,auto_values=? WHERE code=?', (amount, json.dumps(auto), code))
+    conn.execute("INSERT INTO fund_registry_meta(key,value) VALUES('funds_units_v2',?)", (datetime.now().isoformat(timespec='seconds'),))
+
+
+def release_non_amount_locks(conn):
+    if conn.execute("SELECT 1 FROM fund_registry_meta WHERE key='amount_overrides_v1'").fetchone():
+        return
+    for code, raw_locks, raw_auto in conn.execute('SELECT code,locked_fields,auto_values FROM fund_registry').fetchall():
+        locks, auto = json.loads(raw_locks or '[]'), json.loads(raw_auto or '{}')
+        for field in locks:
+            if field in LOCKABLE_FIELDS and field not in ('limit_amount', 'direct_limit_amount', 'status') and field in auto and (field != 'name' or auto[field]):
+                conn.execute('UPDATE fund_registry SET ' + field + '=? WHERE code=?', (auto[field], code))
+        conn.execute('UPDATE fund_registry SET locked_fields=? WHERE code=?', (json.dumps([field for field in locks if field in ('limit_amount', 'direct_limit_amount', 'status')]), code))
+    conn.execute("INSERT INTO fund_registry_meta(key,value) VALUES('amount_overrides_v1',?)", (datetime.now().isoformat(timespec='seconds'),))
+
+
+def restore_index_keys(conn):
+    if conn.execute("SELECT 1 FROM fund_registry_meta WHERE key='index_keys_v1'").fetchone():
+        return
+    if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='funds'").fetchone():
+        if 'index_key' in {row[1] for row in conn.execute('PRAGMA table_info(funds)')}:
+            conn.execute("UPDATE fund_registry SET index_key=(SELECT index_key FROM funds WHERE funds.code=fund_registry.code) WHERE index_key='' AND EXISTS (SELECT 1 FROM funds WHERE funds.code=fund_registry.code AND index_key IS NOT NULL)")
+    conn.execute("INSERT INTO fund_registry_meta(key,value) VALUES('index_keys_v1',?)", (datetime.now().isoformat(timespec='seconds'),))
+
 
 def decode_registry_row(row):
     result = dict(row)
@@ -277,11 +322,24 @@ def sync_registry_scan(conn: sqlite3.Connection, records: list, raw_records: lis
                 'index_key': record.get('index_key') or '', 'locked_fields': [], 'auto_values': {},
                 'active': True,
             }
-            _insert_seed(conn, {**current, **record}, now)
+            _insert_seed(conn, {**current, **record}, now, limits_are_yuan=True)
             current = {**current, 'auto_values': {}, 'locked_fields': []}
         locked = set(current.get('locked_fields') or [])
         auto_values = dict(current.get('auto_values') or {})
         updates = {}
+        # 已存在的名册也需要接收扫描识别的指数；尊重管理员维护的市场。
+        if current.get('market') == 'us':
+            index_key = raw.get('index_key')
+            if index_key not in ('nasdaq100', 'sp500'):
+                text = str(raw.get('name') or current.get('name') or '') + ' ' + str(raw.get('track_target') or current.get('track_target') or '')
+                if any(word in text for word in ('纳斯达克100', '纳指', '纳斯达克科技')):
+                    index_key = 'nasdaq100'
+                elif any(word in text for word in ('标普500', '标准普尔500')):
+                    index_key = 'sp500'
+                else:
+                    index_key = current.get('index_key') or 'manual'
+            updates['index_key'] = index_key
+            record['index_key'] = index_key
         for field in SCAN_FIELDS:
             value = raw.get(field)
             if value is not None:

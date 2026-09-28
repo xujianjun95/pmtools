@@ -91,7 +91,7 @@ function Background() {
     <div className="bg-root">
       <aside className="bg-sidebar">
         <p className="bg-brand">
-          后台<span className="bg-brandSub"> / BACKGROUND</span>
+          PMTOOLS<span className="bg-brandSub">管理工作台</span>
         </p>
         <nav className="bg-nav">
           {NAV.map((item) => (
@@ -99,6 +99,7 @@ function Background() {
               key={item.key}
               type="button"
               className={`bg-navBtn${view === item.key || (item.key === 'articles' && view === 'editor') ? ' is-active' : ''}`}
+              aria-current={view === item.key || (item.key === 'articles' && view === 'editor') ? 'page' : undefined}
               onClick={() => {
                 setEditingId(null)
                 setView(item.key)

@@ -156,7 +156,7 @@ export function HistoryTimeline({ fund }) {
       </div>
       {items.map((h, i) => (
         <div key={h.date} className={`${styles.tlItem} ${i === 0 ? styles.latest : ''}`}>
-          <span className={styles.tlDate}>{h.date}</span>
+          <span className={styles.tlDate}>{h.date || '日期未知'}</span>
           <span className={styles.tlStatus}>{statusLabel(h.status)}</span>
           <span className={styles.tlLimit}>
             <span className={styles.tlMobileLabel}>代销额度</span>
@@ -167,7 +167,9 @@ export function HistoryTimeline({ fund }) {
             {limitTextIfOpen(h, 'direct_limit_amount')}
           </span>
           {i === 0 ? (
-            items.length === 1 ? <span className={styles.tlTag}>首日监控</span> : <span className={styles.tlTag}>当前</span>
+            h.source === 'registry'
+              ? <span className={styles.tlTag}>资料记录</span>
+              : items.length === 1 ? <span className={styles.tlTag}>首日监控</span> : <span className={styles.tlTag}>当前</span>
           ) : null}
         </div>
       ))}

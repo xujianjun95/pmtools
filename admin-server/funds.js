@@ -15,6 +15,8 @@ const SIGNED_NUMERIC = new Set(['return_1m', 'return_6m', 'return_1y', 'return_3
 const NUMERIC_FIELDS = new Set(['limit_amount', 'min_buy', 'direct_limit_amount', 'tracking_error', 'fee', 'return_1m', 'return_6m', 'return_1y', 'return_3y', 'return_since', 'fund_size', 'management_fee_rate', 'custody_fee_rate', 'sales_service_fee_rate', 'operation_fee_rate'])
 const SCAN_FIELDS = ['name', 'status', 'redeem', 'limit_amount', 'min_buy', 'direct_limit_amount', 'direct_as_of', 'direct_source', 'direct_source_url', 'track_target', 'tracking_error', 'fee', 'return_1m', 'return_6m', 'return_1y', 'return_3y', 'return_since', 'inception_date', 'fund_size', 'fund_size_date', 'management_fee_rate', 'custody_fee_rate', 'sales_service_fee_rate', 'operation_fee_rate']
 const LOCKABLE_FIELDS = new Set(SCAN_FIELDS)
+const EDITABLE_FIELDS = new Set(['limit_amount', 'direct_limit_amount', 'status'])
+const BASIC_FIELDS = new Set(['name', 'market', 'region', 'kind', 'tags'])
 const ALL_FIELDS = new Set(['market', 'region', 'kind', 'tags', 'source_group', 'index_key', ...SCAN_FIELDS])
 const RULES = { nasdaq100: '纳斯达克100', sp500: '标普500', manual: '手动管理' }
 const TIMESTAMP = () => new Date().toISOString()
@@ -64,14 +66,14 @@ function inferKind(name) {
   return '主动'
 }
 
-function seedInsert(db, item, now) {
+function seedInsert(db, item, now, limitsAreYuan = false) {
   const code = String(item.code || '')
   const name = String(item.name || '').trim()
   if (!CODE_RE.test(code) || !name) return
   const scan = Object.fromEntries(SCAN_FIELDS.map((field) => [field, item[field] ?? null]))
   if (scan.return_1y === null && item.y1 !== undefined) scan.return_1y = asNumber(item.y1)
-  scan.limit_amount = limitInYuan(item.limit_amount)
-  scan.direct_limit_amount = limitInYuan(item.direct_limit_amount)
+  scan.limit_amount = limitsAreYuan ? asNumber(item.limit_amount) : limitInYuan(item.limit_amount)
+  scan.direct_limit_amount = limitsAreYuan ? asNumber(item.direct_limit_amount) : limitInYuan(item.direct_limit_amount)
   const tags = Array.isArray(item.tags) ? item.tags : []
   const columns = ['code', 'name', 'market', 'region', 'kind', 'tags', 'source_group', 'index_key', ...SCAN_FIELDS.slice(1), 'locked_fields', 'auto_values', 'active', 'created_at', 'updated_at', 'deleted_at']
   const values = [code, name, MARKET_VALUES.has(item.market) ? item.market : 'other', String(item.region || ''), String(item.kind || inferKind(name)), JSON.stringify(tags), String(item.source_group || 'manual'), String(item.index_key || ''), ...SCAN_FIELDS.slice(1).map((field) => scan[field]), '[]', JSON.stringify(scan), 1, now, now, null]
@@ -84,7 +86,12 @@ function tableExists(db, name) {
 
 function initializeFundDb(db) {
   db.exec(SCHEMA)
-  if (db.prepare("SELECT 1 FROM fund_registry_meta WHERE key='seed_v1'").get()) return
+  if (db.prepare("SELECT 1 FROM fund_registry_meta WHERE key='seed_v1'").get()) {
+    repairLegacyUnits(db)
+    releaseNonAmountLocks(db)
+    restoreIndexKeys(db)
+    return
+  }
   const now = TIMESTAMP()
   const seed = readJson(SEED_PATH, { funds: [] })
   for (const fund of seed.funds || []) seedInsert(db, fund, now)
@@ -108,18 +115,17 @@ function initializeFundDb(db) {
       if (!db.prepare('SELECT 1 FROM fund_registry WHERE code=?').get(old.code)) {
         const indexKey = old.index_key || ''
         const market = ['nasdaq100', 'sp500', 'manual'].includes(indexKey) ? 'us' : 'other'
-        seedInsert(db, { ...old, market, region: market === 'us' ? '美国' : '多市场 / 全球', kind: inferKind(old.name), source_group: market === 'us' ? 'us' : (indexKey === 'world' ? 'active_pool' : 'worldpage'), index_key: indexKey }, now)
+        seedInsert(db, { ...old, market, region: market === 'us' ? '美国' : '多市场 / 全球', kind: inferKind(old.name), source_group: market === 'us' ? 'us' : (indexKey === 'world' ? 'active_pool' : 'worldpage'), index_key: indexKey }, now, true)
       } else {
         const valueColumns = columns.filter((field) => field !== 'name')
         const assignments = valueColumns.map((field) => `${field}=COALESCE(?,${field})`)
         if (assignments.length) {
-          // 旧静态表额度以万元存储，合并前同样要换算为元（>=1e11 的无限额度标记保持原值）
-          const values = valueColumns.map((field) =>
-            field === 'limit_amount' || field === 'direct_limit_amount'
-              ? limitInYuan(old[field])
-              : old[field]
-          )
+          // 扫描器旧 funds 表已经以元保存，不能再乘 10000。
+          const values = valueColumns.map((field) => old[field])
           db.prepare(`UPDATE fund_registry SET ${assignments.join(',')}, updated_at=? WHERE code=?`).run(...values, now, old.code)
+          const auto = safeJson(db.prepare('SELECT auto_values FROM fund_registry WHERE code=?').get(old.code).auto_values, {})
+          valueColumns.forEach((field) => { if (old[field] != null) auto[field] = old[field] })
+          db.prepare('UPDATE fund_registry SET auto_values=? WHERE code=?').run(JSON.stringify(auto), old.code)
         }
       }
     }
@@ -143,6 +149,51 @@ function initializeFundDb(db) {
     db.prepare('UPDATE fund_registry SET locked_fields=? WHERE code=?').run(JSON.stringify([...locked].sort()), code)
   }
   db.prepare("INSERT INTO fund_registry_meta(key,value) VALUES('seed_v1',?)").run(now)
+  db.prepare("INSERT OR IGNORE INTO fund_registry_meta(key,value) VALUES('funds_units_v2',?)").run(now)
+  releaseNonAmountLocks(db)
+  restoreIndexKeys(db)
+}
+
+// 已初始化库只修复可由旧表证明的 10000 倍误迁移，保留人工额度与删除标记。
+function repairLegacyUnits(db) {
+  if (db.prepare("SELECT 1 FROM fund_registry_meta WHERE key='funds_units_v2'").get()) return
+  if (tableExists(db, 'funds')) {
+    const columns = new Set(db.prepare('PRAGMA table_info(funds)').all().map((r) => r.name))
+    for (const field of ['limit_amount', 'direct_limit_amount']) {
+      if (!columns.has(field)) continue
+      for (const old of db.prepare(`SELECT code,${field} AS amount FROM funds`).all()) {
+        const row = db.prepare('SELECT * FROM fund_registry WHERE code=?').get(old.code)
+        if (!row || safeJson(row.locked_fields, []).includes(field) || !(old.amount > 0 && old.amount < 1e11) || row[field] !== old.amount * 10000) continue
+        const auto = safeJson(row.auto_values, {})
+        auto[field] = old.amount
+        db.prepare(`UPDATE fund_registry SET ${field}=?,auto_values=? WHERE code=?`).run(old.amount, JSON.stringify(auto), old.code)
+      }
+    }
+  }
+  db.prepare("INSERT INTO fund_registry_meta(key,value) VALUES('funds_units_v2',?)").run(TIMESTAMP())
+}
+
+function releaseNonAmountLocks(db) {
+  if (db.prepare("SELECT 1 FROM fund_registry_meta WHERE key='amount_overrides_v1'").get()) return
+  for (const row of db.prepare('SELECT code,locked_fields,auto_values FROM fund_registry').all()) {
+    const locks = safeJson(row.locked_fields, [])
+    const auto = safeJson(row.auto_values, {})
+    const removed = locks.filter((field) => LOCKABLE_FIELDS.has(field) && !EDITABLE_FIELDS.has(field))
+    for (const field of removed) {
+      if (Object.hasOwn(auto, field) && (field !== 'name' || auto[field])) db.prepare(`UPDATE fund_registry SET ${field}=? WHERE code=?`).run(auto[field], row.code)
+    }
+    db.prepare('UPDATE fund_registry SET locked_fields=? WHERE code=?').run(JSON.stringify(locks.filter((field) => EDITABLE_FIELDS.has(field))), row.code)
+  }
+  db.prepare("INSERT INTO fund_registry_meta(key,value) VALUES('amount_overrides_v1',?)").run(TIMESTAMP())
+}
+
+// 静态种子没有指数键时，沿用扫描表的分类，保留纳指 / 标普筛选。
+function restoreIndexKeys(db) {
+  if (db.prepare("SELECT 1 FROM fund_registry_meta WHERE key='index_keys_v1'").get()) return
+  if (tableExists(db, 'funds') && db.prepare('PRAGMA table_info(funds)').all().some((row) => row.name === 'index_key')) {
+    db.exec("UPDATE fund_registry SET index_key=(SELECT index_key FROM funds WHERE funds.code=fund_registry.code) WHERE index_key='' AND EXISTS (SELECT 1 FROM funds WHERE funds.code=fund_registry.code AND index_key IS NOT NULL)")
+  }
+  db.prepare("INSERT INTO fund_registry_meta(key,value) VALUES('index_keys_v1',?)").run(TIMESTAMP())
 }
 
 function decode(row) {
@@ -192,7 +243,7 @@ function validateFields(input, { partial = false } = {}) {
     const text = value.trim()
     const max = field === 'direct_source_url' ? 1000 : field === 'name' ? 120 : 100
     if (text.length > max) { errors.push(`${field} 长度不能超过 ${max}`); continue }
-    if (!partial && ['name', 'region', 'kind'].includes(field) && !text) { errors.push(`${field} 不能为空`); continue }
+    if (['name', 'region', 'kind'].includes(field) && !text) { errors.push(`${field} 不能为空`); continue }
     if (['direct_as_of', 'inception_date', 'fund_size_date'].includes(field) && text && !validDate(text)) { errors.push(`${field} 日期格式应为 YYYY-MM-DD`); continue }
     output[field] = text
   }
@@ -212,7 +263,7 @@ function validateFields(input, { partial = false } = {}) {
   }
   if (!partial || Object.hasOwn(input, 'locked_fields')) {
     const locked = input.locked_fields === undefined ? [] : input.locked_fields
-    if (!Array.isArray(locked) || locked.some((field) => typeof field !== 'string' || !LOCKABLE_FIELDS.has(field))) errors.push('locked_fields 包含不支持的字段')
+    if (!Array.isArray(locked) || locked.some((field) => typeof field !== 'string' || !EDITABLE_FIELDS.has(field))) errors.push('locked_fields 包含不支持的字段')
     else output.locked_fields = [...new Set(locked)].sort()
   }
   if (Object.hasOwn(input, 'source_group')) {
@@ -234,27 +285,35 @@ function rowList(db, includeDeleted = false) {
   return db.prepare(`SELECT * FROM fund_registry ${where} ORDER BY market, region, name, code`).all().map(decode)
 }
 
-function appendHistory(db, fund) {
+function appendHistory(db, fund, recordedAt) {
   const result = { ...fund }
-  if (!tableExists(db, 'snapshots')) { result.history = []; return result }
-  result.history = db.prepare('SELECT date,status,redeem,limit_amount,direct_limit_amount FROM snapshots WHERE code=? ORDER BY date').all(fund.code)
-  if (!result.history.length && fund.status) result.history = [{ date: '', status: fund.status, redeem: fund.redeem, limit_amount: fund.limit_amount, direct_limit_amount: fund.direct_limit_amount }]
+  result.history = tableExists(db, 'snapshots')
+    ? db.prepare('SELECT date,status,redeem,limit_amount,direct_limit_amount FROM snapshots WHERE code=? ORDER BY date').all(fund.code)
+    : []
+  if (!result.history.length && fund.status) {
+    const recordDate = typeof recordedAt === 'string' ? recordedAt.slice(0, 10) : ''
+    result.history = [{ date: validDate(recordDate) ? recordDate : '', source: 'registry', status: fund.status, redeem: fund.redeem, limit_amount: fund.limit_amount, direct_limit_amount: fund.direct_limit_amount }]
+  }
   return result
 }
 
 function publicPayload(db) {
-  const funds = rowList(db).map((fund) => appendHistory(db, fund))
+  const funds = rowList(db).map((fund) => appendHistory(db, Object.fromEntries(
+    ['code', 'market', 'region', 'kind', 'tags', 'source_group', 'index_key', ...SCAN_FIELDS].map((key) => [key, fund[key]])
+  ), fund.updated_at || fund.created_at))
   const tombstones = db.prepare('SELECT code FROM fund_registry WHERE active=0 ORDER BY code').all().map((row) => row.code)
   const recentChanges = tableExists(db, 'changes')
     ? db.prepare("SELECT code,date,field,old_val,new_val FROM changes WHERE date >= date('now','-7 days') ORDER BY date DESC,id DESC LIMIT 300").all()
     : []
   const byCode = new Map(funds.map((fund) => [fund.code, fund]))
-  for (const item of recentChanges) {
+  const visibleChanges = recentChanges.filter((item) => byCode.has(item.code))
+  for (const item of visibleChanges) {
     const fund = byCode.get(item.code)
     item.name = fund?.name || ''
     item.region = fund?.region || (fund?.market === 'us' ? '美国' : undefined)
   }
-  return { ok: true, registry_version: 1, generated_at: TIMESTAMP(), funds, recent_changes: recentChanges, rules: RULES, tombstones }
+  const updatedAt = tableExists(db, 'snapshots') ? db.prepare('SELECT MAX(date) AS date FROM snapshots').get().date : null
+  return { ok: true, registry_version: 1, updated_at: updatedAt, generated_at: TIMESTAMP(), funds, recent_changes: visibleChanges, rules: RULES, tombstones }
 }
 
 function parseAmount(value) {
@@ -338,7 +397,15 @@ export async function previewFundFromEastmoney(code) {
   const feeUrl = `https://fundf10.eastmoney.com/jjfl_${code}.html`
   const [purchaseText, detailHtml, feeHtml] = await Promise.all([getText(purchaseUrl), getText(detailUrl), getText(feeUrl)])
   const fund = { ...parsePurchasePayload(purchaseText, code), ...parseDetails(detailHtml), ...parseFees(feeHtml) }
-  return { fund, source: '东方财富天天基金申购表、基金主页及费率页' }
+  return { fund, source: '东方财富、天天基金申购表、基金主页及费率页' }
+}
+
+function inferIndexKey(fund) {
+  if (fund.market !== 'us') return 'worldpage'
+  const text = `${fund.name || ''} ${fund.track_target || ''}`
+  if (/纳斯达克100|纳指|纳斯达克科技/.test(text)) return 'nasdaq100'
+  if (/标普500|标准普尔500/.test(text)) return 'sp500'
+  return 'manual'
 }
 
 export function createFundStore({ dbPath, fundPreview = previewFundFromEastmoney }) {
@@ -348,7 +415,8 @@ export function createFundStore({ dbPath, fundPreview = previewFundFromEastmoney
       db = new Database(dbPath, { timeout: 5000 })
       db.pragma('busy_timeout = 5000')
       db.pragma('journal_mode = WAL')
-      db.transaction(() => initializeFundDb(db)).immediate()
+      try { db.transaction(() => initializeFundDb(db)).immediate() }
+      catch (error) { db.close(); db = null; throw error }
     }
     return db
   }
@@ -361,6 +429,7 @@ export function createFundStore({ dbPath, fundPreview = previewFundFromEastmoney
       const validation = validateFields(input)
       if (!validation.ok) return { ok: false, code: 400, errors: validation.errors }
       const fields = validation.fields
+      if (!fields.index_key) fields.index_key = inferIndexKey(fields)
       const code = String(input.code || '')
       if (!CODE_RE.test(code)) return { ok: false, code: 400, errors: ['基金代码须为6位数字'] }
       const database = getDb()
@@ -379,54 +448,73 @@ export function createFundStore({ dbPath, fundPreview = previewFundFromEastmoney
     update(code, input) {
       if (!CODE_RE.test(code)) return { ok: false, code: 400, errors: ['基金代码须为6位数字'] }
       if (Object.hasOwn(input || {}, 'code') && input.code !== code) return { ok: false, code: 400, errors: ['基金代码创建后不可修改'] }
+      if (Object.keys(input || {}).some((field) => !['code', 'locked_fields', ...EDITABLE_FIELDS, ...BASIC_FIELDS].includes(field))) return { ok: false, code: 400, errors: ['仅支持修改基本信息、申购额度、状态和更新模式'] }
       const validation = validateFields(input, { partial: true })
       if (!validation.ok) return { ok: false, code: 400, errors: validation.errors }
       const fields = validation.fields
       delete fields.code
       delete fields.source_group
       const database = getDb()
-      const before = activeFund(code)
-      if (!before) return { ok: false, code: 404, errors: ['基金不存在'] }
-      const currentLocks = safeJson(before.locked_fields, [])
-      const newLocks = fields.locked_fields || currentLocks
-      delete fields.locked_fields
-      for (const field of Object.keys(fields)) {
-        if (LOCKABLE_FIELDS.has(field) && !newLocks.includes(field)) {
-          // 所有手工改动默认锁住；显式 lock 列表可解锁指定字段。
-          newLocks.push(field)
+      return database.transaction(() => {
+        const before = activeFund(code)
+        if (!before) return { ok: false, code: 404, errors: ['基金不存在'] }
+        const previousLocks = safeJson(before.locked_fields, [])
+        const requestedLocks = fields.locked_fields
+        delete fields.locked_fields
+        const locks = requestedLocks === undefined
+          ? new Set(previousLocks)
+          : new Set([...previousLocks.filter((field) => !EDITABLE_FIELDS.has(field)), ...requestedLocks])
+        if (requestedLocks === undefined) {
+          // 兼容既有调用：提交字段值即表示人工锁定。
+          for (const field of Object.keys(fields)) {
+            if (EDITABLE_FIELDS.has(field)) locks.add(field)
+          }
+        } else {
+          if (Object.keys(fields).some((field) => EDITABLE_FIELDS.has(field) && !locks.has(field))) return { ok: false, code: 400, errors: ['自动更新字段不能同时提交人工值'] }
+          const auto = safeJson(before.auto_values, {})
+          for (const field of EDITABLE_FIELDS) {
+            if (locks.has(field) && !Object.hasOwn(fields, field)) fields[field] = before[field]
+            if (previousLocks.includes(field) && !locks.has(field)) fields[field] = auto[field] ?? null
+          }
         }
-      }
-      const lockValue = JSON.stringify([...new Set(newLocks)].sort())
-      const serialized = { ...fields, locked_fields: lockValue, updated_at: TIMESTAMP() }
-      if (Object.hasOwn(fields, 'tags')) serialized.tags = JSON.stringify(fields.tags)
-      const columns = Object.keys(serialized)
-      database.transaction(() => {
+        // 名称可临时修正，但仍跟随扫描；分类调整要同步前台与扫描出口。
+        if (Object.hasOwn(fields, 'name')) locks.delete('name')
+        if (Object.hasOwn(fields, 'market') && fields.market !== before.market) {
+          fields.source_group = fields.market === 'us' ? 'us' : 'manual'
+          fields.index_key = inferIndexKey({ ...before, ...fields })
+        } else if (before.market === 'us' && ['', 'manual'].includes(before.index_key)) {
+          fields.index_key = inferIndexKey({ ...before, ...fields })
+        }
+        const manualStatus = Object.hasOwn(fields, 'status') ? fields.status : before.status
+        if (locks.has('status') && (typeof manualStatus !== 'string' || !manualStatus.trim())) return { ok: false, code: 400, errors: ['手动更新时请选择申购状态'] }
+        const serialized = { ...fields, locked_fields: JSON.stringify([...locks].sort()), updated_at: TIMESTAMP() }
+        if (Object.hasOwn(fields, 'tags')) serialized.tags = JSON.stringify(fields.tags)
+        const columns = Object.keys(serialized)
         database.prepare(`UPDATE fund_registry SET ${columns.map((key) => `${key}=?`).join(',')} WHERE code=? AND active=1`).run(...columns.map((key) => serialized[key]), code)
-        logEvent(database, code, 'update', columns.filter((key) => key !== 'updated_at'))
+        logEvent(database, code, 'update', Object.keys(fields))
+        return { ok: true, fund: decode(database.prepare('SELECT * FROM fund_registry WHERE code=?').get(code)) }
       }).immediate()
-      return { ok: true, fund: decode(database.prepare('SELECT * FROM fund_registry WHERE code=?').get(code)) }
     },
     unlock(code, fields) {
       if (!CODE_RE.test(code)) return { ok: false, code: 400, errors: ['基金代码须为6位数字'] }
-      if (!Array.isArray(fields) || !fields.length || fields.some((field) => !LOCKABLE_FIELDS.has(field))) return { ok: false, code: 400, errors: ['fields 必须包含可恢复自动更新的字段'] }
+      if (!Array.isArray(fields) || !fields.length || fields.some((field) => !EDITABLE_FIELDS.has(field))) return { ok: false, code: 400, errors: ['fields 必须包含可恢复自动更新的字段'] }
       const database = getDb()
-      const before = activeFund(code)
-      if (!before) return { ok: false, code: 404, errors: ['基金不存在'] }
-      const locks = new Set(safeJson(before.locked_fields, []))
-      const auto = safeJson(before.auto_values, {})
-      const updates = { updated_at: TIMESTAMP() }
-      for (const field of fields) {
-        locks.delete(field)
-        if (Object.hasOwn(auto, field)) updates[field] = auto[field]
-        else updates[field] = null
-      }
-      updates.locked_fields = JSON.stringify([...locks].sort())
-      const columns = Object.keys(updates)
-      database.transaction(() => {
+      return database.transaction(() => {
+        const before = activeFund(code)
+        if (!before) return { ok: false, code: 404, errors: ['基金不存在'] }
+        const locks = new Set(safeJson(before.locked_fields, []))
+        const auto = safeJson(before.auto_values, {})
+        const updates = { updated_at: TIMESTAMP() }
+        for (const field of fields) {
+          locks.delete(field)
+          updates[field] = auto[field] ?? null
+        }
+        updates.locked_fields = JSON.stringify([...locks].sort())
+        const columns = Object.keys(updates)
         database.prepare(`UPDATE fund_registry SET ${columns.map((key) => `${key}=?`).join(',')} WHERE code=? AND active=1`).run(...columns.map((key) => updates[key]), code)
         logEvent(database, code, 'unlock', fields)
+        return { ok: true, fund: decode(database.prepare('SELECT * FROM fund_registry WHERE code=?').get(code)) }
       }).immediate()
-      return { ok: true, fund: decode(database.prepare('SELECT * FROM fund_registry WHERE code=?').get(code)) }
     },
     delete(code) {
       if (!CODE_RE.test(code)) return { ok: false, code: 400, errors: ['基金代码须为6位数字'] }

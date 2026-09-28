@@ -40,11 +40,11 @@ async function request(path, { method = 'GET', body, query } = {}) {
       throw new UnauthorizedError()
     }
     const payload = await response.json().catch(() => null)
+    const detail = Array.isArray(payload?.errors) ? payload.errors.join('；') : payload?.message
     if (!response.ok || !payload) {
-      throw new Error(payload?.message || `请求失败：${response.status}`)
+      throw new Error(detail || `请求失败：${response.status}`)
     }
     if (payload.ok !== true) {
-      const detail = Array.isArray(payload.errors) ? payload.errors.join('；') : payload.message
       throw new Error(detail || '请求失败')
     }
     return payload

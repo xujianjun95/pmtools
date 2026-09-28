@@ -1,3 +1,4 @@
+import { loadFundData } from './fundData'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import HeroSection from './components/HeroSection'
@@ -34,7 +35,7 @@ function QdiiMonitorPage() {
   const [searchParams] = useSearchParams()
   const requestedIndex = searchParams.get('index')
   const [data, setData] = useState(null)
-  const [worldLiveFunds, setWorldLiveFunds] = useState([])
+  const [worldData, setWorldData] = useState(null)
   const [error, setError] = useState(null)
   const [indexKey, setIndexKey] = useState(
     VALID_INDEX_KEYS.has(requestedIndex) ? requestedIndex : 'all',
@@ -44,11 +45,7 @@ function QdiiMonitorPage() {
   const [filterVersion, setFilterVersion] = useState(0)
 
   useEffect(() => {
-    fetch('/qdii/data.json', { cache: 'no-store' })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
-      })
+    loadFundData('us')
       .then((json) => {
         const usFundCodes = new Set(json.funds.map((fund) => fund.code))
         const recentChanges = json.recent_changes.map((change) => ({
@@ -80,13 +77,9 @@ function QdiiMonitorPage() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/qdii/worldpage-data.json', { cache: 'no-store' })
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
-        return response.json()
-      })
+    loadFundData('worldpage')
       .then((json) => {
-        if (!cancelled && Array.isArray(json.funds)) setWorldLiveFunds(json.funds)
+        if (!cancelled && Array.isArray(json.funds)) setWorldData(json)
       })
       .catch(() => {}) // 与其他市场页面一致：扫描文件不可用时使用静态快照
     return () => { cancelled = true }
@@ -101,8 +94,8 @@ function QdiiMonitorPage() {
   const stats = useMemo(() => {
     if (!data) return []
     const fundsByCode = new Map(data.funds.map((fund) => [fund.code, fund]))
-    const worldLiveByCode = new Map(worldLiveFunds.map((fund) => [fund.code, fund]))
-    for (const fund of OTHER_MARKET_FUNDS) {
+    const worldLiveByCode = new Map((worldData?.funds || []).map((fund) => [fund.code, fund]))
+    for (const fund of (worldData?.registry_version === 1 ? worldData.funds : OTHER_MARKET_FUNDS)) {
       if (fundsByCode.has(fund.code)) continue
       fundsByCode.set(fund.code, {
         ...fund,
@@ -117,7 +110,7 @@ function QdiiMonitorPage() {
       { cls: 'limited', num: count('限大额'), label: statusLabel('限大额') },
       { cls: 'suspended', num: count('暂停申购'), label: '暂停申购' },
     ]
-  }, [data, worldLiveFunds])
+  }, [data, worldData])
 
   const indexOptions = useMemo(() => {
     if (!data) return []

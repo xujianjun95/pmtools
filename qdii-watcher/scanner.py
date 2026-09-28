@@ -282,7 +282,7 @@ def _parse_cell_number(value) -> Optional[float]:
 def build_registry_record(row, registry: dict) -> dict:
     """后台新增、但未被静态关键词命中的基金：从申购行 + registry 主数据构造记录。"""
     code = registry["code"]
-    name = registry.get("name") or str(row["基金简称"]).strip()
+    name = str(row["基金简称"]).strip() or registry.get("name")
     # 美国新增基金归 manual（随 data.json 出口），其余进世界页 worldpage
     index_key = registry.get("index_key") or (
         "manual" if registry.get("market") == "us" else WORLD_PAGE_INDEX_KEY
@@ -673,7 +673,8 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
     """
     # INDEX_RULES 命中的纳指/标普基金 + 后台新增的美国基金（index_key=manual）
     us_records = [r for r in records
-                  if r["index_key"] in INDEX_RULES or r["index_key"] == "manual"]
+                  if (r.get("market") == "us" if "market" in r else
+                      r["index_key"] in INDEX_RULES or r["index_key"] == "manual")]
     funds_out = []
     for r in us_records:
         history = conn.execute(
@@ -716,7 +717,8 @@ def export_json(conn: sqlite3.Connection, records: list[dict], today: str, out_p
     payload = {
         "updated_at": today,
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "rules": {k: v[0] for k, v in INDEX_RULES.items()},
+        "rules": {**{k: v[0] for k, v in INDEX_RULES.items()}, "manual": "其他美国基金"},
+        "registry_version": 1,
         # 直销限额来源：安鑫乐跨境额度日报（基金公司公告口径，每交易日更新）
         "direct_limits": {
             "source": ', '.join(sorted({r['direct_source'] for r in us_records if r.get('direct_source')})) or None,
@@ -805,6 +807,13 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
         if r.get("index_key") == WORLD_PAGE_INDEX_KEY and r["code"] not in static_codes:
             specs.append({"code": r["code"], "name": r["name"],
                           "country": r.get("region") or "其他市场"})
+    has_registry = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='fund_registry'").fetchone()
+    if has_registry:
+        registry = read_registry(conn)
+        specs = [{"code": r["code"], "name": r["name"], "country": r["region"]}
+                 for r in registry if r["source_group"] != "active_pool" and
+                 (r["market"] != "us" or r["source_group"] == "worldpage")]
+        records_by_code = {r["code"]: {**records_by_code.get(r["code"], {}), **r} for r in registry}
     for fund in specs:
         code = fund["code"]
         record = records_by_code.get(code)
@@ -843,7 +852,11 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
             "redeem": redeem,
             "limit_amount": limit_amount,
             "direct_limit_amount": direct_limit_amount,
-            **observations.get(code, {}),
+            **(observations.get(code, {}) if not has_registry else
+               {key: record.get(key) for key in ('direct_as_of', 'direct_source', 'direct_source_url')}),
+            "market": record.get("market") if record else None,
+            "fee": record.get("fee") if record else None,
+            "min_buy": record.get("min_buy") if record else None,
             **details,
             "history": [
                 {"date": d, "status": s, "redeem": rd, "limit_amount": la,
@@ -851,13 +864,15 @@ def export_worldpage_json(conn: sqlite3.Connection, records: list[dict], today: 
                 for d, s, rd, la, dla in history
             ],
         }
-        output.update(FUND_OVERRIDES.get(code, {}))
+        if not has_registry:
+            output.update(FUND_OVERRIDES.get(code, {}))
         funds_out.append(output)
 
     payload = {
         "updated_at": today,
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "count": len(funds_out),
+        "registry_version": 1 if has_registry else None,
         "funds": funds_out,
     }
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -925,7 +940,6 @@ def main() -> int:
         conn = sqlite3.connect(args.db)
         try:
             direct_as_of = merge_direct_limits(records, conn)
-            apply_fund_overrides(records)
             raw_records = copy.deepcopy(records)
             # 名册同步在 BEGIN IMMEDIATE 内：抓取原值入 auto_values，锁定字段保留手工值
             conn.execute("BEGIN IMMEDIATE")

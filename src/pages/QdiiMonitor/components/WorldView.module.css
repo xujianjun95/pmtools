@@ -128,7 +128,8 @@
 }
 
 /* 「全部」视图下每个地区独立一张卡，卡间距与 crossCard 一致 */
-.groupCard + .groupCard {
+.groupCard + .groupCard,
+.crossCard + .groupCard {
   margin-top: 16px;
 }
 

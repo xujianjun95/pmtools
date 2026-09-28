@@ -30,6 +30,7 @@ def init_store(conn):
 def save_observations(conn, payload):
     """只保存有有效日期和明确数值的记录；同日以网站为准，AI 仅补缺。"""
     init_store(conn)
+    has_registry = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='fund_registry'").fetchone()
     written = 0
     with conn:
         for code, info in payload.get('funds', {}).items():
@@ -51,6 +52,19 @@ def save_observations(conn, payload):
                 source=excluded.source, source_url=excluded.source_url, updated_at=excluded.updated_at''',
                 (code, amount, as_of, source, info.get('direct_source_url') or payload.get('source_url'),
                  datetime.now().isoformat(timespec='seconds')))
+            if has_registry:
+                row = conn.execute('SELECT locked_fields,auto_values FROM fund_registry WHERE code=? AND active=1', (code,)).fetchone()
+                if row:
+                    locks, auto = json.loads(row[0] or '[]'), json.loads(row[1] or '{}')
+                    values = {'direct_limit_amount': amount, 'direct_as_of': as_of,
+                              'direct_source': source,
+                              'direct_source_url': info.get('direct_source_url') or payload.get('source_url')}
+                    auto.update(values)
+                    updates = {field: value for field, value in values.items() if field not in locks}
+                    updates.update(auto_values=json.dumps(auto, ensure_ascii=False, allow_nan=False),
+                                   updated_at=datetime.now().isoformat(timespec='seconds'))
+                    conn.execute('UPDATE fund_registry SET ' + ','.join(field + '=?' for field in updates) + ' WHERE code=?',
+                                 (*updates.values(), code))
             written += 1
     return written
 

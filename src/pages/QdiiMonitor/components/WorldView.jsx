@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { loadFundData } from '../fundData'
+import { compareRegions, getRegionDisplay } from '../regions'
 import filterStyles from './FilterBar.module.css'
 import tableStyles from './FundTable.module.css'
 import { FundDetails, HistoryTimeline, LimitValue } from './FundTable'
@@ -64,7 +66,8 @@ for (const f of CROSS_MARKET.funds) STATIC_FUND_BY_CODE.set(f.code, f)
 
 // 以 live 记录为驱动合并：静态底（保留 note / fee / kind 等）+ live 非空覆盖。
 // 与组件内 mergeFund 的区别是它能处理静态快照里不存在的新增基金。
-function mergeLiveFund(liveFund) {
+function mergeLiveFund(liveFund, authoritative = false) {
+  if (authoritative) return { ...liveFund, kind: liveFund.kind || '其他' }
   const base = STATIC_FUND_BY_CODE.get(liveFund.code) || {}
   const merged = { ...base }
   for (const key of LIVE_FIELDS) {
@@ -87,28 +90,31 @@ function mergeLiveFund(liveFund) {
 // 静态骨架只提供地图元数据（id / flag / marker）。live 缺失（fetch 失败 / 首次运行）返回 null。
 function buildLiveGroups(liveData) {
   const liveFunds = liveData?.funds
-  if (!Array.isArray(liveFunds) || liveFunds.length === 0) return null
+  if (!Array.isArray(liveFunds) || (liveFunds.length === 0 && liveData.registry_version !== 1)) return null
   const countryGroups = OTHER_MARKET_COUNTRIES.map((c) => ({ ...c, funds: [] }))
   const crossGroup = { ...CROSS_MARKET, funds: [] }
   const byZh = new Map(countryGroups.map((g) => [g.zh, g]))
+  const byId = new Map(countryGroups.map((g) => [g.id, g]))
   const extraGroups = []
   const isCross = (country) => !country || /全球|多市场|跨市场/.test(country)
 
   for (const liveFund of liveFunds) {
-    const fund = mergeLiveFund(liveFund)
+    const fund = mergeLiveFund(liveFund, liveData.registry_version === 1)
     const country = String(liveFund.country || '').trim()
-    if (isCross(country)) {
+    if (liveFund.market === 'cross' || isCross(country)) {
       crossGroup.funds.push(fund)
       continue
     }
-    let group = byZh.get(country)
+    const regionDisplay = getRegionDisplay(country)
+    let group = byId.get(regionDisplay.id) || byZh.get(country)
     if (!group) {
-      group = { id: null, zh: country, flag: '', en: country, marker: null, funds: [] }
+      group = { id: `region:${encodeURIComponent(country)}`, zh: regionDisplay.name, flag: regionDisplay.flag, en: '', marker: null, funds: [] }
       byZh.set(country, group)
       extraGroups.push(group)
     }
     group.funds.push(fund)
   }
+  extraGroups.sort((a, b) => compareRegions(a.zh, b.zh))
   return { countryGroups: [...countryGroups, ...extraGroups], crossGroup }
 }
 
@@ -326,8 +332,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   // scanner 每日扫描的世界页数据；文件缺失（未部署/首次运行前）整体回退静态快照
   useEffect(() => {
     let cancelled = false
-    fetch('/qdii/worldpage-data.json', { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    loadFundData('worldpage')
       .then((json) => {
         if (!cancelled) setLiveData(json)
       })
@@ -371,12 +376,12 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   if (prevInitialId !== initialSelectedId) {
     setPrevInitialId(initialSelectedId)
     setSelectedId(
-      initialSelectedId === 'all' || countryById(initialSelectedId) ? initialSelectedId : 'all'
+      initialSelectedId === 'all' || countryById(initialSelectedId) || liveGroups?.countryGroups.some((group) => group.id === initialSelectedId) ? initialSelectedId : 'all'
     )
     setExpandedKey(null)
   }
 
-  const selected = selectedId === 'all' ? null : countryById(selectedId)
+  const selected = selectedId === 'all' ? null : (liveGroups?.countryGroups.find((group) => group.id === selectedId) || countryById(selectedId))
   const totalCount = useMemo(() => {
     if (liveGroups) {
       return liveGroups.countryGroups.reduce((n, g) => n + g.funds.length, 0)
@@ -532,7 +537,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
 
       <div className={filterStyles.filters} style={{ margin: '0 0 14px' }}>
         <div className={filterStyles.filterGroup}>
-          <span className={filterStyles.glabel}>国家</span>
+          <span className={filterStyles.glabel}>地区</span>
           <button
             className={`${filterStyles.pill} ${selectedId === 'all' ? filterStyles.active : ''}`}
             onClick={() => handleSelect('all', 'All')}
@@ -540,7 +545,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
             全部
             <span className={filterStyles.count}>{totalCount}</span>
           </button>
-          {OTHER_MARKET_COUNTRIES.map((c) => (
+          {(liveGroups ? liveGroups.countryGroups : OTHER_MARKET_COUNTRIES).map((c) => (
             <button
               key={c.id}
               className={`${filterStyles.pill} ${selectedId === c.id ? filterStyles.active : ''}`}
@@ -548,7 +553,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
             >
               {c.flag} {c.zh}
               <span className={filterStyles.count}>
-                {liveGroups?.countryGroups.find((g) => g.id === c.id)?.funds.length ?? c.funds.length}
+                {liveGroups ? (liveGroups.countryGroups.find((g) => g.id === c.id)?.funds.length ?? 0) : c.funds.length}
               </span>
             </button>
           ))}
