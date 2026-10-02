@@ -412,3 +412,7 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+.explanationSlot { position: absolute; right: 0; bottom: 76px; z-index: 1; pointer-events: auto; }
+.explanationSlot:empty { display: none; }
+@media (max-width: 768px) { .explanationSlot { bottom: 60px; } }

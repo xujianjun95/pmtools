@@ -436,6 +436,7 @@ function PmtoolsCompanion() {
         </div>
       </nav>
 
+      <div id="pmtools-companion-explanation" className={styles.explanationSlot} />
       <button
         ref={buttonRef}
         type="button"

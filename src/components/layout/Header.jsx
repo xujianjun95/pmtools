@@ -14,19 +14,12 @@ function scrollToNewsSection() {
 
 import styles from './Header.module.css'
 
-function formatHeaderTime() {
-  return new Intl.DateTimeFormat('zh-CN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).format(new Date())
-}
-
 function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [qdiiMenuOpen, setQdiiMenuOpen] = useState(false)
+  const dashboardLinkRef = useRef(null)
   const mobileMenuRef = useRef(null)
   const mobileToggleRef = useRef(null)
-  const [localTime, setLocalTime] = useState(() => formatHeaderTime())
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false })
   /** 首页点「造物」或「资讯」后把指示线挪到对应链接下；点 Logo 会清掉 */
   const [activeNav, setActiveNav] = useState(null) // 'builds' | 'news' | null
@@ -38,11 +31,6 @@ function Header() {
   const qdiiLinkRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setLocalTime(formatHeaderTime()), 1000 * 30)
-    return () => window.clearInterval(timer)
-  }, [])
 
   // 接收从 HomePage 传来的滚动状态，自动高亮对应导航
   useEffect(() => {
@@ -61,7 +49,7 @@ function Header() {
         targetEl = aboutLinkRef.current
       } else if (location.pathname === '/articles') {
         targetEl = articlesLinkRef.current
-      } else if (location.pathname === '/qdii') {
+      } else if (location.pathname === '/qdii' || location.pathname.startsWith('/qdii/')) {
         targetEl = qdiiLinkRef.current
       } else if (location.pathname === '/') {
         if (activeNav === 'builds') targetEl = buildsLinkRef.current
@@ -76,7 +64,7 @@ function Header() {
       }
 
       setIndicator({
-        left: targetEl.offsetLeft,
+        left: targetEl.getBoundingClientRect().left - nav.getBoundingClientRect().left,
         width: targetEl.offsetWidth,
         visible: true,
       })
@@ -182,15 +170,56 @@ function Header() {
               >
                 资讯
               </Link>
-              <Link
-                ref={qdiiLinkRef}
-                to="/qdii"
-                className={styles.navLink}
-                aria-current={location.pathname === '/qdii' ? 'page' : undefined}
-                onClick={() => setActiveNav(null)}
+              <div
+                className={styles.navGroup}
+                onMouseEnter={() => setQdiiMenuOpen(true)}
+                onMouseLeave={() => setQdiiMenuOpen(false)}
+                onFocus={() => setQdiiMenuOpen(true)}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) setQdiiMenuOpen(false)
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    event.preventDefault()
+                    qdiiLinkRef.current?.focus()
+                    setQdiiMenuOpen(false)
+                  } else if (event.key === 'ArrowDown') {
+                    event.preventDefault()
+                    setQdiiMenuOpen(true)
+                    window.requestAnimationFrame(() => dashboardLinkRef.current?.focus())
+                  }
+                }}
               >
-                QDII 监控
-              </Link>
+                <Link
+                  ref={qdiiLinkRef}
+                  to="/qdii"
+                  className={styles.navLink}
+                  aria-current={location.pathname === '/qdii' ? 'page' : undefined}
+                  onClick={() => { setActiveNav(null); setQdiiMenuOpen(false) }}
+                >
+                  QDII 监控
+                </Link>
+                <button
+                  type="button"
+                  className={styles.submenuToggle}
+                  aria-label="展开 QDII 子菜单"
+                  aria-expanded={qdiiMenuOpen}
+                  aria-controls="qdii-site-submenu"
+                  onClick={() => setQdiiMenuOpen((open) => !open)}
+                >
+                  <span className={styles.submenuChevron} aria-hidden="true" />
+                </button>
+                <div id="qdii-site-submenu" className={styles.submenu} hidden={!qdiiMenuOpen}>
+                  <Link
+                    ref={dashboardLinkRef}
+                    to="/qdii/dashboard"
+                    aria-current={location.pathname === '/qdii/dashboard' ? 'page' : undefined}
+                    onClick={() => { setActiveNav(null); setQdiiMenuOpen(false) }}
+                  >
+                    市场看板
+                  </Link>
+                </div>
+              </div>
               <Link
                 ref={articlesLinkRef}
                 to="/articles"
@@ -227,14 +256,6 @@ function Header() {
             </span>
           </button>
           <div className={styles.right}>
-            <div className={styles.statusBar}>
-              <span className={styles.statusItem}>
-                <span className={styles.statusDot} aria-hidden="true" />
-                System Online
-              </span>
-              <span className={styles.statusDivider}>//</span>
-              <span className={styles.statusItem}>Local Time: {localTime}</span>
-            </div>
             <ThemeToggle />
           </div>
         </div>
@@ -251,7 +272,8 @@ function Header() {
         }}>
           <Link to="/" onClick={handleBuildsClick}>造物</Link>
           <Link to="/" onClick={handleNewsClick}>资讯</Link>
-          <Link to="/qdii" aria-current={location.pathname.startsWith('/qdii') ? 'page' : undefined}>QDII 监控</Link>
+          <Link to="/qdii" aria-current={location.pathname === '/qdii' ? 'page' : undefined}>QDII 监控</Link>
+          <Link to="/qdii/dashboard" className={styles.mobileSubmenuLink} aria-current={location.pathname === '/qdii/dashboard' ? 'page' : undefined}>市场看板</Link>
           <Link to="/articles" aria-current={location.pathname === '/articles' ? 'page' : undefined}>文章</Link>
           <Link to="/about" aria-current={location.pathname === '/about' ? 'page' : undefined}>关于我</Link>
         </nav>

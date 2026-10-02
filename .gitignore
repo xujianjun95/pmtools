@@ -23,6 +23,9 @@ dist-ssr
 
 # 运行时数据（服务器 cron 生成，不入库）
 public/qdii/data.json
+public/qdii/market-dashboard.json
+public/qdii/market-dashboard.json.lock
+public/qdii/.market-dashboard-*.tmp
 qdii-watcher/fund.db
 public/qdii/world-data.json
 public/qdii/worldpage-data.json
