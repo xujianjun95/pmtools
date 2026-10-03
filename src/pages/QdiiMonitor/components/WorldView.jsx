@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { loadFundData } from '../fundData'
 import { compareRegions, getRegionDisplay } from '../regions'
 import filterStyles from './FilterBar.module.css'
@@ -527,14 +526,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
   }
 
   return (
-    <section className={`${styles.world} fi d8`} ref={sectionRef}>
-      <Link to="/qdii" className={styles.backLink}>
-        ← 返回 QDII 监控
-      </Link>
-      <div className={styles.titleRow}>
-        <h2 className="section-title">其他市场</h2>
-      </div>
-
+    <div ref={sectionRef}>
       <div className={filterStyles.filters} style={{ margin: '0 0 14px' }}>
         <div className={filterStyles.filterGroup}>
           <span className={filterStyles.glabel}>地区</span>
@@ -591,12 +583,12 @@ export default function WorldView({ initialSelectedId = 'all' }) {
 
       {selectedId === 'all' ? (
         !groups.length ? (
-          <div className={tableStyles.tableCard}>
+          <div className={`${tableStyles.tableCard} ${styles.listCard}`}>
             <div className={styles.empty}>没有符合条件的基金</div>
           </div>
         ) : (
           groups.map((group) => (
-            <div className={`${tableStyles.tableCard} ${styles.groupCard}`} key={group.key}>
+            <div className={`${tableStyles.tableCard} ${styles.groupCard} ${styles.listCard}`} key={group.key}>
               <CountryTableSection
                 group={group}
                 sortConfig={sortConfig}
@@ -608,7 +600,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
           ))
         )
       ) : selected ? (
-        <div className={tableStyles.tableCard}>
+        <div className={`${tableStyles.tableCard} ${styles.listCard}`}>
           <div className={styles.fundHead}>
             <strong>
               <span className={styles.countryFlag} aria-hidden="true">{selected.flag}</span>
@@ -629,7 +621,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
           )}
         </div>
       ) : (
-        <div className={tableStyles.tableCard}>
+        <div className={`${tableStyles.tableCard} ${styles.listCard}`}>
           <div className={styles.fundHead}>
             <strong>{fallbackName || '该国'}</strong>
             <span className={styles.fundCount}>0 只</span>
@@ -641,7 +633,7 @@ export default function WorldView({ initialSelectedId = 'all' }) {
         </div>
       )}
 
-      <div className={`${tableStyles.tableCard} ${styles.crossCard}`}>
+      <div className={`${tableStyles.tableCard} ${styles.crossCard} ${styles.listCard}`}>
         <div className={styles.fundHead}>
           <strong>
             <span className={styles.countryFlag} aria-hidden="true">{CROSS_MARKET.flag}</span>
@@ -664,6 +656,6 @@ export default function WorldView({ initialSelectedId = 'all' }) {
         )}
       </div>
       <Disclaimer />
-    </section>
+    </div>
   )
 }
