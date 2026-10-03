@@ -213,7 +213,7 @@ function FundRow({ fund, isOpen, onToggle }) {
         <td className={tableStyles.tchev}>
           <button
             type="button"
-            className={styles.detailToggle}
+            className={tableStyles.detailToggle}
             aria-label={`${isOpen ? '收起' : '展开'}${fund.name}详情`}
             aria-expanded={isOpen}
             onClick={(event) => {

@@ -101,28 +101,6 @@
   vertical-align: -0.04em;
 }
 
-.detailToggle {
-  display: inline-grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-}
-
-.detailToggle:hover {
-  background: var(--accent-subtle);
-}
-
-.detailToggle:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 2px;
-}
-
 .crossCard {
   margin-top: 16px;
 }

@@ -1,5 +1,7 @@
 /* 通顶全宽毛玻璃顶栏：fixed 贴齐视口顶，消除 sticky + 半透明时的滚动露缝 */
 .shell {
+  --nav-transition-duration: 220ms;
+  --nav-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
   position: fixed;
   top: 0;
   left: 0;
@@ -89,11 +91,17 @@
   background: var(--accent);
   opacity: var(--indicator-opacity);
   transform: translateX(var(--indicator-left));
-  transition: transform 0.28s ease, width 0.28s ease, opacity 0.2s ease;
+  transition:
+    transform var(--nav-transition-duration) var(--nav-transition-easing),
+    width var(--nav-transition-duration) var(--nav-transition-easing),
+    opacity var(--nav-transition-duration) var(--nav-transition-easing);
 }
 
 .navLink {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding-bottom: 3px;
   font-family: var(--font-display);
   font-size: 0.75rem;
@@ -103,7 +111,7 @@
   white-space: nowrap;
   flex-shrink: 0;
   color: var(--text-muted);
-  transition: color 0.2s;
+  transition: color var(--nav-transition-duration) var(--nav-transition-easing);
 }
 
 /* 键盘焦点可见：与整站 accent 语义一致 */
@@ -128,8 +136,16 @@
   color: var(--text-primary);
 }
 
-.active {
+.navLink[data-active='true'] {
   color: var(--text-primary);
+}
+
+.navIcon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  overflow: visible;
 }
 
 .navGroup {
@@ -227,6 +243,12 @@
 .mobileToggle,
 .mobileMenu {
   display: none;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .nav {
+    gap: 24px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -345,12 +367,15 @@
   .mobileMenu a {
     display: flex;
     align-items: center;
+    gap: 10px;
     min-height: 48px;
     color: var(--text-body);
     border-bottom: 1px solid var(--border-subtle);
+    transition: color var(--nav-transition-duration) var(--nav-transition-easing);
   }
 
-  .mobileMenu a[aria-current='page'] {
+  .mobileMenu a[aria-current='page'],
+  .mobileMenu a[data-active='true'] {
     color: var(--accent);
     font-weight: 600;
   }
@@ -382,6 +407,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .nav::after,
+  .navLink,
+  .mobileMenu a,
   .mobileMenu,
   .menuIcon span,
   .submenuChevron {

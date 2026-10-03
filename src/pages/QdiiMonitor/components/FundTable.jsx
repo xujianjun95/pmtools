@@ -379,7 +379,18 @@ export default function FundTable({ funds, filterVersion }) {
                     </span>
                   </td>
                   <td className={styles.tchev}>
-                    <span className={`${styles.chev} ${isOpen ? styles.chevOpen : ''}`}>▶</span>
+                    <button
+                      type="button"
+                      className={styles.detailToggle}
+                      aria-label={`${isOpen ? '收起' : '展开'}${f.name}详情`}
+                      aria-expanded={isOpen}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setExpanded(isOpen ? null : f.code)
+                      }}
+                    >
+                      <span className={`${styles.chev} ${isOpen ? styles.chevOpen : ''}`}>▶</span>
+                    </button>
                   </td>
                 </tr>,
                 <tr key={`${f.code}-hist`} className={styles.historyRow}>
