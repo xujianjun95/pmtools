@@ -101,7 +101,8 @@
   animation-duration: 2.6s;
 }
 
-.root[data-state='guide'] .botSvg {
+.root[data-state='guide'] .botSvg,
+.root[data-state='explaining'] .botSvg {
   opacity: 0;
 }
 
@@ -115,7 +116,8 @@
   transition: opacity 80ms ease;
 }
 
-.root[data-state='guide'] .winkStage {
+.root[data-state='guide'] .winkStage,
+.root[data-state='explaining'] .winkStage {
   opacity: 1;
 }
 

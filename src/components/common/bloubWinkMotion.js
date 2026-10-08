@@ -14,6 +14,9 @@ const WINK_EYES = [
   { w: 0.236, h: 0.464 },
   { w: 0.447, h: 0.089 },
 ]
+// jeremy-prt/bloub src/bot/expressions.ts: attentif.
+const ATTENTIVE_GAZE = { yaw: 4, pitch: 5, roll: -4 }
+const ATTENTIVE_EYES = [{ w: 0.21, h: 0.44 }, { w: 0.21, h: 0.44 }]
 
 const clamp = (value, min = 0, max = 1) =>
   value < min ? min : value > max ? max : value
@@ -117,26 +120,34 @@ function capsulePath(width, height) {
 }
 
 export function sampleWink(time) {
+  return sampleFace(time, WINK_GAZE, WINK_EYES, EYE_SPLIT_WINK)
+}
+
+export function sampleAttentive(time) {
+  return sampleFace(time, ATTENTIVE_GAZE, ATTENTIVE_EYES, 16)
+}
+
+function sampleFace(time, targetGaze, targetEyes, targetSplit) {
   const progress = easeOutQuint(clamp(time / MORPH_DURATION))
   const gaze = {
     yaw:
-      lerp(IDLE_GAZE.yaw, WINK_GAZE.yaw, progress) +
+      lerp(IDLE_GAZE.yaw, targetGaze.yaw, progress) +
       loopNoise(time, 11.3, 0.4) * 5.5 +
       loopNoise(time, 3.7, 2.1) * 1.6,
     pitch:
-      lerp(IDLE_GAZE.pitch, WINK_GAZE.pitch, progress) +
+      lerp(IDLE_GAZE.pitch, targetGaze.pitch, progress) +
       loopNoise(time, 9.1, 1.3) * 4.2 +
       loopNoise(time, 4.3, 0.7) * 1.3,
-    roll: lerp(IDLE_GAZE.roll, WINK_GAZE.roll, progress) + loopNoise(time, 13.7, 3.2) * 2.2,
+    roll: lerp(IDLE_GAZE.roll, targetGaze.roll, progress) + loopNoise(time, 13.7, 3.2) * 2.2,
   }
-  const split = lerp(EYE_SPLIT_IDLE, EYE_SPLIT_WINK, progress)
+  const split = lerp(EYE_SPLIT_IDLE, targetSplit, progress)
   const forced = clamp(time / 0.2)
   const forcedLid = forced < 1 ? Math.abs(forced * 2 - 1) : 1
   const lid = Math.min(blinkLid(time), forcedLid)
   const blinkScale = 0.06 + 0.94 * lid
   const eyes = eyePoses(gaze, RADIUS, split).map((pose, index) => {
     const start = IDLE_EYES[index]
-    const target = WINK_EYES[index]
+    const target = targetEyes[index]
     const width = lerp(start.w, target.w, progress) * RADIUS
     const height = lerp(start.h, target.h, progress) * RADIUS
     return {

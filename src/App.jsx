@@ -24,7 +24,7 @@ function App() {
         <Route path="/resume" element={<ResumePage />} />
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/qdii" element={<QdiiMonitorPage />} />
-        <Route path="/qdii/dashboard" element={<Suspense fallback={<p role="status">正在加载市场看板…</p>}><MarketDashboardPage /></Suspense>} />
+        <Route path="/qdii/dashboard" element={<Suspense fallback={<p role="status">正在加载全球行情…</p>}><MarketDashboardPage /></Suspense>} />
         <Route path="/qdii/world" element={<QdiiWorldPage />} />
         <Route path="/qdii/dca" element={<DcaPage />} />
       </Route>

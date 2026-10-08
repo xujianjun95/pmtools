@@ -26,6 +26,7 @@ const BLOB_SHAPES = Object.freeze({
   idle: [1, 1.02, 1.01, 0.98, 1, 1.03, 1.01, 0.98, 1, 1.02, 0.99, 0.97, 1, 1.03, 1.01, 0.99],
   attention: [0.97, 1, 1.04, 1.08, 1.07, 1.03, 0.98, 0.95, 0.96, 0.98, 1.02, 1.04, 1.03, 1, 0.97, 0.95],
   guide: [1, 1.02, 1.01, 0.98, 1, 1.03, 1.01, 0.98, 1, 1.02, 0.99, 0.97, 1, 1.03, 1.01, 0.99],
+  explaining: [1, 1.02, 1.01, 0.98, 1, 1.03, 1.01, 0.98, 1, 1.02, 0.99, 0.97, 1, 1.03, 1.01, 0.99],
   confirm: [0.82, 0.91, 1.06, 1.18, 1.22, 1.17, 1.05, 0.9, 0.82, 0.91, 1.06, 1.18, 1.22, 1.17, 1.05, 0.9],
 })
 
@@ -134,6 +135,7 @@ function PmtoolsCompanion() {
   const buttonRef = useRef(null)
   const eyesRef = useRef(null)
   const headRef = useRef(null)
+  const explanationRef = useRef(null)
   const pointerFrameRef = useRef(0)
   const pointerRef = useRef(null)
   const headTargetRef = useRef({ x: 0, y: 0, rot: 0 })
@@ -142,6 +144,7 @@ function PmtoolsCompanion() {
   const sectionPulseTimerRef = useRef(0)
   const buildsPulseSeenRef = useRef(false)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [explaining, setExplaining] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
   const [sectionPulse, setSectionPulse] = useState(false)
@@ -154,7 +157,7 @@ function PmtoolsCompanion() {
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const finePointer = useMediaQuery('(any-pointer: fine)')
 
-  const visualState = confirming
+  const visualState = explaining ? 'explaining' : confirming
     ? 'confirm'
     : panelOpen
       ? 'guide'
@@ -162,6 +165,17 @@ function PmtoolsCompanion() {
         ? 'attention'
         : 'idle'
   const blobPath = useBlobShape(visualState, reducedMotion)
+
+  useEffect(() => {
+    const slot = explanationRef.current
+    if (!slot) return undefined
+    // Portal 内容在退出动画完成后移除，因此表情与气泡的完整可见周期一致。
+    const updateExpression = () => setExplaining(slot.childElementCount > 0)
+    const observer = new MutationObserver(updateExpression)
+    observer.observe(slot, { childList: true })
+    updateExpression()
+    return () => observer.disconnect()
+  }, [])
 
   const resetEyes = useCallback(() => {
     pointerRef.current = null
@@ -436,7 +450,7 @@ function PmtoolsCompanion() {
         </div>
       </nav>
 
-      <div id="pmtools-companion-explanation" className={styles.explanationSlot} />
+      <div ref={explanationRef} id="pmtools-companion-explanation" className={styles.explanationSlot} />
       <button
         ref={buttonRef}
         type="button"
@@ -467,8 +481,10 @@ function PmtoolsCompanion() {
           </g>
         </svg>
         <span className={styles.winkStage} aria-hidden="true">
-          {panelOpen && (
+          {(explaining || panelOpen) && (
             <BloubWink
+              key={explaining ? 'attentive' : 'wink'}
+              expression={explaining ? 'attentive' : 'wink'}
               active={pageVisible}
               reducedMotion={reducedMotion}
               className={styles.winkBot}

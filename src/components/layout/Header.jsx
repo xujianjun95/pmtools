@@ -21,11 +21,13 @@ const NAV_ICON_VIEW_BOXES = {
   builds: '-0.2558 -0.1008 24.2215 24.2215',
   news: '31.1277 27.1867 961.7415 961.7415',
   qdii: '0.5546 0.1846 23.6308 23.6308',
+  dashboard: '0 0 1024 1024',
   articles: '0.9231 1.0947 22.1538 22.1538',
   about: '0.9231 0.9231 22.1538 22.1538',
 }
 
 const NAV_ICON_PATHS = {
+  dashboard: ['M1023.968793 512.0972c0-282.258242-228.984556-511.073966-511.452563-511.073966-282.473122 0-511.462795 228.815722-511.462795 511.073966 0 260.737573 195.390741 475.854231 447.837044 507.156 14.231147 2.999101 31.564741 4.746785 52.209522 4.746785 5.795601 0 11.384509-0.304924 16.78207-0.857471C797.877943 1020.265179 1023.968793 792.575015 1023.968793 512.0972zM950.836169 519.328399c-1.471411-25.500029-4.8399-50.460814-9.969375-74.718637 0.455339-8.661681 0.579151-16.868022 0.346877-24.49726 6.343032 29.660502 9.687986 60.432236 9.687986 91.984698C950.902679 514.513057 950.875051 516.921751 950.836169 519.328399zM74.120572 512.0972c0-30.977405 3.225236-61.200685 9.345202-90.360825 18.931886 20.247766 63.554125 19.769915 74.436224-10.483039 19.471131 11.604504 45.637286 13.717484 45.637286 36.912165 0 76.550227 2.725897 158.618759 72.279247 159.886547 1.958471 0.025581 38.788778 13.957944 56.316786 59.416164 6.060619 15.711767 30.032959 0 56.321902 0 13.124008 0 0 22.110053 0 69.921714 0 47.626454 102.680569 120.959633 102.680569 120.959633-0.475804 31.525858 0.818588 57.017702 3.442161 77.38314-23.177287-0.426689-42.709813 2.645062-58.055262 7.868674C230.627375 907.644909 74.120572 728.142955 74.120572 512.0972zM620.440877 936.783561c-2.272604-11.126653-12.215375-17.220015-30.356301-12.451742 14.474677-61.640676 21.511461-96.169728 51.728602-122.387045 43.719746-37.898564 5.206218-80.04355-28.063232-75.076769-26.222433 3.958895-9.651149-32.467234-33.055594-34.481983-23.404445-1.958471-53.969486-48.511552-87.653346-64.530291-17.855443-8.479545-35.402894-31.203539-62.940184-32.221658-24.407215-0.946492-60.07615 20.637618-60.07615 3.999824 0-53.590889-5.426213-91.832236-6.541539-107.104012-0.900446-12.269607-8.020113-4.132845 24.974087-3.339838 17.956744 0.48092 9.185577-36.067997 26.959162-37.495409 17.456382-1.381367 59.052916 16.341056 69.650557 9.277668 9.845564-6.577352 72.371338 164.12683 72.371338 28.216717 0-16.126177-8.351641-44.163828 0-59.436629 33.030013-60.352424 63.952163-109.539311 61.175104-116.734697-1.575781-4.050986-33.792323-7.39594-59.569649 1.253462-8.699541 2.904963 2.766826 16.530355-9.727892 19.440434-46.814006 10.807404-88.175196-12.622623-73.691309-34.645701 14.831785-22.570509 68.571044-9.845564 73.282016-55.124718 2.710549-25.935927 4.956549-55.974003 6.45968-78.298935 63.004648 9.852726 56.069163-81.7677-37.613081-91.574381 189.525561 2.217349 350.128371 124.61565 409.062591 294.48692-2.980683-2.718734-6.448425-4.371258-10.453365-4.774413-28.324157-70.749511-97.074267-19.547874-73.752703 42.855112-124.959457 96.057172-92.973143 163.052434-51.9179 201.416569 21.603552 20.166931 42.200242 50.496628 55.610754 72.279247-14.596442 42.561444 53.781211 25.518448 87.503954-46.709636C890.911457 782.384621 771.249286 898.633281 620.440877 936.783561z'],
   builds: [
     'M12.82 2.44 L19.66 6.4 Q20.62 6.95 20.62 8.04 V15.96 Q20.62 17 19.66 17.63 L12.82 21.58 Q11.88 22.12 10.95 21.58 L4.08 17.63 Q3.09 17.06 3.09 15.96 V8.04 Q3.09 6.94 4.08 6.4 L10.95 2.44 Q11.88 1.9 12.82 2.44 Z',
     'M6.92 9.4 L11.84 12.18 L16.8 9.4',
@@ -85,7 +87,7 @@ function NavIcon({ kind }) {
         />
       )}
       {paths.map((path, index) => (
-        <path key={index} d={path} vectorEffect="non-scaling-stroke" />
+        <path key={index} d={path} vectorEffect="non-scaling-stroke" fill={kind === 'dashboard' ? 'currentColor' : undefined} stroke={kind === 'dashboard' ? 'none' : undefined} />
       ))}
     </svg>
   )
@@ -93,7 +95,6 @@ function NavIcon({ kind }) {
 
 function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [qdiiMenuOpen, setQdiiMenuOpen] = useState(false)
   const dashboardLinkRef = useRef(null)
   const mobileMenuRef = useRef(null)
   const mobileToggleRef = useRef(null)
@@ -109,6 +110,7 @@ function Header() {
   const location = useLocation()
   const navigate = useNavigate()
   const currentNav =
+    location.pathname === '/qdii/dashboard' ? 'dashboard' :
     location.pathname === '/qdii' || location.pathname.startsWith('/qdii/') ? 'qdii' :
     location.pathname === '/articles' ? 'articles' :
     location.pathname === '/about' ? 'about' :
@@ -131,6 +133,8 @@ function Header() {
         targetEl = aboutLinkRef.current
       } else if (location.pathname === '/articles') {
         targetEl = articlesLinkRef.current
+      } else if (location.pathname === '/qdii/dashboard') {
+        targetEl = dashboardLinkRef.current
       } else if (location.pathname === '/qdii' || location.pathname.startsWith('/qdii/')) {
         targetEl = qdiiLinkRef.current
       } else if (location.pathname === '/') {
@@ -258,58 +262,28 @@ function Header() {
                 <NavIcon kind="news" />
                 资讯
               </Link>
-              <div
-                className={styles.navGroup}
-                onMouseEnter={() => setQdiiMenuOpen(true)}
-                onMouseLeave={() => setQdiiMenuOpen(false)}
-                onFocus={() => setQdiiMenuOpen(true)}
-                onBlur={(event) => {
-                  if (!event.currentTarget.contains(event.relatedTarget)) setQdiiMenuOpen(false)
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Escape') {
-                    event.preventDefault()
-                    qdiiLinkRef.current?.focus()
-                    setQdiiMenuOpen(false)
-                  } else if (event.key === 'ArrowDown') {
-                    event.preventDefault()
-                    setQdiiMenuOpen(true)
-                    window.requestAnimationFrame(() => dashboardLinkRef.current?.focus())
-                  }
-                }}
+              <Link
+                ref={qdiiLinkRef}
+                to="/qdii"
+                className={styles.navLink}
+                data-active={currentNav === 'qdii'}
+                aria-current={location.pathname === '/qdii' ? 'page' : undefined}
+                onClick={() => setActiveNav(null)}
               >
-                <Link
-                  ref={qdiiLinkRef}
-                  to="/qdii"
-                  className={styles.navLink}
-                  data-active={currentNav === 'qdii'}
-                  aria-current={location.pathname === '/qdii' ? 'page' : undefined}
-                  onClick={() => { setActiveNav(null); setQdiiMenuOpen(false) }}
-                >
-                  <NavIcon kind="qdii" />
-                  QDII 监控
-                </Link>
-                <button
-                  type="button"
-                  className={styles.submenuToggle}
-                  aria-label="展开 QDII 子菜单"
-                  aria-expanded={qdiiMenuOpen}
-                  aria-controls="qdii-site-submenu"
-                  onClick={() => setQdiiMenuOpen((open) => !open)}
-                >
-                  <span className={styles.submenuChevron} aria-hidden="true" />
-                </button>
-                <div id="qdii-site-submenu" className={styles.submenu} hidden={!qdiiMenuOpen}>
-                  <Link
-                    ref={dashboardLinkRef}
-                    to="/qdii/dashboard"
-                    aria-current={location.pathname === '/qdii/dashboard' ? 'page' : undefined}
-                    onClick={() => { setActiveNav(null); setQdiiMenuOpen(false) }}
-                  >
-                    市场看板
-                  </Link>
-                </div>
-              </div>
+                <NavIcon kind="qdii" />
+                QDII 监控
+              </Link>
+              <Link
+                ref={dashboardLinkRef}
+                to="/qdii/dashboard"
+                className={styles.navLink}
+                data-active={currentNav === 'dashboard'}
+                aria-current={currentNav === 'dashboard' ? 'page' : undefined}
+                onClick={() => setActiveNav(null)}
+              >
+                <NavIcon kind="dashboard" />
+                全球行情
+              </Link>
               <Link
                 ref={articlesLinkRef}
                 to="/articles"
@@ -367,7 +341,7 @@ function Header() {
           <Link to="/" data-active={currentNav === 'builds'} aria-current={currentNav === 'builds' ? 'location' : undefined} onClick={handleBuildsClick}><NavIcon kind="builds" />造物</Link>
           <Link to="/" data-active={currentNav === 'news'} aria-current={currentNav === 'news' ? 'location' : undefined} onClick={handleNewsClick}><NavIcon kind="news" />资讯</Link>
           <Link to="/qdii" data-active={currentNav === 'qdii'} aria-current={location.pathname === '/qdii' ? 'page' : undefined}><NavIcon kind="qdii" />QDII 监控</Link>
-          <Link to="/qdii/dashboard" className={styles.mobileSubmenuLink} aria-current={location.pathname === '/qdii/dashboard' ? 'page' : undefined}>市场看板</Link>
+          <Link to="/qdii/dashboard" data-active={currentNav === 'dashboard'} aria-current={currentNav === 'dashboard' ? 'page' : undefined}><NavIcon kind="dashboard" />全球行情</Link>
           <Link to="/articles" data-active={currentNav === 'articles'} aria-current={location.pathname === '/articles' ? 'page' : undefined}><NavIcon kind="articles" />文章</Link>
           <Link to="/about" data-active={currentNav === 'about'} aria-current={location.pathname === '/about' ? 'page' : undefined}><NavIcon kind="about" />关于我</Link>
         </nav>

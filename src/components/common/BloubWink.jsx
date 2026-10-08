@@ -4,10 +4,12 @@ import {
   MORPH_DURATION,
   RADIUS,
   round,
+  sampleAttentive,
   sampleWink,
 } from './bloubWinkMotion'
 
-function BloubWink({ active, reducedMotion = false, className = '' }) {
+/** @param {{active: boolean, reducedMotion?: boolean, className?: string, expression?: 'wink' | 'attentive'}} props */
+function BloubWink({ active, reducedMotion = false, className = '', expression = 'wink' }) {
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => {
@@ -24,8 +26,8 @@ function BloubWink({ active, reducedMotion = false, className = '' }) {
   }, [active, reducedMotion])
 
   const frame = useMemo(
-    () => sampleWink(reducedMotion ? MORPH_DURATION : elapsed),
-    [elapsed, reducedMotion]
+    () => (expression === 'attentive' ? sampleAttentive : sampleWink)(reducedMotion ? MORPH_DURATION : elapsed),
+    [elapsed, reducedMotion, expression]
   )
 
   return (

@@ -11,6 +11,7 @@ import styles from './MarketDashboard.module.css'
  * @property {string} caption
  * @property {string} symbol
  * @property {string} [unitLabel]
+ * @property {'vix' | 'treasury' | 'dollar' | 'usdcny'} [helpTopic]
  */
 
 /** @type {MarketIndicator[]} */
@@ -27,10 +28,10 @@ const INDICES = [
 
 /** @type {MarketIndicator[]} */
 const ENVIRONMENT = [
-  { id: 'vix', name: 'VIX 恐慌指数', caption: 'VOLATILITY', symbol: 'CBOE:VIX' },
-  { id: 'treasury', name: '美国 10 年期国债收益率', caption: 'TREASURY YIELD', symbol: 'TVC:US10Y' },
-  { id: 'dollar', name: '美元指数', caption: 'DOLLAR INDEX', symbol: 'TVC:DXY' },
-  { id: 'usdcny', name: '美元兑人民币', caption: 'USD / CNY', symbol: 'FX_IDC:USDCNY' },
+  { id: 'vix', name: 'VIX 恐慌指数', caption: 'VOLATILITY', symbol: 'CBOE:VIX', helpTopic: 'vix' },
+  { id: 'treasury', name: '美国 10 年期国债收益率', caption: 'TREASURY YIELD', symbol: 'TVC:US10Y', helpTopic: 'treasury' },
+  { id: 'dollar', name: '美元指数', caption: 'DOLLAR INDEX', symbol: 'TVC:DXY', helpTopic: 'dollar' },
+  { id: 'usdcny', name: '美元兑人民币', caption: 'USD / CNY', symbol: 'FX_IDC:USDCNY', helpTopic: 'usdcny' },
 ]
 
 /** @type {MarketIndicator[]} */
@@ -130,7 +131,7 @@ function IndicatorCard({ indicator, quote }) {
   const stale = quote?.stale
   return (
     <article className={styles.indicatorCard} aria-label={indicator.name}>
-      <div className={styles.cardTitle}><h3>{indicator.name}</h3>{indicator.id === 'vix' && <MarketHelpButton topic="vix" />}</div>
+      <div className={styles.cardTitle}><h3>{indicator.helpTopic ? <MarketHelpButton topic={indicator.helpTopic}>{indicator.name}</MarketHelpButton> : indicator.name}</h3></div>
       <p className={styles.caption}>{indicator.caption}</p>
       <p className={styles.quoteValue}>{displayValue}{isYield && quote?.value != null ? <span>%</span> : null}</p>
       <p className={`${styles.quoteChange} ${quote?.change > 0 ? styles.rising : quote?.change < 0 ? styles.falling : ''}`}>{delta}</p>
@@ -153,7 +154,7 @@ export default function MarketDashboardPage() {
     <MarketHelpProvider><div className={styles.page}>
       <header className={styles.heading}>
         <p className={styles.eyebrow}>MARKET DASHBOARD</p>
-        <h1>市场看板</h1>
+        <h1>全球行情</h1>
         <p className={styles.description}>全球指数 · 大宗商品 · 市场波动 · 利率与汇率</p>
       </header>
       {error && <div className={styles.dataError} role="status"><span>{snapshot ? '行情更新暂时失败，正在显示最近成功的数据。' : '行情数据暂时不可用，请稍后重试。'}</span><button type="button" disabled={loading} onClick={refresh}>{loading ? '加载中…' : '重新加载'}</button></div>}

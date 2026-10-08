@@ -65,7 +65,9 @@
 .infoWrapper { display: inline-flex; }
 .infoButton { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: transparent; color: var(--text-muted); font-size: 0.72rem; cursor: pointer; }
 .infoButton:hover, .infoButton[aria-expanded='true'] { color: var(--accent); border-color: var(--accent); }
-.infoButton:focus-visible, .infoHeading button:focus-visible, .infoSource:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.infoTextButton { padding: 0 0 3px; border: 0; border-bottom: 1px dashed var(--text-muted); border-radius: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.infoTextButton:hover, .infoTextButton[aria-expanded='true'] { color: var(--accent); border-bottom-color: var(--accent); }
+.infoButton:focus-visible, .infoTextButton:focus-visible, .infoHeading button:focus-visible, .infoSource:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .infoPopover { position: relative; width: min(420px, calc(100vw - 40px)); transform-origin: calc(100% - 32px) bottom; }
 .infoPopover[data-state='open'] { animation: infoBubbleEnter 240ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 .infoPopover[data-state='closing'] { animation: infoBubbleExit 160ms ease-in both; pointer-events: none; }
