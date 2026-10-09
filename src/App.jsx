@@ -13,6 +13,7 @@ import DcaPage from './pages/DcaPage/index.jsx'
 // 后台独立懒加载 chunk：Vditor/ECharts 不进入主站首屏依赖（spec §7.5）
 const BackgroundPage = lazy(() => import('./pages/Background/Background.jsx'))
 const MarketDashboardPage = lazy(() => import('./pages/MarketDashboard/index.jsx'))
+const FuturePage = lazy(() => import('./pages/FuturePage/index.jsx'))
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/qdii/dashboard" element={<Suspense fallback={<p role="status">正在加载全球行情…</p>}><MarketDashboardPage /></Suspense>} />
         <Route path="/qdii/world" element={<QdiiWorldPage />} />
         <Route path="/qdii/dca" element={<DcaPage />} />
+        <Route path="/qdii/future" element={<Suspense fallback={<p role="status">正在加载未来推演…</p>}><FuturePage /></Suspense>} />
       </Route>
       <Route
         path="/background/*"

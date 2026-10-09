@@ -48,6 +48,7 @@
    落在两个按钮的底线上，而不是竖直居中悬空。 */
 .action {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 12px;
   margin-top: 18px;

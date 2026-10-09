@@ -35,8 +35,8 @@ function MainLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 故意不依赖 hash / state.scrollToBuilds，避免重复跑 effect 打断滚到构建区
   }, [location.pathname, location.search])
 
-  // 鉴往旅程页是沉浸式一屏体验，隐藏页脚避免把页面顶出一屏。
-  const hideFooter = location.pathname === '/qdii/dca'
+  // 定投旅程页隐藏页脚，避免把沉浸式体验顶出一屏。
+  const hideFooter = ['/qdii/dca', '/qdii/future'].includes(location.pathname)
 
   return (
     <div className={styles.layout}>

@@ -30,7 +30,7 @@ function fmtAxisTick(v) {
 }
 
 // 渐进式折线图：只绘制已播放到 cursor 的月份，未来月份不显示。
-export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMotion, events, onReviewEvent }) {
+export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMotion, events, onReviewEvent, ariaLabel = '历史定投旅程折线图' }) {
   // 可见窗口内的资产/投入最大值 → 目标纵轴档位
   const targetMax = useMemo(() => {
     let m = 1
@@ -172,7 +172,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
         className={styles.chart}
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label="历史定投旅程折线图"
+        aria-label={ariaLabel}
       >
         {geo.yticks.map((t, k) => (
           <g key={`${t.label}-${k}`}>

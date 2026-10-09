@@ -23,6 +23,9 @@ export default function HeroSection({ metaLine, stats }) {
             <Link to="/qdii/dca" className={styles.simBtn}>
               鉴往 · 定投推演
             </Link>
+            <Link to="/qdii/future" className={styles.simBtn}>
+              知来 · 未来推演
+            </Link>
             <SubscribeButton />
             <span className={styles.actionHint}>日累计限额变动时邮件通知</span>
           </div>

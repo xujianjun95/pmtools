@@ -154,6 +154,117 @@
   min-width: 0;
 }
 
+.futureSetupForm {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fieldHint {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.futureMethod, .futureAnnual {
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+.futureMethod summary, .futureAnnual summary {
+  cursor: pointer;
+  color: var(--text-body);
+}
+
+.futureMethod p, .futureAnnual p {
+  margin-top: 8px;
+}
+
+.futureTableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.futureTable {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.futureTable th, .futureTable td {
+  padding: 10px 12px;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.futureTable th:first-child {
+  text-align: left;
+}
+
+.retirement {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.retirementSettings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.retirementOption {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.retirementOption h4 {
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.retirementOption dl {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+.retirementOption dt {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.retirementOption dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.retirementOption .retirementMonthly {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  line-height: 1.4;
+}
+
+.retirementCaption {
+  text-align: left;
+  padding: 8px 12px;
+}
+
 .ctlLabel {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -1081,7 +1192,7 @@
     font-size: 1.6rem;
   }
 
-  .setupForm {
+  .setupForm, .futureSetupForm {
     grid-template-columns: 1fr;
     padding: 14px;
   }
