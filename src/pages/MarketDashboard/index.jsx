@@ -128,13 +128,14 @@ function IndicatorCard({ indicator, quote }) {
   const delta = quote?.change == null ? '暂无涨跌数据' : isYield
     ? `${signed(quote.change * 100)} bp`
     : `${signed(quote.change, digits)}  (${signed(quote.changePercent ?? 0)}%)`
+  const changeClassName = quote?.change > 0 ? styles.rising : quote?.change < 0 ? styles.falling : ''
   const stale = quote?.stale
   return (
     <article className={styles.indicatorCard} aria-label={indicator.name}>
       <div className={styles.cardTitle}><h3>{indicator.helpTopic ? <MarketHelpButton topic={indicator.helpTopic}>{indicator.name}</MarketHelpButton> : indicator.name}</h3></div>
       <p className={styles.caption}>{indicator.caption}</p>
-      <p className={styles.quoteValue}>{displayValue}{isYield && quote?.value != null ? <span>%</span> : null}</p>
-      <p className={`${styles.quoteChange} ${quote?.change > 0 ? styles.rising : quote?.change < 0 ? styles.falling : ''}`}>{delta}</p>
+      <p className={`${styles.quoteValue} ${quote?.value != null ? changeClassName : ''}`}>{displayValue}{isYield && quote?.value != null ? <span>%</span> : null}</p>
+      <p className={`${styles.quoteChange} ${changeClassName}`}>{delta}</p>
       {quote?.history?.length > 1 ? <Sparkline history={quote.history} name={indicator.name} /> : <p className={styles.historyUnavailable}>暂无日线数据</p>}
       <p className={styles.quoteTime}>{indicator.unitLabel && <>{indicator.unitLabel} · </>}行情 {quote?.asOfDate || formatTime(quote?.asOf)}{stale ? <span className={styles.stale}> · 更新延迟</span> : null}</p>
     </article>
@@ -181,7 +182,7 @@ export default function MarketDashboardPage() {
             {INDICES.map((item) => <button key={item.id} type="button" aria-pressed={selectedIndex === item.id} onClick={() => setSelectedIndex(item.id)}>{item.name}</button>)}
           </div>
           <div className={styles.rangeButtons} aria-label="趋势时间范围">
-            {[['1m', '1 月'], ['3m', '3 月'], ['12m', '1 年'], ['all', '全部']].map(([value, label]) => (
+            {[['1m', '1 月'], ['3m', '3 月'], ['6m', '6 月'], ['12m', '1 年']].map(([value, label]) => (
               <button key={value} type="button" aria-pressed={range === value} onClick={() => setRange(value)}>{label}</button>
             ))}
           </div>
@@ -191,7 +192,7 @@ export default function MarketDashboardPage() {
             ? <MarketTrendChart key={`${selectedIndex}:${range}:${theme}`} history={history} name={indicator.name} theme={theme} />
             : <p className={styles.emptyState}>{loading ? '正在加载趋势…' : '暂无可用历史数据'}</p>}
         </div>
-        <div className={styles.trendAttribution}><span>Yahoo Finance · 日线点位，最新交易日可能尚未收盘{range === 'all' ? ' · 最近 5 年可用历史' : ''}</span>{quote?.sourceUrl && <a href={quote.sourceUrl} target="_blank" rel="noopener noreferrer">查看数据来源 ↗</a>}</div>
+        <div className={styles.trendAttribution}><span>Yahoo Finance · 日线点位，最新交易日可能尚未收盘</span>{quote?.sourceUrl && <a href={quote.sourceUrl} target="_blank" rel="noopener noreferrer">查看数据来源 ↗</a>}</div>
         </div>
       </section>
       <dl className={styles.dataNote} aria-label="行情数据说明">

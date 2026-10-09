@@ -53,11 +53,11 @@ export function normalizeMarketSnapshot(input) {
   return { updatedAt: safeTime(input.updatedAt), indicators: [...unique.values()] }
 }
 
-/** @param {MarketHistoryPoint[]} history @param {'1m'|'3m'|'12m'|'all'} range */
+/** @param {MarketHistoryPoint[]} history @param {'1m'|'3m'|'6m'|'12m'} range */
 export function historyForRange(history, range) {
-  if (!history.length || range === 'all') return history
+  if (!history.length) return history
   const end = new Date(`${history.at(-1).date}T00:00:00Z`)
-  const months = { '1m': 1, '3m': 3, '12m': 12 }[range] || 3
+  const months = { '1m': 1, '3m': 3, '6m': 6, '12m': 12 }[range] || 3
   const month = end.getUTCMonth() - months
   const lastDay = new Date(Date.UTC(end.getUTCFullYear(), month + 1, 0)).getUTCDate()
   const cutoff = new Date(Date.UTC(end.getUTCFullYear(), month, Math.min(end.getUTCDate(), lastDay))).toISOString().slice(0, 10)
