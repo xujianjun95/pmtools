@@ -1,0 +1,16 @@
+[Unit]
+Description=Refresh PMTools domestic market quotes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/qdii-watcher
+ExecStart=/usr/bin/python3 /opt/qdii-watcher/fetch_market_dashboard.py --source domestic --out /var/www/pmtools/main/qdii/market-dashboard.json
+TimeoutStartSec=240
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/www/pmtools/main/qdii
+UMask=0022

@@ -55,7 +55,7 @@ function Explanation({ topic }) {
     <h5>对海外投资有什么影响？</h5>
     <p>在美元资产价格不变、没有汇率对冲且不考虑费用时，美元相对人民币升值，会提高这项资产折算成人民币后的价值；反过来则会降低。实际基金还受到资产涨跌、币种构成、对冲安排和费用等因素影响。</p>
     <h5>这是银行实际兑换价格吗？</h5>
-    <p>不是。这张卡片使用 Yahoo Finance 的 USD/CNY 参考行情，不是银行买入价、卖出价或人民币汇率中间价，也不是离岸人民币 USD/CNH。实际兑换请以交易机构当时的报价和费用为准。</p>
+    <p>不是。这张卡片使用新浪财经的在岸 USD/CNY 参考行情，不是银行买入价、卖出价或人民币汇率中间价，也不是离岸人民币 USD/CNH。实际兑换请以交易机构当时的报价和费用为准。</p>
     <p className={styles.infoSummary}>先看清报价方向，再看行情时间。美元指数观察一篮子货币，美元兑人民币只观察这两种货币，不能互相替代。</p>
     <a className={styles.infoSource} href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/foreign" target="_blank" rel="noopener noreferrer">参考：Investor.gov 外汇报价说明 ↗</a>
   </>

@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh PMTools market quotes every five minutes
+
+[Timer]
+OnCalendar=*-*-* *:0/5:00
+AccuracySec=10s
+Persistent=true
+Unit=market-dashboard.service
+
+[Install]
+WantedBy=timers.target

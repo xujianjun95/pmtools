@@ -1,100 +1,24 @@
-name: Refresh Market Dashboard
+name: Test Market Dashboard
 
 on:
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
   push:
     branches: [dev, main]
     paths:
       - '.github/workflows/market-dashboard.yml'
-      - 'qdii-watcher/fetch_market_dashboard.py'
-      - 'qdii-watcher/test_market_dashboard.py'
+      - 'qdii-watcher/*market*.py'
+      - 'qdii-watcher/market-dashboard.*'
 
 permissions:
   contents: read
 
-concurrency:
-  group: market-dashboard-refresh
-  cancel-in-progress: false
-
 jobs:
-  refresh:
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Test the market fetcher
-        run: python3 -m unittest discover -s qdii-watcher -p test_market_dashboard.py
-      - name: Refresh quotes while retaining failed indicators
-        run: |
-          mkdir -p market-data
-          curl --fail --silent --show-error --max-time 20 https://pmtools.com.cn/qdii/market-dashboard.json -o market-data/.market-dashboard-incoming.json || true
-          python3 qdii-watcher/fetch_market_dashboard.py --out market-data/.market-dashboard-incoming.json
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          snapshot = json.loads(Path('market-data/.market-dashboard-incoming.json').read_text())
-          fresh = sum(item.get('stale') is False for item in snapshot['indicators'])
-          if not fresh:
-              raise SystemExit('No fresh quotes; production snapshot will remain untouched')
-          print(f'Fresh indicators: {fresh}/{len(snapshot["indicators"])}')
-          PY
-      - name: Publish the snapshot atomically
-        if: github.ref == 'refs/heads/main'
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SERVER_IP }}
-          REMOTE_USER: ${{ secrets.SERVER_USER }}
-          SOURCE: 'market-data/'
-          TARGET: '/var/www/pmtools/main/qdii/'
-          ARGS: '-avz'
-          EXCLUDE: '.market-dashboard-incoming.json.lock'
-          SCRIPT_AFTER_REQUIRED: 'true'
-          SCRIPT_AFTER: |
-            set -eu
-            python3 - <<'PY'
-            import fcntl
-            import json
-            import math
-            from datetime import datetime, timezone
-            from pathlib import Path
-
-            source = Path('/var/www/pmtools/main/qdii/.market-dashboard-incoming.json')
-            target = source.with_name('market-dashboard.json')
-            with target.with_suffix('.json.lock').open('a') as lock:
-                fcntl.flock(lock, fcntl.LOCK_EX)
-                snapshot = json.loads(source.read_text())
-                if snapshot.get('version') != 1 or not isinstance(snapshot.get('indicators'), list):
-                    raise ValueError('Invalid market snapshot')
-                previous = json.loads(target.read_text()) if target.exists() else {}
-                cached = {item['id']: item for item in previous.get('indicators', []) if isinstance(item, dict) and 'id' in item}
-                for index, item in enumerate(snapshot['indicators']):
-                    old = cached.get(item.get('id'), {})
-                    value = old.get('value')
-                    if item.get('stale') is True and old.get('symbol') == item.get('symbol') and isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value > 0:
-                        snapshot['indicators'][index] = {**old, 'stale': True}
-                json.dumps(snapshot, allow_nan=False)
-                now = datetime.now(timezone.utc)
-                fresh = 0
-                for item in snapshot['indicators']:
-                    value = item.get('value')
-                    if value is None or item.get('stale') is not False:
-                        continue
-                    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
-                        raise ValueError('Invalid quote')
-                    fetched = datetime.fromisoformat(item['fetchedAt'].replace('Z', '+00:00'))
-                    if not -60 <= (now - fetched).total_seconds() <= 1200:
-                        raise ValueError('Quote is too old or in the future')
-                    fresh += 1
-                if not fresh:
-                    raise ValueError('No fresh quotes')
-                source.write_text(json.dumps(snapshot, ensure_ascii=False, allow_nan=False, separators=(',', ':')))
-                source.chmod(0o644)
-                source.replace(target)
-                print(f'Published {fresh} fresh market indicators')
-            PY
+      - name: Test quote parsing and failure preservation
+        run: python3 -m unittest discover -s qdii-watcher -p 'test_*market*.py'

@@ -137,7 +137,7 @@ function IndicatorCard({ indicator, quote }) {
       <p className={`${styles.quoteValue} ${quote?.value != null ? changeClassName : ''}`}>{displayValue}{isYield && quote?.value != null ? <span>%</span> : null}</p>
       <p className={`${styles.quoteChange} ${changeClassName}`}>{delta}</p>
       {quote?.history?.length > 1 ? <Sparkline history={quote.history} name={indicator.name} /> : <p className={styles.historyUnavailable}>暂无日线数据</p>}
-      <p className={styles.quoteTime}>{indicator.unitLabel && <>{indicator.unitLabel} · </>}行情 {quote?.asOfDate || formatTime(quote?.asOf)}{stale ? <span className={styles.stale}> · 更新延迟</span> : null}</p>
+      <p className={styles.quoteTime}>{indicator.unitLabel && <>{indicator.unitLabel} · </>}{quote?.source && <>{quote.source} · </>}行情 {quote?.asOfDate || formatTime(quote?.asOf)}{stale ? <span className={styles.stale}> · 更新延迟</span> : null}</p>
     </article>
   )
 }
@@ -150,6 +150,7 @@ export default function MarketDashboardPage() {
   const indicator = INDICES.find((item) => item.id === selectedIndex) || INDICES[2]
   const quotes = new Map(snapshot?.indicators.map((item) => [item.id, item]) || [])
   const quote = quotes.get(selectedIndex)
+  const sourceLabel = [...new Set(snapshot?.indicators.map(item => item.source).filter(Boolean) || [])].join(' / ') || '行情缓存'
   const history = useMemo(() => historyForRange(quote?.history || [], range), [quote?.history, range])
   return (
     <MarketHelpProvider><div className={styles.page}>
@@ -162,7 +163,7 @@ export default function MarketDashboardPage() {
       <section className={styles.section} aria-labelledby="market-indices-title">
         <div className={styles.sectionHeading}>
           <div className={styles.sectionTitle}><h2 id="market-indices-title">主要指数</h2><MarketHelpButton topic="indices" /></div>
-          <span>{loading && !snapshot ? '正在加载行情…' : `Yahoo Finance · 更新 ${formatTime(snapshot?.updatedAt)}（北京时间）`}</span>
+          <span>{loading && !snapshot ? '正在加载行情…' : `${sourceLabel} · 更新 ${formatTime(snapshot?.updatedAt)}（北京时间）`}</span>
         </div>
         <div className={styles.indicatorGrid}>{INDICES.map((item) => <IndicatorCard key={item.id} indicator={item} quote={quotes.get(item.id)} />)}</div>
       </section>
@@ -171,7 +172,7 @@ export default function MarketDashboardPage() {
         <div className={styles.indicatorGrid}>{ENVIRONMENT.map((item) => <IndicatorCard key={item.id} indicator={item} quote={quotes.get(item.id)} />)}</div>
       </section>
       <section className={styles.section} aria-labelledby="market-commodities-title">
-        <div className={styles.sectionHeading}><h2 id="market-commodities-title">大宗商品</h2><span>Yahoo Finance</span></div>
+        <div className={styles.sectionHeading}><h2 id="market-commodities-title">大宗商品</h2><span>期货连续报价</span></div>
         <div className={styles.indicatorGrid}>{COMMODITIES.map((item) => <IndicatorCard key={item.id} indicator={item} quote={quotes.get(item.id)} />)}</div>
       </section>
       <section className={styles.section} aria-labelledby="market-trend-title">
@@ -192,13 +193,13 @@ export default function MarketDashboardPage() {
             ? <MarketTrendChart key={`${selectedIndex}:${range}:${theme}`} history={history} name={indicator.name} theme={theme} />
             : <p className={styles.emptyState}>{loading ? '正在加载趋势…' : '暂无可用历史数据'}</p>}
         </div>
-        <div className={styles.trendAttribution}><span>Yahoo Finance · 日线点位，最新交易日可能尚未收盘</span>{quote?.sourceUrl && <a href={quote.sourceUrl} target="_blank" rel="noopener noreferrer">查看数据来源 ↗</a>}</div>
+        <div className={styles.trendAttribution}><span>{quote?.historySource || '历史缓存'} · 日线缓存截至 {quote?.historyAsOf || '未知日期'}，历史曲线暂不随报价刷新</span>{quote?.sourceUrl && <a href={quote.sourceUrl} target="_blank" rel="noopener noreferrer">查看报价来源 ↗</a>}</div>
         </div>
       </section>
       <dl className={styles.dataNote} aria-label="行情数据说明">
-        <div><dt>数据来源</dt><dd>指数、利率、汇率与商品期货均来自 Yahoo Finance。</dd></div>
+        <div><dt>数据来源</dt><dd>当前报价来自东方财富与新浪财经，每 5 分钟抓取；历史曲线保留既有 Yahoo Finance 缓存，暂未更新历史日线。</dd></div>
         <div><dt>报价口径</dt><dd>金银铜为 COMEX 期货连续报价，非现货；跨合约走势可能受换月影响。</dd></div>
-        <div><dt>时间与涨跌</dt><dd>全部时间为北京时间。行情可能延迟，行情时间不等于缓存更新时间；涨跌相对前一交易日收盘。</dd></div>
+        <div><dt>时间与涨跌</dt><dd>全部时间为北京时间。行情可能延迟，行情时间不等于缓存更新时间；指数和汇率相对昨收，商品期货相对前结算价。</dd></div>
         <div><dt>单位说明</dt><dd>美债收益率以 % 展示，变动以基点（bp）展示。</dd></div>
       </dl>
     </div></MarketHelpProvider>

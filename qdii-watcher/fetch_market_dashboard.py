@@ -1,7 +1,7 @@
 """Refresh the local market dashboard without touching fund scans or notifications.
 
-Yahoo Finance chart data supplies the original indices (not CFD proxies).
-Prices and daily history are unadjusted; ^TNX is reported as a yield in percent.
+Domestic quotes are the default; existing daily history keeps its original source.
+The optional Yahoo adapter supplies unadjusted history and yields in percent.
 Run once, or use --watch to keep the local JSON refreshed every five minutes.
 """
 import argparse
@@ -164,6 +164,7 @@ def main():
     parser = argparse.ArgumentParser(description="Local market dashboard quote refresh")
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--watch", action="store_true")
+    parser.add_argument("--source", choices=("domestic", "yahoo"), default="domestic")
     args = parser.parse_args()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.with_suffix(".json.lock").open("a") as lock:
@@ -179,7 +180,11 @@ def main():
                 except (OSError, ValueError):
                     log.warning("Existing cache is unreadable; fetching a fresh snapshot")
                     previous = {}
-                snapshot, succeeded = refresh_snapshot(previous)
+                if args.source == "domestic":
+                    from domestic_market import refresh_domestic_snapshot
+                    snapshot, succeeded = refresh_domestic_snapshot(previous)
+                else:
+                    snapshot, succeeded = refresh_snapshot(previous)
                 write_snapshot(args.out, snapshot)
                 log.info("Refreshed %d/%d indicators: %s", succeeded, len(INDICATORS), args.out)
             except Exception as error:

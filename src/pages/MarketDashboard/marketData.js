@@ -9,6 +9,9 @@
  * @property {string | null} asOf
  * @property {string | null} fetchedAt
  * @property {string | null} sourceUrl
+ * @property {string | null} source
+ * @property {string | null} historySource
+ * @property {string | null} historyAsOf
  * @property {boolean} stale
  * @property {MarketHistoryPoint[]} history
  * @typedef {{updatedAt: string | null, indicators: MarketQuote[]}} MarketSnapshot
@@ -38,13 +41,16 @@ export function normalizeMarketSnapshot(input) {
     let sourceUrl = null
     try {
       const source = new URL(item.sourceUrl)
-      if (source.protocol === 'https:' && source.hostname === 'finance.yahoo.com') sourceUrl = source.href
+      if (source.protocol === 'https:' && ['finance.yahoo.com', 'quote.eastmoney.com', 'finance.sina.com.cn', 'stock.finance.sina.com.cn'].includes(source.hostname)) sourceUrl = source.href
     } catch { /* Missing source links are optional. */ }
     unique.set(item.id, {
       id: item.id, value: safeNumber(item.value) > 0 ? item.value : null,
       change: safeNumber(item.change), changePercent: safeNumber(item.changePercent),
       asOfDate: typeof item.asOfDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(item.asOfDate) && Number.isFinite(Date.parse(item.asOfDate)) ? item.asOfDate : null,
       asOf: safeTime(item.asOf), fetchedAt: safeTime(item.fetchedAt), sourceUrl,
+      source: ['Yahoo Finance', '东方财富', '新浪财经'].includes(item.source) ? item.source : null,
+      historySource: ['Yahoo Finance', '东方财富', '新浪财经'].includes(item.historySource || item.source) ? (item.historySource || item.source) : null,
+      historyAsOf: [...daily.keys()].sort().at(-1) || null,
       stale: item.stale === true || !safeTime(item.fetchedAt) || now - Date.parse(item.fetchedAt) > 15 * 60 * 1000,
       history: [...daily.values()].sort((a, b) => a.date.localeCompare(b.date)),
     })
