@@ -32,4 +32,8 @@ npm run market:watch
 
 页面加载失败可以重试，刷新失败保留已显示数据；缓存超过 15 分钟标记延迟。运行时文件为 `public/qdii/market-dashboard.json`。
 
-此进程与基金限额扫描和邮件通知独立。本次仅提供本地运行入口，没有配置服务器定时任务、开机启动或修改部署流程；上线前需单独安排该数据文件的更新和发布保护。上游访问限流或网络限制仍可能导致更新延迟。
+生产通过 `.github/workflows/market-dashboard.yml` 在 GitHub Actions 抓取 Yahoo Finance 数据，按每 5 分钟的计划同步到 `/var/www/pmtools/main/qdii/market-dashboard.json`；Actions 排队可能使实际刷新间隔更长，超过 15 分钟仍按更新延迟展示。服务器不能直接访问 Yahoo，因此不依赖服务器抓取或本地电脑持续开机。
+
+工作流支持手动运行；`dev` 上的抓取改动只验证抓取，不写生产，`main` 上的改动及定时任务会发布数据。抓取前读取线上缓存，单项失败保留旧项；没有新报价时任务失败并保留生产数据。服务器取得独立文件锁、验证快照与报价时间后，以 0644 权限原子替换。前端发布保护行情 JSON、锁和临时文件，不覆盖或删除它们。
+
+基金限额扫描、邮件通知、数据库和既有服务器任务不参与此流程。上游限流、Actions 调度及 SSH 失败仍可能造成延迟，可在 Actions 的 `Refresh Market Dashboard` 查看结果并手动重跑。

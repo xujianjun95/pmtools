@@ -32,7 +32,7 @@ export default function FutureSetup({ initialAssets, monthlyAmount, initialConfi
     <form className={styles.setup} onSubmit={handleSubmit} noValidate>
       <span className="section-label">知来</span>
       <h1 className={styles.setupTitle}>未来有很多种走法</h1>
-      <p className={styles.setupDesc}>
+      <p className={`${styles.setupDesc} ${styles.futureSetupDesc}`}>
         以指数的历史长期收益为基准，从当前资产和每月投入出发，看看定投计划如何经历上涨与大跌。
       </p>
       <div className={`${styles.setupForm} ${styles.futureSetupForm}`}>

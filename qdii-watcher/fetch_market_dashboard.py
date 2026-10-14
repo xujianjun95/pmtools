@@ -11,6 +11,7 @@ import fcntl
 import json
 import logging
 import math
+import os
 from pathlib import Path
 import tempfile
 import time
@@ -153,6 +154,7 @@ def write_snapshot(path, snapshot):
         try:
             handle.write(text)
             handle.flush()
+            os.fchmod(handle.fileno(), 0o644)
             temporary.replace(path)
         finally:
             temporary.unlink(missing_ok=True)

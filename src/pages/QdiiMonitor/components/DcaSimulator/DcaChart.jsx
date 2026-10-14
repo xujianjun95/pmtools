@@ -1,7 +1,7 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styles from './DcaSimulator.module.css'
 
-const W = 1200
+const DEFAULT_W = 1200
 const H = 280
 const PAD = { l: 58, r: 16, t: 24, b: 30 }
 
@@ -30,7 +30,20 @@ function fmtAxisTick(v) {
 }
 
 // 渐进式折线图：只绘制已播放到 cursor 的月份，未来月份不显示。
-export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMotion, events, onReviewEvent, ariaLabel = '历史定投旅程折线图' }) {
+export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMotion, events, onReviewEvent, drawdowns = [], showArea = false, responsive = false, ariaLabel = '历史定投旅程折线图' }) {
+  const areaId = useId()
+  const svgRef = useRef(null)
+  const [canvasWidth, setCanvasWidth] = useState(DEFAULT_W)
+  const W = responsive ? canvasWidth : DEFAULT_W
+  useEffect(() => {
+    if (!responsive || !svgRef.current || typeof ResizeObserver === 'undefined') return undefined
+    const observer = new ResizeObserver(entries => {
+      const width = entries[0]?.contentRect.width
+      if (width > 0) setCanvasWidth(Math.max(280, width))
+    })
+    observer.observe(svgRef.current)
+    return () => observer.disconnect()
+  }, [responsive])
   // 可见窗口内的资产/投入最大值 → 目标纵轴档位
   const targetMax = useMemo(() => {
     let m = 1
@@ -55,7 +68,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
     const t0 = performance.now()
     const duration = 340
     const tick = (now) => {
-      const t = Math.min(1, (now - t0) / duration)
+      const t = Math.max(0, Math.min(1, (now - t0) / duration))
       const eased = 1 - (1 - t) ** 3
       const v = from + (targetViewMax - from) * eased
       viewMaxRef.current = v
@@ -85,7 +98,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
     if (yearMarks.length === 0 || curve[0].ym.slice(0, 4) !== yearMarks[0].label) {
       yearMarks.unshift({ i: 0, label: curve[0].ym.slice(0, 4) })
     }
-    const step = Math.max(1, Math.ceil(yearMarks.length / 9))
+    const step = Math.max(1, Math.ceil(yearMarks.length / (W < 600 ? 3 : 9)))
     const xticks = []
     yearMarks.forEach((t, k) => {
       if (k % step !== 0) return
@@ -99,7 +112,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
       return { v, label: fmtAxisTick(v), y: y(v) }
     })
     return { x, y, line, xticks, yticks }
-  }, [curve, viewMax])
+  }, [curve, viewMax, W])
 
   const visibleCurve = useMemo(() => curve.slice(0, cursor + 1), [curve, cursor])
   const dInvested = useMemo(() => (geo ? geo.line(visibleCurve, (p) => p.invested) : ''), [geo, visibleCurve])
@@ -156,7 +169,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
     if (!playing || reducedMotion || !to) return undefined
     let rafId
     const step = (now) => {
-      const t = Math.min(1, (now - start) / Math.max(1, frameDelay))
+      const t = Math.max(0, Math.min(1, (now - start) / Math.max(1, frameDelay)))
       place(t)
       if (t < 1) rafId = requestAnimationFrame(step)
     }
@@ -169,6 +182,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
   return (
     <div className={styles.chartWrap}>
       <svg
+        ref={svgRef}
         className={styles.chart}
         viewBox={`0 0 ${W} ${H}`}
         role="img"
@@ -187,6 +201,10 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
             {t.label}
           </text>
         ))}
+        {showArea && <>
+          <defs><linearGradient id={areaId} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--accent)" stopOpacity="0.22" /><stop offset="100%" stopColor="var(--accent)" stopOpacity="0.02" /></linearGradient></defs>
+          <path d={`${dValue} L${geo.x(cursor)},${H - PAD.b} L${geo.x(0)},${H - PAD.b} Z`} fill={`url(#${areaId})`} />
+        </>}
         <path d={dInvested} className={`${styles.line} ${styles.lineInvested}`} />
         <path d={dValue} className={`${styles.line} ${styles.lineValue}`} />
         {/* 游标尖端延伸段：播放中逐帧生长，保证折线连续绘制 */}
@@ -208,6 +226,9 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
             }}
           />
         ))}
+        {drawdowns.filter(event => event.index <= cursor).map(event => <circle key={event.index} data-drawdown={event.index} cx={geo.x(event.index)} cy={geo.y(curve[event.index].value)} r={5} fill="var(--surface)" stroke="var(--accent)" strokeWidth={2}>
+          <title>{curve[event.index].ym} · 市场回撤 {(event.drawdown * 100).toFixed(1)}%</title>
+        </circle>)}
         <circle ref={dotValueRef} r={4.5} className={styles.dotValue} />
         <circle ref={dotInvestedRef} r={3} className={styles.dotInvested} />
       </svg>
@@ -218,6 +239,7 @@ export default function DcaChart({ curve, cursor, playing, frameDelay, reducedMo
         <span>
           <i className={`${styles.sw} ${styles.swInvested}`} /> 累计投入
         </span>
+        {drawdowns.length > 0 && <span>○ 市场回撤 ≥20%</span>}
       </div>
     </div>
   )

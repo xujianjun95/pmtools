@@ -113,7 +113,7 @@ export function calibrateReturnModel(data, assetKey, asOfYm) {
 // 修正是抽样前对所有路径相同的偏差项，不对单条路径指定年收益、终点或回撤次数。
 /** @param {ReturnModel} model @param {number} months @param {() => number} rng @param {number} [blockMonths] */
 export function generateMonthlyReturns(model, months, rng, blockMonths = RETURN_BLOCK_MONTHS) {
-  if (!Number.isInteger(months) || months < 1 || months > 360) throw new Error('推演月份无效')
+  if (!Number.isInteger(months) || months < 1 || months > 600) throw new Error('推演月份无效')
   if (!Number.isFinite(model?.meanLogReturn) || !Array.isArray(model.residuals) || model.residuals.length < 120 || !model.residuals.every(Number.isFinite)) {
     throw new Error('历史收益模型无效')
   }

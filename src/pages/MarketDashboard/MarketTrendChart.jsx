@@ -8,8 +8,14 @@ const formatPrice = (value) => value.toLocaleString('zh-CN', { minimumFractionDi
 /** @param {{history: import('./marketData').MarketHistoryPoint[], name: string, theme: 'light'|'dark'}} props */
 export default function MarketTrendChart({ history, name, theme }) {
   const containerRef = useRef(null)
+  const historyRef = useRef(history)
+  const seriesRef = useRef(null)
   const [failed, setFailed] = useState(false)
   const latest = history.at(-1)
+  useEffect(() => {
+    historyRef.current = history
+    seriesRef.current?.setData(history.map((point) => ({ time: point.date, value: point.value })))
+  }, [history])
   useEffect(() => {
     let chart = null
     let disposed = false
@@ -38,7 +44,8 @@ export default function MarketTrendChart({ history, name, theme }) {
           priceLineVisible: true, lastValueVisible: true,
           priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
         })
-        series.setData(history.map((point) => ({ time: point.date, value: point.value })))
+        seriesRef.current = series
+        series.setData(historyRef.current.map((point) => ({ time: point.date, value: point.value })))
         chart.timeScale().fitContent()
       } catch {
         if (!disposed) setFailed(true)
@@ -47,9 +54,10 @@ export default function MarketTrendChart({ history, name, theme }) {
     initialize()
     return () => {
       disposed = true
+      seriesRef.current = null
       chart?.remove()
     }
-  }, [history, theme])
+  }, [theme])
   if (failed) return <p className={styles.emptyState} role="status">趋势图暂时无法加载，请刷新重试。</p>
   return <div className={styles.chartShell}>
     <div ref={containerRef} className={styles.chart} role="img" aria-label={`${name}历史指数点位，${history[0]?.date} 至 ${latest?.date}，${history.length} 个交易日`} />

@@ -9,6 +9,8 @@
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
   justify-content: space-between;
   align-items: center;
 }
@@ -26,6 +28,32 @@
   color: var(--text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.filing {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.filing:hover {
+  text-decoration: underline;
+}
+
+.filing:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.footer.compact {
+  margin-top: 0;
+  padding: 12px var(--margin-page);
+}
+
+.compact .inner {
+  justify-content: center;
 }
 
 @media (max-width: 768px) {

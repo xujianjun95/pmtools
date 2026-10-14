@@ -136,6 +136,10 @@
   color: var(--text-secondary);
 }
 
+.futureSetupDesc {
+  max-width: none;
+}
+
 .setupForm {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

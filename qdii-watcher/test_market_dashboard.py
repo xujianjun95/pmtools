@@ -1,5 +1,7 @@
 import json
+import os
 from pathlib import Path
+import stat
 import tempfile
 import unittest
 
@@ -12,6 +14,18 @@ def payload(price=110, closes=None):
 
 
 class MarketDashboardTests(unittest.TestCase):
+    def test_published_snapshot_remains_readable_by_the_web_server(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "market.json"
+            path.write_text('{}')
+            path.chmod(0o644)
+            previous_umask = os.umask(0o077)
+            try:
+                write_snapshot(path, {"version": 1})
+            finally:
+                os.umask(previous_umask)
+            self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o644)
+
     def test_daily_change_uses_prior_trading_day_not_range_baseline(self):
         result = parse_indicator(payload(), INDICATORS[0], "2025-01-04T00:00:00+00:00")
         self.assertEqual(result["previousClose"], 100)

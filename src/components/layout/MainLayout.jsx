@@ -35,8 +35,8 @@ function MainLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 故意不依赖 hash / state.scrollToBuilds，避免重复跑 effect 打断滚到构建区
   }, [location.pathname, location.search])
 
-  // 定投旅程页隐藏页脚，避免把沉浸式体验顶出一屏。
-  const hideFooter = ['/qdii/dca', '/qdii/future'].includes(location.pathname)
+  // 沉浸式页面只显示紧凑备案信息。
+  const compactFooter = ['/qdii/dca', '/qdii/future'].includes(location.pathname)
 
   return (
     <div className={styles.layout}>
@@ -46,7 +46,7 @@ function MainLayout() {
         <Outlet />
       </main>
       <PmtoolsCompanion />
-      {!hideFooter && <Footer />}
+      <Footer compact={compactFooter} />
     </div>
   )
 }

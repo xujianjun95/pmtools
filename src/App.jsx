@@ -28,7 +28,7 @@ function App() {
         <Route path="/qdii/dashboard" element={<Suspense fallback={<p role="status">正在加载全球行情…</p>}><MarketDashboardPage /></Suspense>} />
         <Route path="/qdii/world" element={<QdiiWorldPage />} />
         <Route path="/qdii/dca" element={<DcaPage />} />
-        <Route path="/qdii/future" element={<Suspense fallback={<p role="status">正在加载未来推演…</p>}><FuturePage /></Suspense>} />
+        <Route path="/qdii/future" element={<Suspense fallback={<p role="status">正在加载复利测算…</p>}><FuturePage /></Suspense>} />
       </Route>
       <Route
         path="/background/*"
