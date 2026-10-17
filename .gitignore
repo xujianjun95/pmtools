@@ -53,3 +53,6 @@ qdii-watcher/*.publish.lock
 *.db-wal
 qdii-watcher/direct_limits.json
 qdii-watcher/frontend/
+
+# 本地部署草稿（不随仓库发布）
+docs/deploy-checklist.md
