@@ -77,7 +77,8 @@ function badgeColor(value) {
 
 /** 组装通知邮件正文（HTML）——邮箱客户端安全：table 布局 + 内联样式 */
 export function buildMailBody(changes, meta) {
-  const summary = summarize(changes)
+  // 邮件底部/顶部"回到站点"的落地页：QDII 监控面板
+  const siteUrl = `${config.siteBaseUrl}/qdii`
 
   const mono = `'DM Mono',ui-monospace,Consolas,Menlo,monospace`
   const serif = `Georgia,'Noto Serif SC','Songti SC',serif`
@@ -86,6 +87,13 @@ export function buildMailBody(changes, meta) {
   const rows = changes
     .map((c) => {
       const toBadge = badgeColor(c.to)
+      const dir = changeDirection(c.from, c.to)
+      // 箭头比圆点多一层信息：同样是"变了"，收紧和放宽对申购人意义相反
+      const marker = dir === 'down' ? '&#8595;' : dir === 'up' ? '&#8593;' : '&#9679;'
+      const markerColor = dir === 'down' ? '#9a513d' : dir === 'up' ? '#188038' : toBadge.fg
+      const markerStyle = dir
+        ? `font-size:10px;vertical-align:1px;color:${markerColor};`
+        : `font-size:7px;vertical-align:2px;`
       const rowBg = '#ffffff'
       return `<tr style="background:${rowBg};">
         <td style="padding:12px 14px;border-bottom:1px solid #e8e4dd;font-family:${mono};font-size:12px;color:#6f6a5e;white-space:nowrap;">${escapeHtml(c.code)}</td>
@@ -93,23 +101,33 @@ export function buildMailBody(changes, meta) {
         <td style="padding:12px 14px;border-bottom:1px solid #e8e4dd;font-family:${body};font-size:12px;color:#555048;white-space:nowrap;">${escapeHtml(c.field)}</td>
         <td style="padding:12px 14px;border-bottom:1px solid #e8e4dd;font-family:${mono};font-size:12px;color:#a39e93;text-decoration:line-through;white-space:nowrap;">${escapeHtml(c.from)}</td>
         <td style="padding:12px 14px;border-bottom:1px solid #e8e4dd;font-family:${body};white-space:nowrap;">
-          <span style="display:inline-block;padding:3px 11px;border-radius:999px;background:${toBadge.bg};color:${toBadge.fg};border:1px solid ${toBadge.border};font-size:12px;font-weight:500;line-height:1.5;white-space:nowrap;"><span style="font-size:7px;vertical-align:2px;">&#9679;</span>&nbsp;${escapeHtml(c.to)}</span>
+          <span style="display:inline-block;padding:3px 11px;border-radius:999px;background:${toBadge.bg};color:${toBadge.fg};border:1px solid ${toBadge.border};font-size:12px;font-weight:500;line-height:1.5;white-space:nowrap;"><span style="${markerStyle}">${marker}</span>&nbsp;${escapeHtml(c.to)}</span>
         </td>
       </tr>`
     })
     .join('')
 
   return {
-    subject: `【QDII额度监控】${summary}`,
-    html: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f7f5f2" style="background:#f7f5f2;padding:32px 12px;font-family:${body};">
+    subject: buildSubject(changes),
+    html: `<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${escapeHtml(buildPreheader(changes))}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f7f5f2" style="background:#f7f5f2;padding:32px 12px;font-family:${body};">
   <tr><td align="center">
     <table role="presentation" width="850" cellpadding="0" cellspacing="0" style="width:850px;max-width:850px;background:#ffffff;border:1px solid #e8e4dd;border-radius:12px;overflow:hidden;">
       <tr><td height="3" bgcolor="#7a6040" style="height:3px;background:#7a6040;font-size:0;line-height:0;">&nbsp;</td></tr>
       <tr>
         <td style="padding:30px 32px 22px;">
-          <div style="font-family:${mono};font-size:11px;letter-spacing:2px;color:#7a6040;text-transform:uppercase;">QDII Fund Purchase Limit Monitor</div>
-          <div style="font-family:${serif};font-size:24px;font-weight:400;color:#1a1714;margin-top:8px;line-height:1.4;">PMTOOLS·QDII 基金申购额度变动提醒</div>
-          <div style="font-family:${mono};font-size:12px;letter-spacing:0.04em;color:#6f6a5e;margin-top:10px;">数据日期 ${meta.updatedAt} &middot; 每日扫描 &middot; 共 ${changes.length} 条变动</div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td valign="top" style="vertical-align:top;">
+                <div style="font-family:${mono};font-size:11px;letter-spacing:2px;color:#7a6040;text-transform:uppercase;">QDII Fund Purchase Limit Monitor</div>
+                <div style="font-family:${serif};font-size:24px;font-weight:400;color:#1a1714;margin-top:8px;line-height:1.4;">PMTOOLS·QDII 基金申购额度变动提醒</div>
+                <div style="font-family:${mono};font-size:12px;letter-spacing:0.04em;color:#6f6a5e;margin-top:10px;">数据日期 ${meta.updatedAt} &middot; 每日扫描 &middot; 共 ${changes.length} 条变动</div>
+              </td>
+              <td valign="top" align="right" style="vertical-align:top;padding-left:16px;white-space:nowrap;">
+                <a href="${siteUrl}" target="_blank" style="display:inline-block;padding:8px 14px;border:1px solid #d6c39a;border-radius:999px;background:#f6efdd;color:#7a6040;font-family:${mono};font-size:12px;line-height:1.4;text-decoration:none;white-space:nowrap;">打开 PMTOOLS 官网 &#8594;</a>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
       <tr>
@@ -140,19 +158,118 @@ export function buildMailBody(changes, meta) {
   }
 }
 
-function summarize(changes) {
-  const statuses = new Set()
-  let limitChanges = 0
-  for (const c of changes) {
-    if (c.field === '申购状态') statuses.add(c.to)
-    // 代销/直销两个渠道的日累计限额都计入
-    if (String(c.field).startsWith('日累计限额')) limitChanges += 1
+/** 从额度文案里取出数值（识别"万""亿"），取不到返回 null */
+function parseAmount(value) {
+  const m = String(value)
+    .replace(/,/g, '')
+    .match(/(\d+(?:\.\d+)?)\s*(亿|万)?/)
+  if (!m) return null
+  const n = Number(m[1])
+  if (m[2] === '亿') return n * 100000000
+  if (m[2] === '万') return n * 10000
+  return n
+}
+
+/**
+ * 转成可比较的额度值：
+ * 无限额 = +Infinity（比任何金额都宽），暂停/封闭 = -1（比 0 额度还紧）。
+ * 解析不出数字（如"限大额""开放申购"）返回 null，交给状态等级兜底。
+ */
+function comparableAmount(value) {
+  const s = String(value).trim()
+  if (/无限额|不限|无限制/.test(s)) return Number.POSITIVE_INFINITY
+  if (/暂停|封闭/.test(s)) return -1
+  return parseAmount(s)
+}
+
+/** 状态等级兜底：暂停 0 < 限大额 1 < 开放 2，仅在没有具体金额时使用 */
+function stateRank(value) {
+  const s = String(value)
+  if (/无限额|不限|无限制/.test(s)) return 2
+  if (/暂停|封闭/.test(s)) return 0
+  if (/限大额|限额/.test(s)) return 1
+  if (/开放/.test(s)) return 2
+  return null
+}
+
+/**
+ * 判断变动方向：down = 收紧（额度变小或转为限制申购），up = 放宽。
+ * 申购人最关心的就是这个方向——同样是"变了"，收紧和放宽的意义完全相反。
+ * 先比金额（含无限额/暂停的极值），金额不可比时退回状态等级。
+ */
+function changeDirection(from, to) {
+  const fromAmount = comparableAmount(from)
+  const toAmount = comparableAmount(to)
+  if (fromAmount !== null && toAmount !== null) {
+    if (toAmount < fromAmount) return 'down'
+    if (toAmount > fromAmount) return 'up'
+    return null
   }
-  const parts = []
-  if (statuses.size) parts.push(`状态变化(${[...statuses].join('/')})`)
-  if (limitChanges) parts.push(`额度变化${limitChanges}条`)
-  if (!parts.length) parts.push(`${changes.length}条变动`)
-  return parts.join(' ')
+  const fromRank = stateRank(from)
+  const toRank = stateRank(to)
+  if (fromRank !== null && toRank !== null) {
+    if (toRank < fromRank) return 'down'
+    if (toRank > fromRank) return 'up'
+  }
+  return null
+}
+
+/** 基金简称：去掉 QDII 标记、币种、份额后缀，主题行里放得下 */
+function shortName(name) {
+  const cleaned = String(name)
+    .replace(/[（(]\s*QDII\s*[)）]/gi, '')
+    .replace(/(人民币|美元|美汇|美钞|现汇|现钞)/g, '')
+    .replace(/[（(]\s*[)）]/g, '')
+    .replace(/类$/, '')
+    .replace(/[A-E]$/, '')
+    .trim()
+  const chars = Array.from(cleaned)
+  return chars.length > 14 ? `${chars.slice(0, 14).join('')}…` : cleaned
+}
+
+/** 字段简称：日累计限额（直销）→ 直销；申购状态 → 状态 */
+function shortField(field) {
+  const channel = String(field).match(/[（(](直销|代销)[)）]/)
+  if (channel) return channel[1]
+  if (String(field).includes('状态')) return '状态'
+  if (String(field).includes('限额')) return '限额'
+  return String(field)
+}
+
+/**
+ * 主题行：一眼能看出"谁的什么方向"，避免用户在收件箱里只看到"变动 2 条"。
+ * 单只基金直接写名字；多只写成"XX 等 N 只基金"。
+ * N 按基金代码去重——同一基金的直销/代销可能各变一条，那是 1 只不是 2 只。
+ */
+function buildSubject(changes) {
+  const downs = changes.filter((c) => changeDirection(c.from, c.to) === 'down').length
+  const ups = changes.filter((c) => changeDirection(c.from, c.to) === 'up').length
+  let trend = '额度变动'
+  if (downs > 0 && ups === 0) trend = '额度收紧'
+  else if (ups > 0 && downs === 0) trend = '额度放宽'
+  else if (downs > 0 && ups > 0) trend = '额度有变化'
+
+  const lead = shortName(changes[0].name)
+  const fundCount = new Set(changes.map((c) => c.code || c.name)).size
+  if (fundCount === 1) return `【QDII额度监控】${lead} ${trend}`
+  return `【QDII额度监控】${lead} 等 ${fundCount} 只基金${trend}`
+}
+
+/**
+ * 邮件列表里的预览文字（preheader）：正文里隐藏，收件箱可见。
+ * 不写的话客户端会抓正文第一句英文，白白浪费一块最显眼的展示位。
+ * 格式刻意压到 40 字内：多数手机客户端只显示这么长，超出会把"现值"截掉。
+ */
+function buildPreheader(changes) {
+  const c = changes[0]
+  const stripUnit = (v) =>
+    String(v)
+      .replace(/\s*元\s*\/\s*日$/, '')
+      .replace(/\s*元$/, '')
+      .trim()
+  const unit = /元\s*\/\s*日$/.test(String(c.to)) ? '元/日' : ''
+  const more = changes.length > 1 ? `，另有 ${changes.length - 1} 条` : ''
+  return `${c.code} ${shortName(c.name)} ${shortField(c.field)} ${stripUnit(c.from)}→${stripUnit(c.to)}${unit}${more}`
 }
 
 function escapeHtml(s) {

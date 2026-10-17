@@ -62,6 +62,8 @@ export const config = {
     maxAttempts: Number(env.CODE_MAX_ATTEMPTS || 5),
   },
   publicBaseUrl: (env.PUBLIC_BASE_URL || 'http://localhost:3100').replace(/\/+$/, ''),
+  // 站点地址：通知邮件里"回到 PMTOOLS"按钮的落地页前缀（与退订 API 的 publicBaseUrl 区分）
+  siteBaseUrl: (env.SITE_BASE_URL || 'https://pmtools.com.cn').replace(/\/+$/, ''),
   // 多个时间段用分号分隔；默认每天 20:30 仅检测一次。
   notifyCron: env.NOTIFY_CRON || '30 20 * * *',
   batchSize: Number(env.BATCH_SIZE || 10),
