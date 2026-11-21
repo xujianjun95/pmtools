@@ -6,6 +6,7 @@ import {
   scrollToBuildsNavState,
 } from '../../utils/scrollBuildsGallery'
 import { scrollToSection } from '../../utils/scrollToSection'
+import QdiiConfetti from '../../pages/QdiiMonitor/components/QdiiConfetti'
 import BloubWink from './BloubWink'
 import styles from './PmtoolsCompanion.module.css'
 
@@ -156,6 +157,7 @@ function PmtoolsCompanion() {
   )
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const finePointer = useMediaQuery('(any-pointer: fine)')
+  const showConfetti = /^\/qdii\/?$/.test(location.pathname)
 
   const visualState = explaining ? 'explaining' : confirming
     ? 'confirm'
@@ -422,6 +424,7 @@ function PmtoolsCompanion() {
       className={styles.root}
       data-visible={pageVisible ? 'true' : 'false'}
       data-state={visualState}
+      data-confetti={showConfetti || undefined}
     >
       <nav
         id="pmtools-companion-nav"
@@ -451,6 +454,7 @@ function PmtoolsCompanion() {
       </nav>
 
       <div ref={explanationRef} id="pmtools-companion-explanation" className={styles.explanationSlot} />
+      {showConfetti && <QdiiConfetti reducedMotion={reducedMotion} />}
       <button
         ref={buttonRef}
         type="button"

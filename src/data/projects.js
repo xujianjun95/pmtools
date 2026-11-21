@@ -5,7 +5,7 @@ const projectData = [
     title: 'YesSir',
     tagline: 'Chrome 标签页管理 · AI 聚合搜索',
     featuredBadge: 'Google 精选',
-    badge: '500+ 用户的选择',
+    badge: '1000+ 用户的选择',
     description:
       '一款优雅、简洁的Chrome 浏览器插件，重新定义标签页管理体验。集成 AI 聚合搜索能力，让信息获取更高效。',
     detailDescription:
@@ -49,7 +49,7 @@ const projectData = [
       project:
         'https://chromewebstore.google.com/detail/%E6%A0%87%E7%AD%BE%E9%A1%B5ai%E8%87%AA%E5%8A%A8%E5%88%86%E7%BB%84%E8%B7%A8%E7%AA%97%E5%8F%A3%E7%AE%A1%E7%90%86%E5%BF%AB%E9%80%9F%E5%88%87%E6%8D%A2%E5%8F%8C%E5%87%BB%E5%85%B3%E9%97%AD%E6%99%BA%E8%83%BD%E8%AF%AD/ggdplmigmgopdecjadbgakofifnonacb?authuser=0&hl=zh-CN',
       source: '#',
-      download: '/YesSir-v1.5.5.zip',
+      download: '/YesSir-v1.5.7.zip',
     },
     mockupType: 'yessir',
   },
@@ -134,7 +134,6 @@ const projectData = [
     number: '02',
     title: '咔哒 · SnapBuild',
     tagline: '轻量级在线 HTML 编辑工具',
-    badge: '300+ 用户的选择',
     description: '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',
     detailDescription:
       '专为极速验证与原型沟通打造的轻量级工作台。无需配置繁琐的本地环境，敲击代码，瞬间生成真实可交互的页面结构，让每一个想法都即刻可见。',

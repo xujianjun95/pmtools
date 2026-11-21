@@ -1,9 +1,28 @@
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const localFontStyles = {
+  name: 'local-font-styles',
+  apply: 'serve',
+  configureServer(server) {
+    // OSS only allows the production origins. Development uses the same font files locally.
+    const stylesheet = readFileSync(new URL('./public/fonts/fonts.css', import.meta.url), 'utf8')
+      .replaceAll('https://pmtools27.oss-cn-beijing.aliyuncs.com/fonts/', '/fonts/')
+
+    server.middlewares.use((request, response, next) => {
+      if (request.url?.split('?')[0] !== '/fonts/fonts.css') return next()
+
+      response.setHeader('Content-Type', 'text/css; charset=utf-8')
+      response.setHeader('Cache-Control', 'no-cache')
+      response.end(stylesheet)
+    })
+  },
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), localFontStyles],
   server: {
     port: 5173,
     strictPort: true,

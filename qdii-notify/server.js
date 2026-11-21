@@ -56,6 +56,20 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, ts: new Date().toISOString(), subscribers: db.countAll() })
 })
 
+function sendConfettiTotal(res, readTotal) {
+  res.set('Cache-Control', 'no-store')
+  try {
+    return res.json({ total: readTotal() })
+  } catch (err) {
+    console.error('[confetti]', err.code || err.name)
+    return res.status(503).json({ total: null })
+  }
+}
+
+app.get('/api/confetti', (_req, res) => sendConfettiTotal(res, db.getConfettiTotal))
+app.post('/api/confetti', (req, res) =>
+  sendConfettiTotal(res, () => db.countConfetti(req.ip || 'unknown', req.body?.n)))
+
 /** 发送验证码：POST /api/send-code  body: { email } */
 app.post('/api/send-code', rateLimit, async (req, res) => {
   const email = String(req.body?.email || '').trim().toLowerCase()
