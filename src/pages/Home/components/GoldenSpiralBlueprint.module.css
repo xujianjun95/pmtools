@@ -1,0 +1,187 @@
+@font-face {
+  font-family: 'Source Serif 4';
+  src: url('/fonts/blueprint/source-serif-4-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/blueprint/jetbrains-mono.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.blueprint {
+  --blueprint-background: #f5f3ef;
+  --blueprint-ink: #3a3834;
+  --blueprint-guide: #a9a398;
+  --blueprint-accent: #8a6a4b;
+
+  min-width: 0;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  background: var(--blueprint-background);
+}
+
+:global([data-theme='dark']) .blueprint {
+  --blueprint-background: #16150f;
+  --blueprint-ink: #cfc8ba;
+  --blueprint-guide: #6b665c;
+  --blueprint-accent: #d3a878;
+}
+
+.drawing {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.stroke {
+  fill: none;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+.drawing[data-drawing] .stroke {
+  stroke-dashoffset: var(--offset, 1);
+}
+
+.frame {
+  stroke: var(--blueprint-ink);
+  stroke-width: 2;
+}
+
+.square,
+.dimension {
+  stroke: var(--blueprint-guide);
+  stroke-width: 1.7;
+}
+
+.dimension {
+  --offset: var(--dimension-offset);
+}
+
+.spiral {
+  --offset: var(--spiral-offset);
+
+  stroke: var(--blueprint-ink);
+  stroke-width: 2.65;
+  stroke-linejoin: round;
+}
+
+.endpoint,
+.pen {
+  fill: var(--blueprint-accent);
+}
+
+.ring {
+  stroke: var(--blueprint-accent);
+  stroke-width: 1.7;
+}
+
+.pen,
+.ring {
+  opacity: 0;
+}
+
+.drawing[data-drawing] :is(.number, .annotation, .pen, .ring) {
+  opacity: var(--visibility, 0);
+}
+
+.drawing[data-drawing] .endpoint {
+  opacity: var(--endpoint-opacity, 0);
+}
+
+.number {
+  fill: var(--blueprint-ink);
+  font: 400 22px 'JetBrains Mono', monospace;
+}
+
+.annotation {
+  fill: var(--blueprint-guide);
+  font: italic 400 28px 'Source Serif 4', Georgia, serif;
+  letter-spacing: 0;
+}
+
+.measurement {
+  display: none;
+}
+
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .stage {
+    position: relative;
+    perspective: 950px;
+  }
+
+  .drawing {
+    --layer-x: calc(var(--pointer-x, 0) * var(--drawing-unit, 1));
+    --layer-y: calc(var(--pointer-y, 0) * var(--drawing-unit, 1));
+
+    transform: rotateX(calc(var(--pointer-y, 0) * -9deg)) rotateY(calc(var(--pointer-x, 0) * 12deg));
+  }
+
+  .backgroundLayer {
+    transform: translate(calc(var(--layer-x) * -16px), calc(var(--layer-y) * -16px));
+  }
+
+  .spiralLayer {
+    transform: translate(calc(var(--layer-x) * 20px), calc(var(--layer-y) * 20px));
+  }
+
+  .foregroundLayer {
+    transform: translate(calc(var(--layer-x) * 36px), calc(var(--layer-y) * 36px));
+  }
+
+  .measurement {
+    position: absolute;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 160ms ease-out;
+  }
+
+  .stage[data-measuring] .measurement {
+    opacity: 1;
+    transition-duration: 0s;
+  }
+
+  .measurementLines {
+    display: block;
+    width: 100%;
+    height: 100%;
+    stroke: var(--blueprint-accent);
+    stroke-width: 1px;
+    stroke-dasharray: 3 5;
+    stroke-opacity: 0.55;
+  }
+
+  .measureHorizontal {
+    transform: translateY(var(--measure-y, 0px));
+  }
+
+  .measureVertical {
+    transform: translateX(var(--measure-x, 0px));
+  }
+
+  .coordinates {
+    position: absolute;
+    top: max(4px, calc(var(--measure-y, 0px) - 21px));
+    left: min(calc(var(--measure-x, 0px) + 8px), calc(100% - 16ch - 6px));
+    color: var(--blueprint-accent);
+    font: 400 11px / 1.2 'JetBrains Mono', monospace;
+    white-space: pre;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .blueprint {
+    max-width: none;
+  }
+}
