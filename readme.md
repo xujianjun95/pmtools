@@ -1,161 +1,74 @@
-# Pmtools 个人门户（React + Vite SPA）
+# PMTOOLS
 
-这是一个用于个人作品集/门户的单页应用（SPA）。当前实现采用：
-- **React Router** 做客户端路由：`/`、`/project/:id`、`/profile`、`/resume`
-- **数据驱动**：项目卡片与详情页从 `src/data/projects.js` 渲染
-- **主题体系**：`useTheme` Hook + `src/styles/global.css` 统一管理 CSS 变量
-- **入场动画**：全局 `.fi` + `.d1~.d8`，由 `MainLayout` 在路由切换时重播
+PMTOOLS 是一个个人作品与工具站。这里展示 YesSir、Kada 和 Dang Analysis 等项目，也提供文章、QDII 基金申购额度监控、全球市场看板和投资测算工具。
 
----
+首页的黄金螺旋蓝图使用 React 和 SVG 绘制。桌面端可以移动鼠标查看三层视差和测量坐标。手机端在标题下方显示图纸，开启系统的「减少动态效果」时直接显示成图。
 
-## 0) 协作规则（长期有效）
+[访问 PMTOOLS](https://pmtools.com.cn/)
 
-- 严格按提出的需求执行，不自行臆想或扩展未提出的需求。
-- 遇到不确定、信息不足或存在歧义的地方，先与需求提出方确认，再继续执行。
+## 主要页面
 
----
+| 路径 | 内容 |
+| --- | --- |
+| `/` | 作品、项目入口与资讯 |
+| `/project/:id` | 项目介绍、功能和更新日志，例如 `/project/yessir` |
+| `/about` | 个人介绍 |
+| `/articles` | 已发布的文章 |
+| `/qdii`、`/qdii/world` | QDII 申购额度和全球基金视图 |
+| `/qdii/dashboard` | 全球指数、外汇和商品行情看板 |
+| `/qdii/dca`、`/qdii/future` | 定投模拟和复利测算 |
+| `/background` | 登录后管理文章、基金名册和数据看板 |
 
-## 1) 本地验证（你可以照这个做）
+## 本地运行
 
-1. 安装依赖：
+前端使用 React、Vite 和 React Router。建议使用 Node.js 22.12 或更新版本。
 
-   ```bash
-   npm ci
-   ```
-
-2. 启动开发服务：
-
-   ```bash
-   npm run dev
-   ```
-
-3. 浏览器逐个检查：
-- `http://localhost:<port>/`：首页项目网格（从 `src/data/projects.js` map 渲染）
-- `/project/yessir`、`/project/kada`：详情页（`useParams + getProjectById`）
-- `/profile`：个人简介（Hero / Skills / Contact 组件化）
-- `/resume`：简历占位页
-
-额外重点看两点：
-- 主题切换是否生效并持久化（`localStorage.theme`）
-- `.fi` 动画在路由切换时是否能再次播放（`MainLayout` 已做重播处理）
-
----
-
-## 2) 路由规则（`src/App.jsx`）
-
-- `/` → `src/pages/Home/index.jsx`
-- `/project/:id` → `src/pages/ProjectDetail/index.jsx`
-- `/profile` → `src/pages/Profile/index.jsx`
-- `/resume` → `src/pages/Resume/index.jsx`（预留）
-
----
-
-## 3) 目录结构与约定（按当前仓库更新）
-
-> 下面是当前仓库的关键结构，按此约定继续扩展页面与模块。
-
-```text
-src/
-├── data/
-│   └── projects.js               # 项目数据中心（卡片/详情都从这里来）
-├── components/
-│   ├── layout/
-│   │   ├── Header.jsx
-│   │   ├── Footer.jsx
-│   │   └── MainLayout.jsx        # 共享布局 + 路由切换时重播动画
-│   ├── common/
-│   │   ├── BlurText.jsx
-│   │   ├── PlaceholderProjectCard.jsx
-│   │   ├── ThemeToggle.jsx
-│   │   ├── TechTag.jsx
-│   │   └── ProjectCard.jsx
-│   └── mockups/
-│       ├── ProjectMockup.jsx    # 根据 mockupType 选择预览组件
-│       ├── MockupYesSir.jsx
-│       └── MockupKada.jsx
-├── pages/
-│   ├── Home/
-│   │   ├── index.jsx             # 页面组合：HomeIntro / ProjectsGrid
-│   │   └── components/
-│   │       ├── HomeIntro.jsx
-│   │       └── ProjectsGrid.jsx
-│   ├── ProjectDetail/
-│   │   ├── index.jsx             # useParams -> getProjectById -> 传给各子组件
-│   │   └── components/
-│   │       ├── DetailHero.jsx
-│   │       ├── OriginSection.jsx
-│   │       ├── FeaturesSection.jsx
-│   │       ├── TechStackSection.jsx
-│   │       ├── YesSirPrivacySection.jsx
-│   │       ├── ChangelogSection.jsx
-│   │       └── DetailLinks.jsx
-│   ├── Profile/
-│   │   ├── index.jsx             # Hero / Skills / Contact 组件化
-│   │   └── components/
-│   │       ├── ProfileHero.jsx
-│   │       ├── SkillsSection.jsx
-│   │       └── ContactSection.jsx
-│   └── Resume/
-│       └── index.jsx             # 占位页
-├── hooks/
-│   └── useTheme.js               # 主题切换逻辑：localStorage + 系统偏好监听
-├── utils/
-│   └── scrollBuildsGallery.js    # 详情页滚动辅助逻辑
-├── assets/
-│   └── mockups/
-│       └── yessir-cover@2x.jpg
-└── styles/
-    └── global.css                # CSS 变量 + .fi / .d1~.d8 动画基类
+```bash
+npm ci
+npm run dev
 ```
 
----
+打开 [http://localhost:5173](http://localhost:5173)。首页和项目详情可以直接预览。文章、后台和邮件订阅需要对应服务，行情看板需要本地行情文件。
 
-## 4) 数据驱动：如何新增一个项目（最重要）
+| 联调内容 | 步骤 |
+| --- | --- |
+| 文章和后台 | 在 [`admin-server/`](admin-server/) 安装依赖（`npm ci`），参照 [配置模板](admin-server/.env.example) 填写该目录的 `.env`，再执行 `npm start`。Vite 将 `/background-api` 转发到本地 `3200` 端口。 |
+| QDII 邮件订阅 | 在 [`qdii-notify/`](qdii-notify/) 安装依赖并按[服务文档](qdii-notify/README.md)配置后执行 `npm start`。Vite 将 `/api` 转发到本地 `3100` 端口。 |
+| 全球市场看板 | 安装 Python 3.9 或以上版本，在仓库根目录执行 `npm run market:refresh` 拉取一次行情，或在另一个终端执行 `npm run market:watch` 持续更新。详见[市场看板文档](docs/market-dashboard.md)。 |
 
-编辑 `src/data/projects.js`，新增一个对象，例如：
+本地联调使用测试数据库和凭据，密钥保存在各自服务的 `.env` 中。
 
-- `id`：用于路由参数 `/project/:id`
-- `mockupType`：用于 `ProjectMockup` 选择预览组件（当前：`yessir` / `kada`）
-- `title` / `tagline` / `description` / `detailDescription`
-- `tags`（首页卡片标签）
-- `techStack`（详情页“技术栈”）
-- `stats`：`[{ value, label }, ...]`（详情页“统计行”）
-- `features`：`[{ title, description }, ...]`（详情页功能卡片）
-- `links.project`、`links.source`
+### 检查与构建
 
-新增完成后：
-- 首页会自动渲染新的 `ProjectCard`
-- 详情页会自动通过 `useParams + getProjectById` 找到并展示
+```bash
+npm run test:dca
+npm run lint
+npm run build
+npm run preview
+```
 
----
+以上命令依次运行定投逻辑测试、全仓 ESLint、生产构建和构建产物预览。前端产物位于 `dist/`。
 
-## 5) 主题与动画机制
+## 维护入口
 
-### 5.1 主题
-- 主题变量定义在 `src/styles/global.css`（`[data-theme='light']` / `[data-theme='dark']`）
-- 切换逻辑在 `src/hooks/useTheme.js`：
-  - 读取/写入 `localStorage.theme`
-  - 没手动选择时监听 `prefers-color-scheme` 变化
+| 要改什么 | 从哪里开始 |
+| --- | --- |
+| 首页和黄金螺旋 | [首页代码](src/pages/Home/) · [蓝图组件](src/pages/Home/components/GoldenSpiralBlueprint.jsx) |
+| 项目卡片和详情 | [项目数据](src/data/projects.js)。新增项目时，在 `projectData` 中填写唯一 `id` 和展示内容，并在 `PROJECT_DISPLAY_ORDER` 中安排首页顺序。 |
+| 项目更新日志 | [更新日志数据](src/data/changelogs.js)，按项目 `id` 维护。 |
+| 文章发布 | 在 `/background` 管理文章。[文章前端](src/data/articlesApi.js) 通过 `/background-api` 读取已上架内容。 |
+| 全站主题 | [主题 Hook](src/hooks/useTheme.js) 和 [CSS 变量](src/styles/global.css)。 |
+| 基金扫描和行情抓取 | [`qdii-watcher/`](qdii-watcher/) · [申购额度数据口径](docs/qdii-scan-logic.md) |
 
-### 5.2 入场动画（`.fi`）
-- 动画类在 `src/styles/global.css`：`.fi` + `.d1~.d8`
-- 路由切换重播在 `src/components/layout/MainLayout.jsx`：
-  - 监听 `useLocation()`
-  - 通过重置 `animation` + 强制 reflow 来触发重新播放
+## 生产发布
 
----
+日常开发使用 `dev`，生产分支为 `main`。
 
-## 6) 生产部署（GitHub Actions）
+1. 将本次改动提交到 `dev` 并推送。
+2. 执行 `git fetch origin` 和 `git log --oneline origin/main..origin/dev`，确认待发布提交。如果夹带其他改动，从 `origin/main` 只挑选本次提交。
+3. 将核对过的改动合入 `main` 并推送。[部署工作流](.github/workflows/deploy.yml)会构建前端，并通过 SSH 同步 `dist/` 到服务器。
+4. 在 [GitHub Actions](https://github.com/xujianjun95/pmtools/actions/workflows/deploy.yml) 检查对应提交的部署结果，再打开[正式站](https://pmtools.com.cn/)验证本次改动。
 
-部署工作流：`.github/workflows/deploy.yml`
+后台 API、邮件服务和行情抓取各自独立运行。Nginx 需为前端路由保留 `index.html` 回退，并将 `/background-api` 和 `/api` 转发到各自服务。
 
-当前流程：
-1. `npm install`
-2. `npm run build`
-3. 将 `dist/` 同步到服务器：`TARGET: /var/www/pmtools/main`
-
-因为这是 React Router 的 SPA，服务器（Nginx）需要支持 **SPA fallback**，典型是：
-
-- `try_files $uri $uri/ /index.html;`
-
-否则用户刷新 `/project/:id` 这类路径会得到 404。
+第三方资产许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 和 [蓝图字体许可](public/fonts/blueprint/)。
