@@ -15,7 +15,6 @@
 }
 
 .blueprint {
-  --blueprint-background: #f5f3ef;
   --blueprint-ink: #3a3834;
   --blueprint-guide: #a9a398;
   --blueprint-accent: #8a6a4b;
@@ -24,11 +23,9 @@
   width: 100%;
   max-width: 600px;
   position: relative;
-  background: var(--blueprint-background);
 }
 
 :global([data-theme='dark']) .blueprint {
-  --blueprint-background: #16150f;
   --blueprint-ink: #cfc8ba;
   --blueprint-guide: #6b665c;
   --blueprint-accent: #d3a878;
